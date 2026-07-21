@@ -1,13 +1,4 @@
 {
-  "itemGroup.kombucha": "Example Mod Tab",
-  "block.kombucha.example_block": "Example Block",
-  "item.kombucha.example_item": "Example Item",
-
-  "kombucha.configuration.title": "Kombucha! Configs",
-  "kombucha.configuration.section.kombucha.common.toml": "Kombucha! Configs",
-  "kombucha.configuration.section.kombucha.common.toml.title": "Kombucha! Configs",
-  "kombucha.configuration.items": "Item List",
-  "kombucha.configuration.logDirtBlock": "Log Dirt Block",
-  "kombucha.configuration.magicNumberIntroduction": "Magic Number Text",
-  "kombucha.configuration.magicNumber": "Magic Number"
+    "itemGroup.kombucha": "Kombucha!",
+    "item.kombucha.kombucha_drink": "Kombucha"
 }
