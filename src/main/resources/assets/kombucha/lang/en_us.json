@@ -1,4 +1,8 @@
 {
     "itemGroup.kombucha": "Kombucha!",
-    "item.kombucha.kombucha_drink": "Kombucha"
+    "item.kombucha.kombucha_drink": "Kombucha",
+    "block.kombucha.empty_combucha_jar": "Empty Jar",
+    "item.kombucha.empty_combucha_jar": "Empty Jar",
+    "block.kombucha.kombucha_jar": "Kombucha Jar",
+    "item.kombucha.kombucha_jar": "Kombucha Jar"
 }

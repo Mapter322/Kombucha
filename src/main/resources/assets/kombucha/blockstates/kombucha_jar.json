@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "jar_type=unsealed": {
+            "model": "kombucha:block/filled_unsealed_combucha_jar"
+        },
+        "jar_type=sealed": {
+            "model": "kombucha:block/filled_sealed_combucha_jar"
+        },
+        "jar_type=infested": {
+            "model": "kombucha:block/infested_combucha_jar"
+        }
+    }
+}
