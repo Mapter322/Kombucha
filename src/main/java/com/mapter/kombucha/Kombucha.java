@@ -62,6 +62,11 @@ public class Kombucha {
                     .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
                     .usingConvertsTo(Items.GLASS_BOTTLE)));
 
+    // Tea leaves
+    public static final DeferredItem<Item> TEA_LEAVES = ITEMS.register("tea_leaves",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+
     // Creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> KOMBUCHA_TAB = CREATIVE_MODE_TABS.register("kombucha_tab",
             () -> CreativeModeTab.builder()
@@ -71,6 +76,7 @@ public class Kombucha {
                     .displayItems((parameters, output) -> {
                         output.accept(KOMBUCHA_DRINK.get());
                         output.accept(EMPTY_KOMBUCHA_JAR_ITEM.get());
+                        output.accept(TEA_LEAVES.get());
 
                         ItemStack unsealed = new ItemStack(KOMBUCHA_JAR_ITEM.get());
                         unsealed.set(ModDataComponents.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED);

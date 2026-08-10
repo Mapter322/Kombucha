@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "pattern": [
+        "DDD",
+        "DDD",
+        "DDD"
+    ],
+    "key": {
+        "D": "minecraft:leaf_litter"
+    },
+    "result": {
+        "id": "kombucha:tea_leaves"
+    }
+}
