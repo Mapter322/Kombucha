@@ -2,6 +2,7 @@ package com.mapter.kombucha.component;
 
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.block.KombuchaJarBlock;
+import com.mapter.kombucha.block.TeaType;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -15,5 +16,11 @@ public class ModDataComponents {
             DATA_COMPONENT_TYPES.register("jar_type",
                     () -> DataComponentType.<KombuchaJarBlock.JarType>builder()
                             .persistent(KombuchaJarBlock.JarType.CODEC)
+                            .build());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TeaType>> TEA_TYPE =
+            DATA_COMPONENT_TYPES.register("tea_type",
+                    () -> DataComponentType.<TeaType>builder()
+                            .persistent(TeaType.CODEC)
                             .build());
 }

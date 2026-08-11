@@ -2,6 +2,7 @@ package com.mapter.kombucha;
 
 import com.mapter.kombucha.block.EmptyJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlock;
+import com.mapter.kombucha.block.KombuchaJarBlockEntity;
 import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.Consumables;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -37,6 +38,7 @@ public class Kombucha {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
 
     // Empty jar
     public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
@@ -55,6 +57,10 @@ public class Kombucha {
     public static final DeferredItem<KombuchaJarItem> KOMBUCHA_JAR_ITEM = ITEMS.register("kombucha_jar",
             id -> new KombuchaJarItem(KOMBUCHA_JAR.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KombuchaJarBlockEntity>> KOMBUCHA_JAR_BE =
+            BLOCK_ENTITIES.register("kombucha_jar",
+                    () -> new BlockEntityType<>(KombuchaJarBlockEntity::new, KOMBUCHA_JAR.get()));
 
     // Kombucha drink
     public static final DeferredItem<KombuchaDrinkItem> KOMBUCHA_DRINK = ITEMS.register("kombucha_drink",
@@ -134,6 +140,7 @@ public class Kombucha {
     public Kombucha(IEventBus modEventBus, ModContainer modContainer) {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        BLOCK_ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
     }
