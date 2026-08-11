@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        "minecraft:melon_slice",
+        "minecraft:melon_slice",
+        "minecraft:melon_slice",
+        "minecraft:sugar_cane",
+        "minecraft:sugar_cane",
+        "minecraft:sugar_cane",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves"
+    ],
+    "result": {
+        "id": "kombucha:melon_tea_mix",
+        "count": 1
+    }
+}

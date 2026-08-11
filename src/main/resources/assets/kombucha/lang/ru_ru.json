@@ -7,5 +7,11 @@
     "item.kombucha.kombucha_jar": "Банка с чайным грибом",
     "block.kombucha.water_jar": "Банка с водой",
     "item.kombucha.water_jar": "Банка с водой",
-    "item.kombucha.tea_leaves": "Чайные листья"
+    "item.kombucha.tea_leaves": "Чайные листья",
+    "item.kombucha.tea_mix": "Чайный микс",
+    "item.kombucha.apple_tea_mix": "Яблочный чайный микс",
+    "item.kombucha.melon_tea_mix": "Арбузный чайный микс",
+    "item.kombucha.nether_tea_mix": "Адский чайный микс",
+    "item.kombucha.ender_tea_mix": "Эндер-чайный микс",
+    "item.kombucha.golden_tea_mix": "Золотой чайный микс"
 }

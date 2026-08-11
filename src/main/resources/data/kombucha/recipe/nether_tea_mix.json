@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        "minecraft:nether_wart",
+        "minecraft:nether_wart",
+        "minecraft:nether_wart",
+        "minecraft:crimson_fungus",
+        "minecraft:magma_cream",
+        "minecraft:crimson_fungus",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves"
+    ],
+    "result": {
+        "id": "kombucha:nether_tea_mix",
+        "count": 1
+    }
+}

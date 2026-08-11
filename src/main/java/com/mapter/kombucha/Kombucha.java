@@ -78,6 +78,26 @@ public class Kombucha {
             id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
 
+    // Tea mixes
+    public static final DeferredItem<Item> TEA_MIX = ITEMS.register("tea_mix",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+    public static final DeferredItem<Item> APPLE_TEA_MIX = ITEMS.register("apple_tea_mix",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+    public static final DeferredItem<Item> MELON_TEA_MIX = ITEMS.register("melon_tea_mix",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+    public static final DeferredItem<Item> NETHER_TEA_MIX = ITEMS.register("nether_tea_mix",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+    public static final DeferredItem<Item> ENDER_TEA_MIX = ITEMS.register("ender_tea_mix",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+    public static final DeferredItem<Item> GOLDEN_TEA_MIX = ITEMS.register("golden_tea_mix",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+
     // Creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> KOMBUCHA_TAB = CREATIVE_MODE_TABS.register("kombucha_tab",
             () -> CreativeModeTab.builder()
@@ -88,6 +108,13 @@ public class Kombucha {
                         output.accept(KOMBUCHA_DRINK.get());
                         output.accept(EMPTY_KOMBUCHA_JAR_ITEM.get());
                         output.accept(TEA_LEAVES.get());
+
+                        output.accept(TEA_MIX.get());
+                        output.accept(APPLE_TEA_MIX.get());
+                        output.accept(MELON_TEA_MIX.get());
+                        output.accept(NETHER_TEA_MIX.get());
+                        output.accept(ENDER_TEA_MIX.get());
+                        output.accept(GOLDEN_TEA_MIX.get());
 
                         ItemStack unsealed = new ItemStack(KOMBUCHA_JAR_ITEM.get());
                         unsealed.set(ModDataComponents.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED);

@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        "minecraft:chorus_fruit",
+        "minecraft:chorus_fruit",
+        "minecraft:chorus_fruit",
+        "minecraft:ender_pearl",
+        "kombucha:tea_leaves",
+        "minecraft:ender_pearl",
+        "kombucha:tea_leaves",
+        "minecraft:dragon_breath",
+        "kombucha:tea_leaves"
+    ],
+    "result": {
+        "id": "kombucha:ender_tea_mix",
+        "count": 1
+    }
+}

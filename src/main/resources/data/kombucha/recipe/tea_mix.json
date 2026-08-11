@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves",
+        "minecraft:sugar",
+        "minecraft:sugar",
+        "minecraft:sugar"
+    ],
+    "result": {
+        "id": "kombucha:tea_mix",
+        "count": 1
+    }
+}

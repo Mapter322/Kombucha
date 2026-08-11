@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        "minecraft:golden_apple",
+        "minecraft:golden_carrot",
+        "minecraft:glistering_melon_slice",
+        "minecraft:honey_bottle",
+        "minecraft:honey_bottle",
+        "minecraft:honey_bottle",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves",
+        "kombucha:tea_leaves"
+    ],
+    "result": {
+        "id": "kombucha:golden_tea_mix",
+        "count": 1
+    }
+}

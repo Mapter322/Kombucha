@@ -7,5 +7,11 @@
     "item.kombucha.kombucha_jar": "Kombucha Jar",
     "block.kombucha.water_jar": "Water Jar",
     "item.kombucha.water_jar": "Water Jar",
-    "item.kombucha.tea_leaves": "Tea Leaves"
+    "item.kombucha.tea_leaves": "Tea Leaves",
+    "item.kombucha.tea_mix": "Tea Mix",
+    "item.kombucha.apple_tea_mix": "Apple Tea Mix",
+    "item.kombucha.melon_tea_mix": "Melon Tea Mix",
+    "item.kombucha.nether_tea_mix": "Nether Tea Mix",
+    "item.kombucha.ender_tea_mix": "Ender Tea Mix",
+    "item.kombucha.golden_tea_mix": "Golden Tea Mix"
 }
