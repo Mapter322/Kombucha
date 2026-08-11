@@ -1,6 +1,8 @@
 package com.mapter.kombucha;
 
+import com.mapter.kombucha.block.EmptyJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlock;
+import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
@@ -37,8 +39,8 @@ public class Kombucha {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // Empty jar
-    public static final DeferredBlock<Block> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
-            id -> new Block(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
+            id -> new EmptyJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
                     .noOcclusion()));
     public static final DeferredItem<BlockItem> EMPTY_KOMBUCHA_JAR_ITEM = ITEMS.register("empty_combucha_jar",
@@ -61,6 +63,15 @@ public class Kombucha {
                     .stacksTo(16)
                     .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
                     .usingConvertsTo(Items.GLASS_BOTTLE)));
+
+    // Water jar
+    public static final DeferredBlock<WaterJarBlock> WATER_JAR = BLOCKS.register("water_jar",
+            id -> new WaterJarBlock(BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, id))
+                    .noOcclusion()));
+    public static final DeferredItem<BlockItem> WATER_JAR_ITEM = ITEMS.register("water_jar",
+            id -> new BlockItem(WATER_JAR.get(), new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
 
     // Tea leaves
     public static final DeferredItem<Item> TEA_LEAVES = ITEMS.register("tea_leaves",
@@ -89,6 +100,8 @@ public class Kombucha {
                         ItemStack infested = new ItemStack(KOMBUCHA_JAR_ITEM.get());
                         infested.set(ModDataComponents.JAR_TYPE, KombuchaJarBlock.JarType.INFESTED);
                         output.accept(infested);
+
+                        output.accept(WATER_JAR_ITEM.get());
                     }).build());
 
     public Kombucha(IEventBus modEventBus, ModContainer modContainer) {
