@@ -13,5 +13,10 @@
     "item.kombucha.melon_tea_mix": "Арбузный чайный микс",
     "item.kombucha.nether_tea_mix": "Адский чайный микс",
     "item.kombucha.ender_tea_mix": "Эндер-чайный микс",
-    "item.kombucha.golden_tea_mix": "Золотой чайный микс"
+    "item.kombucha.golden_tea_mix": "Золотой чайный микс",
+    "kombucha.progress.fermenting": "Чайный гриб созревает... %s",
+    "kombucha.progress.infested": "Чайный гриб готовится... %s",
+    "kombucha.progress.ready": "Чайный гриб готов!",
+    "kombucha.hint.add_tea_mix": "Добавь чайный микс",
+    "kombucha.hint.not_ready": "Чайный гриб еще не готов!"
 }

@@ -1,7 +1,9 @@
 package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +26,7 @@ public class WaterJarBlock extends Block {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
                                            BlockPos pos, Player player, InteractionHand hand,
                                            BlockHitResult hitResult) {
-        // Empty bucket → pick up water
+        // Empty bucket - pick up water
         if (stack.is(Items.BUCKET)) {
             if (!level.isClientSide()) {
                 level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
@@ -36,7 +38,7 @@ public class WaterJarBlock extends Block {
             return InteractionResult.SUCCESS;
         }
 
-        // Tea mix → kombucha jar
+        // Tea mix - kombucha jar
         TeaType teaType = getTeaType(stack);
         if (teaType != null) {
             if (!level.isClientSide()) {
@@ -54,7 +56,22 @@ public class WaterJarBlock extends Block {
             return InteractionResult.SUCCESS;
         }
 
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        // Any other item - hint
+        if (!level.isClientSide()) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+                                                Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide()) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+        }
+        return InteractionResult.SUCCESS;
     }
 
     private TeaType getTeaType(ItemStack stack) {

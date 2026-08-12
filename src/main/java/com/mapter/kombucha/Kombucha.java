@@ -5,6 +5,7 @@ import com.mapter.kombucha.block.KombuchaJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlockEntity;
 import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
+import com.mapter.kombucha.config.KombuchaConfig;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mojang.logging.LogUtils;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -143,5 +145,7 @@ public class Kombucha {
         BLOCK_ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
+
+        modContainer.registerConfig(ModConfig.Type.SERVER, KombuchaConfig.SPEC);
     }
 }

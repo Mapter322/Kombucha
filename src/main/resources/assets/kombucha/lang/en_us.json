@@ -13,5 +13,10 @@
     "item.kombucha.melon_tea_mix": "Melon Tea Mix",
     "item.kombucha.nether_tea_mix": "Nether Tea Mix",
     "item.kombucha.ender_tea_mix": "Ender Tea Mix",
-    "item.kombucha.golden_tea_mix": "Golden Tea Mix"
+    "item.kombucha.golden_tea_mix": "Golden Tea Mix",
+    "kombucha.progress.fermenting": "Kombucha mushroom maturing... %s",
+    "kombucha.progress.infested": "Kombucha is brewing... %s",
+    "kombucha.progress.ready": "Kombucha is ready!",
+    "kombucha.hint.add_tea_mix": "Add a tea mix",
+    "kombucha.hint.not_ready": "Kombucha is not ready yet!"
 }
