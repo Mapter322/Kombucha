@@ -1,6 +1,12 @@
 {
     "itemGroup.kombucha": "Kombucha!",
     "item.kombucha.kombucha_drink": "Комбуча",
+    "item.kombucha.apple_kombucha_drink": "Яблочная комбуча",
+    "item.kombucha.melon_kombucha_drink": "Арбузная комбуча",
+    "item.kombucha.nether_kombucha_drink": "Адская комбуча",
+    "item.kombucha.ender_kombucha_drink": "Эндер-комбуча",
+    "item.kombucha.golden_kombucha_drink": "Золотая комбуча",
+    "item.kombucha.empty_combucha_bottle": "Пустая бутылка комбучи",
     "block.kombucha.empty_combucha_jar": "Пустая банка",
     "item.kombucha.empty_combucha_jar": "Пустая банка",
     "block.kombucha.kombucha_jar": "Банка с чайным грибом",

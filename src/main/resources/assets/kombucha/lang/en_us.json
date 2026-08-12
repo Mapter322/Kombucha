@@ -1,6 +1,12 @@
 {
     "itemGroup.kombucha": "Kombucha!",
     "item.kombucha.kombucha_drink": "Kombucha",
+    "item.kombucha.apple_kombucha_drink": "Apple Kombucha",
+    "item.kombucha.melon_kombucha_drink": "Melon Kombucha",
+    "item.kombucha.nether_kombucha_drink": "Nether Kombucha",
+    "item.kombucha.ender_kombucha_drink": "Ender Kombucha",
+    "item.kombucha.golden_kombucha_drink": "Golden Kombucha",
+    "item.kombucha.empty_combucha_bottle": "Empty Kombucha Bottle",
     "block.kombucha.empty_combucha_jar": "Empty Jar",
     "item.kombucha.empty_combucha_jar": "Empty Jar",
     "block.kombucha.kombucha_jar": "Kombucha Jar",

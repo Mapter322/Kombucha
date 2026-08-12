@@ -21,6 +21,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
 
     private TeaType teaType = TeaType.TEA;
     private int fermentationTicks = 0;
+    private int fillsLeft = 3;
 
     public KombuchaJarBlockEntity(BlockPos pos, BlockState state) {
         super(Kombucha.KOMBUCHA_JAR_BE.get(), pos, state);
@@ -40,6 +41,15 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
+    }
+
+    public int getFillsLeft() {
+        return fillsLeft;
+    }
+
+    public void decrementFills() {
+        this.fillsLeft--;
+        setChanged();
     }
 
     public void setTeaType(TeaType teaType) {
@@ -97,6 +107,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         super.loadAdditional(input);
         input.read("tea_type", TeaType.CODEC).ifPresent(type -> this.teaType = type);
         input.read("fermentation_ticks", Codec.INT).ifPresent(ticks -> this.fermentationTicks = ticks);
+        input.read("fills_left", Codec.INT).ifPresent(fills -> this.fillsLeft = fills);
     }
 
     @Override
@@ -104,6 +115,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         super.saveAdditional(output);
         output.store("tea_type", TeaType.CODEC, teaType);
         output.store("fermentation_ticks", Codec.INT, fermentationTicks);
+        output.store("fills_left", Codec.INT, fillsLeft);
     }
 
     @Override

@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "minecraft:block/dead_bush"
+        "layer0": "kombucha:item/ender_fern_tea_mix"
     }
 }

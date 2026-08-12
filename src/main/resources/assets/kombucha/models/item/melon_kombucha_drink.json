@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "kombucha:item/melon_fern_tea_mix"
+        "layer0": "kombucha:item/melon_combucha_bottle"
     }
 }

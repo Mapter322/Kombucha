@@ -14,6 +14,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -90,6 +91,16 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         if (stack.is(ItemTags.WOOL) && jarType == JarType.UNSEALED) {
             if (!level.isClientSide()) {
                 sealJar(level, pos, state, player, stack);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Empty kombucha bottle on ready jar - fill with kombucha
+        if (stack.is(Kombucha.EMPTY_KOMBUCHA_BOTTLE.get()) && jarType == JarType.INFESTED) {
+            if (!level.isClientSide()) {
+                if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+                    fillBottle(level, pos, state, player, stack, be);
+                }
             }
             return InteractionResult.SUCCESS;
         }
@@ -195,6 +206,43 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             }
         }
         level.playSound(null, pos, SoundEvents.WOOL_HIT, SoundSource.BLOCKS, 1.0F, 1.0F);
+    }
+
+    private static void fillBottle(Level level, BlockPos pos, BlockState state, Player player,
+                                    ItemStack stack, KombuchaJarBlockEntity be) {
+        int ticksPerStage = KombuchaConfig.TICKS_PER_STAGE.get();
+
+        // Only fill from a matured jar (stage 3)
+        if (be.getFermentationTicks() < 2 * ticksPerStage) {
+            return;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+
+        ItemStack drink = new ItemStack(getDrinkFor(be.getTeaType()));
+        if (!player.getInventory().add(drink)) {
+            player.drop(drink, false);
+        }
+
+        be.decrementFills();
+        if (be.getFillsLeft() <= 0) {
+            // Jar is empty - back to an empty jar
+            level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
+        }
+        level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+    }
+
+    private static Item getDrinkFor(TeaType teaType) {
+        return switch (teaType) {
+            case APPLE -> Kombucha.APPLE_KOMBUCHA_DRINK.get();
+            case MELON -> Kombucha.MELON_KOMBUCHA_DRINK.get();
+            case NETHER -> Kombucha.NETHER_KOMBUCHA_DRINK.get();
+            case ENDER -> Kombucha.ENDER_KOMBUCHA_DRINK.get();
+            case GOLDEN -> Kombucha.GOLDEN_KOMBUCHA_DRINK.get();
+            default -> Kombucha.KOMBUCHA_DRINK.get();
+        };
     }
 
     private static void showProgress(Player player, JarType jarType, int fermentationTicks) {

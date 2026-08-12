@@ -64,13 +64,49 @@ public class Kombucha {
             BLOCK_ENTITIES.register("kombucha_jar",
                     () -> new BlockEntityType<>(KombuchaJarBlockEntity::new, KOMBUCHA_JAR.get()));
 
-    // Kombucha drink
+    // Empty kombucha bottle
+    public static final DeferredItem<Item> EMPTY_KOMBUCHA_BOTTLE = ITEMS.register("empty_combucha_bottle",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)));
+
+    // Kombucha drinks
     public static final DeferredItem<KombuchaDrinkItem> KOMBUCHA_DRINK = ITEMS.register("kombucha_drink",
             id -> new KombuchaDrinkItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))
                     .stacksTo(16)
                     .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(Items.GLASS_BOTTLE)));
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
+    public static final DeferredItem<KombuchaDrinkItem> APPLE_KOMBUCHA_DRINK = ITEMS.register("apple_kombucha_drink",
+            id -> new KombuchaDrinkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
+    public static final DeferredItem<KombuchaDrinkItem> MELON_KOMBUCHA_DRINK = ITEMS.register("melon_kombucha_drink",
+            id -> new KombuchaDrinkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
+    public static final DeferredItem<KombuchaDrinkItem> NETHER_KOMBUCHA_DRINK = ITEMS.register("nether_kombucha_drink",
+            id -> new KombuchaDrinkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
+    public static final DeferredItem<KombuchaDrinkItem> ENDER_KOMBUCHA_DRINK = ITEMS.register("ender_kombucha_drink",
+            id -> new KombuchaDrinkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
+    public static final DeferredItem<KombuchaDrinkItem> GOLDEN_KOMBUCHA_DRINK = ITEMS.register("golden_kombucha_drink",
+            id -> new KombuchaDrinkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
 
     // Water jar
     public static final DeferredBlock<WaterJarBlock> WATER_JAR = BLOCKS.register("water_jar",
@@ -114,6 +150,12 @@ public class Kombucha {
                     .icon(() -> KOMBUCHA_DRINK.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(KOMBUCHA_DRINK.get());
+                        output.accept(APPLE_KOMBUCHA_DRINK.get());
+                        output.accept(MELON_KOMBUCHA_DRINK.get());
+                        output.accept(NETHER_KOMBUCHA_DRINK.get());
+                        output.accept(ENDER_KOMBUCHA_DRINK.get());
+                        output.accept(GOLDEN_KOMBUCHA_DRINK.get());
+                        output.accept(EMPTY_KOMBUCHA_BOTTLE.get());
                         output.accept(EMPTY_KOMBUCHA_JAR_ITEM.get());
                         output.accept(TEA_LEAVES.get());
 
