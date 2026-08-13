@@ -84,7 +84,6 @@
     "credit": "Made with Blockbench",
     "textures": {
         "0": "kombucha:block/jar_glass",
-        "1": "kombucha:block/tea_mixture",
         "2": "kombucha:block/rope_and_cloth",
         "3": "kombucha:block/combucha_shroom",
         "4": "kombucha:block/white_wool",
@@ -94,12 +93,12 @@
         {
             "from": [
                 4,
-                8,
+                3,
                 4
             ],
             "to": [
                 12,
-                9,
+                4,
                 12
             ],
             "rotation": {
@@ -107,7 +106,7 @@
                 "axis": "y",
                 "origin": [
                     4,
-                    7,
+                    2,
                     4
                 ]
             },
@@ -171,12 +170,12 @@
         {
             "from": [
                 4,
-                6,
+                2,
                 4
             ],
             "to": [
                 12,
-                7,
+                3,
                 12
             ],
             "rotation": {
@@ -184,7 +183,7 @@
                 "axis": "y",
                 "origin": [
                     4,
-                    5,
+                    1,
                     4
                 ]
             },
@@ -248,12 +247,12 @@
         {
             "from": [
                 4,
-                4,
+                1,
                 4
             ],
             "to": [
                 12,
-                5,
+                2,
                 12
             ],
             "rotation": {
@@ -261,7 +260,7 @@
                 "axis": "y",
                 "origin": [
                     4,
-                    3,
+                    0,
                     4
                 ]
             },
@@ -1025,84 +1024,6 @@
                     "texture": "#4"
                 }
             }
-        },
-        {
-            "name": "tea_mixture",
-            "from": [
-                3,
-                1,
-                3
-            ],
-            "to": [
-                13,
-                10,
-                13
-            ],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [
-                    3,
-                    1,
-                    3
-                ]
-            },
-            "faces": {
-                "north": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1"
-                },
-                "east": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1"
-                },
-                "south": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1"
-                },
-                "west": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1"
-                },
-                "up": {
-                    "uv": [
-                        16,
-                        16,
-                        0,
-                        0
-                    ],
-                    "texture": "#1"
-                },
-                "down": {
-                    "uv": [
-                        16,
-                        0,
-                        0,
-                        16
-                    ],
-                    "texture": "#1"
-                }
-            }
         }
     ],
     "groups": [
@@ -1141,7 +1062,6 @@
                 10,
                 11
             ]
-        },
-        12
+        }
     ]
 }

@@ -39,7 +39,7 @@ public class WaterJarBlock extends Block {
         }
 
         // Tea mix - kombucha jar
-        TeaType teaType = getTeaType(stack);
+        TeaType teaType = TeaType.fromStack(stack);
         if (teaType != null) {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
@@ -72,15 +72,5 @@ public class WaterJarBlock extends Block {
                     Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
         }
         return InteractionResult.SUCCESS;
-    }
-
-    private TeaType getTeaType(ItemStack stack) {
-        if (stack.is(Kombucha.TEA_MIX.get())) return TeaType.TEA;
-        if (stack.is(Kombucha.APPLE_TEA_MIX.get())) return TeaType.APPLE;
-        if (stack.is(Kombucha.MELON_TEA_MIX.get())) return TeaType.MELON;
-        if (stack.is(Kombucha.NETHER_TEA_MIX.get())) return TeaType.NETHER;
-        if (stack.is(Kombucha.ENDER_TEA_MIX.get())) return TeaType.ENDER;
-        if (stack.is(Kombucha.GOLDEN_TEA_MIX.get())) return TeaType.GOLDEN;
-        return null;
     }
 }

@@ -52,6 +52,11 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public void setFillsLeft(int fillsLeft) {
+        this.fillsLeft = fillsLeft;
+        setChanged();
+    }
+
     public void setTeaType(TeaType teaType) {
         this.teaType = teaType;
         setChanged();
@@ -78,6 +83,11 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             // Stage 1 - Stage 2: SEALED becomes INFESTED after ticksPerStage ticks
             if (be.fermentationTicks >= ticksPerStage && jarType == KombuchaJarBlock.JarType.SEALED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.INFESTED), 3);
+            }
+
+            // Stage 4: INFESTED spoils after 3 full stages (the mushroom dies)
+            if (be.fermentationTicks >= 3 * ticksPerStage && jarType == KombuchaJarBlock.JarType.INFESTED) {
+                level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.SPOILED), 3);
             }
 
             // Bubbles for stages 1 and 2

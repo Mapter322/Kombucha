@@ -23,6 +23,8 @@
     "kombucha.progress.fermenting": "Чайный гриб созревает... %s",
     "kombucha.progress.infested": "Чайный гриб готовится... %s",
     "kombucha.progress.ready": "Чайный гриб готов!",
+    "kombucha.progress.spoiled": "Комбуча испортилась. Чайный гриб погиб.",
     "kombucha.hint.add_tea_mix": "Добавь чайный микс",
-    "kombucha.hint.not_ready": "Чайный гриб еще не готов!"
+    "kombucha.hint.not_ready": "Чайный гриб еще не готов!",
+    "kombucha.hint.add_water": "Банка пуста. Сначала добавь воды."
 }

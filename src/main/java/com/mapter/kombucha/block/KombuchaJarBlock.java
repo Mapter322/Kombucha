@@ -32,7 +32,10 @@ public class KombuchaJarBlock extends BaseEntityBlock {
     public enum JarType implements StringRepresentable {
         UNSEALED("unsealed"),
         SEALED("sealed"),
-        INFESTED("infested");
+        INFESTED("infested"),
+        UNSEALED_INFESTED("unsealed_infested"),
+        UNSEALED_WATER_INFESTED("unsealed_water_infested"),
+        SPOILED("spoiled");
 
         public static final Codec<JarType> CODEC = StringRepresentable.fromEnum(JarType::values);
 
@@ -48,12 +51,35 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
     }
 
+    public enum Fill implements StringRepresentable {
+        EMPTY("empty"),
+        ONE_THIRD("one_third"),
+        TWO_THIRDS("two_thirds"),
+        FULL("full");
+
+        public static final Codec<Fill> CODEC = StringRepresentable.fromEnum(Fill::values);
+
+        private final String name;
+
+        Fill(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
+    }
+
     public static final EnumProperty<JarType> JAR_TYPE = EnumProperty.create("jar_type", JarType.class);
+    public static final EnumProperty<Fill> FILL = EnumProperty.create("fill", Fill.class);
     public static final MapCodec<KombuchaJarBlock> CODEC = simpleCodec(KombuchaJarBlock::new);
 
     public KombuchaJarBlock(Properties properties) {
         super(properties);
-        registerDefaultState(this.stateDefinition.any().setValue(JAR_TYPE, JarType.UNSEALED));
+        registerDefaultState(this.stateDefinition.any()
+                .setValue(JAR_TYPE, JarType.UNSEALED)
+                .setValue(FILL, Fill.FULL));
     }
 
     @Override
@@ -78,7 +104,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(JAR_TYPE);
+        builder.add(JAR_TYPE, FILL);
     }
 
     @Override
@@ -87,20 +113,62 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                                            BlockHitResult hitResult) {
         JarType jarType = state.getValue(JAR_TYPE);
 
-        // Wool - seal the jar
-        if (stack.is(ItemTags.WOOL) && jarType == JarType.UNSEALED) {
+        // Wool - seal the jar (with or without the mushroom inside)
+        if (stack.is(ItemTags.WOOL) && (jarType == JarType.UNSEALED || jarType == JarType.UNSEALED_INFESTED)) {
             if (!level.isClientSide()) {
                 sealJar(level, pos, state, player, stack);
             }
             return InteractionResult.SUCCESS;
         }
 
-        // Empty kombucha bottle on ready jar - fill with kombucha
-        if (stack.is(Kombucha.EMPTY_KOMBUCHA_BOTTLE.get()) && jarType == JarType.INFESTED) {
+        // Empty kombucha bottle on an open matured jar - fill with kombucha
+        if (stack.is(Kombucha.EMPTY_KOMBUCHA_BOTTLE.get()) && jarType == JarType.UNSEALED_INFESTED) {
             if (!level.isClientSide()) {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
-                    fillBottle(level, pos, state, player, stack, be);
+                    if (be.getFillsLeft() <= 0) {
+                        player.sendOverlayMessage(
+                                Component.translatable("kombucha.hint.add_water").withStyle(ChatFormatting.WHITE));
+                    } else if (be.getFermentationTicks() >= 2 * KombuchaConfig.TICKS_PER_STAGE.get()) {
+                        fillBottle(level, pos, state, player, stack, be);
+                    } else {
+                        player.sendOverlayMessage(
+                                Component.translatable("kombucha.hint.not_ready").withStyle(ChatFormatting.WHITE));
+                    }
                 }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Water bucket on an open empty jar with mushroom - fill with water
+        if (stack.is(Items.WATER_BUCKET) && jarType == JarType.UNSEALED_INFESTED
+                && state.getValue(FILL) == Fill.EMPTY) {
+            if (!level.isClientSide()) {
+                level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_WATER_INFESTED)
+                        .setValue(FILL, Fill.FULL), 3);
+                if (!player.getAbilities().instabuild) {
+                    player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+                }
+                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Tea mix on a water-filled jar with mushroom - new batch starts at stage 2
+        TeaType teaType = TeaType.fromStack(stack);
+        if (teaType != null && jarType == JarType.UNSEALED_WATER_INFESTED) {
+            if (!level.isClientSide()) {
+                if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+                    be.setTeaType(teaType);
+                    // The SCOBY is already mature - fermentation starts from stage 2
+                    be.setFermentationTicks(KombuchaConfig.TICKS_PER_STAGE.get());
+                    // New batch - the jar is full again
+                    be.setFillsLeft(3);
+                }
+                level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_INFESTED), 3);
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }
@@ -113,12 +181,22 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        // Normal RMB on sealed/infested - show progress
-        if (jarType == JarType.SEALED || jarType == JarType.INFESTED) {
+        // Normal RMB on sealed/infested/unsealed infested/spoiled - show progress
+        if (jarType == JarType.SEALED || jarType == JarType.INFESTED
+                || jarType == JarType.UNSEALED_INFESTED || jarType == JarType.SPOILED) {
             if (!level.isClientSide()) {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     showProgress(player, jarType, be.getFermentationTicks());
                 }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Open jar with water and mushroom - waiting for a tea mix
+        if (jarType == JarType.UNSEALED_WATER_INFESTED) {
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(
+                        Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
             }
             return InteractionResult.SUCCESS;
         }
@@ -148,12 +226,22 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        // Empty hand on sealed/infested - show progress
-        if (jarType == JarType.SEALED || jarType == JarType.INFESTED) {
+        // Empty hand on sealed/infested/unsealed infested/spoiled - show progress
+        if (jarType == JarType.SEALED || jarType == JarType.INFESTED
+                || jarType == JarType.UNSEALED_INFESTED || jarType == JarType.SPOILED) {
             if (!level.isClientSide()) {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     showProgress(player, jarType, be.getFermentationTicks());
                 }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Empty hand on an open jar with water and mushroom - waiting for a tea mix
+        if (jarType == JarType.UNSEALED_WATER_INFESTED) {
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(
+                        Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
             }
             return InteractionResult.SUCCESS;
         }
@@ -171,26 +259,14 @@ public class KombuchaJarBlock extends BaseEntityBlock {
     }
 
     private static void sealJar(Level level, BlockPos pos, BlockState state, Player player, ItemStack stack) {
-        KombuchaJarBlockEntity be = (KombuchaJarBlockEntity) level.getBlockEntity(pos);
-        int ticks = be != null ? be.getFermentationTicks() : 0;
-        int ticksPerStage = KombuchaConfig.TICKS_PER_STAGE.get();
-
-        JarType targetType;
-        int resetTicks;
-        if (ticks >= ticksPerStage) {
-            // Was at stage 2+ (infested), keep infested, restart from ticksPerStage
-            targetType = JarType.INFESTED;
-            resetTicks = ticksPerStage;
-        } else {
-            // Was at stage 1 (sealed), restart from 0
-            targetType = JarType.SEALED;
-            resetTicks = 0;
+        boolean hasMushroom = state.getValue(JAR_TYPE) == JarType.UNSEALED_INFESTED;
+        if (!hasMushroom && level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+            hasMushroom = be.getFermentationTicks() >= KombuchaConfig.TICKS_PER_STAGE.get();
         }
 
+        // Closing the lid never rolls the brew back — the stage is preserved
+        JarType targetType = hasMushroom ? JarType.INFESTED : JarType.SEALED;
         level.setBlock(pos, state.setValue(JAR_TYPE, targetType), 3);
-        if (be != null) {
-            be.setFermentationTicks(resetTicks);
-        }
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
@@ -198,7 +274,11 @@ public class KombuchaJarBlock extends BaseEntityBlock {
     }
 
     private static void unsealJar(Level level, BlockPos pos, BlockState state, Player player) {
-        level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED), 3);
+        // The mushroom stays visible when the lid comes off an infested jar
+        JarType target = state.getValue(JAR_TYPE) == JarType.INFESTED
+                ? JarType.UNSEALED_INFESTED
+                : JarType.UNSEALED;
+        level.setBlock(pos, state.setValue(JAR_TYPE, target), 3);
         if (!player.getAbilities().instabuild) {
             ItemStack wool = new ItemStack(Items.WHITE_WOOL);
             if (!player.getInventory().add(wool)) {
@@ -213,7 +293,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         int ticksPerStage = KombuchaConfig.TICKS_PER_STAGE.get();
 
         // Only fill from a matured jar (stage 3)
-        if (be.getFermentationTicks() < 2 * ticksPerStage) {
+        if (be.getFermentationTicks() < 2 * ticksPerStage || be.getFillsLeft() <= 0) {
             return;
         }
 
@@ -227,10 +307,14 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
 
         be.decrementFills();
-        if (be.getFillsLeft() <= 0) {
-            // Jar is empty - back to an empty jar
-            level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
-        }
+        BlockState newState = switch (be.getFillsLeft()) {
+            case 0 -> state.setValue(FILL, Fill.EMPTY);
+            case 1 -> state.setValue(FILL, Fill.ONE_THIRD);
+            case 2 -> state.setValue(FILL, Fill.TWO_THIRDS);
+            default -> state;
+        };
+        // The mushroom (SCOBY) stays in the jar even when all the drink is gone
+        level.setBlock(pos, newState, 3);
         level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
@@ -247,6 +331,12 @@ public class KombuchaJarBlock extends BaseEntityBlock {
 
     private static void showProgress(Player player, JarType jarType, int fermentationTicks) {
         int ticksPerStage = KombuchaConfig.TICKS_PER_STAGE.get();
+
+        if (jarType == JarType.SPOILED) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.progress.spoiled").withStyle(ChatFormatting.DARK_RED));
+            return;
+        }
 
         if (jarType == JarType.SEALED) {
             // Stage 1: tea without mushroom

@@ -23,6 +23,8 @@
     "kombucha.progress.fermenting": "Kombucha mushroom maturing... %s",
     "kombucha.progress.infested": "Kombucha is brewing... %s",
     "kombucha.progress.ready": "Kombucha is ready!",
+    "kombucha.progress.spoiled": "The kombucha has spoiled. The mushroom is dead.",
     "kombucha.hint.add_tea_mix": "Add a tea mix",
-    "kombucha.hint.not_ready": "Kombucha is not ready yet!"
+    "kombucha.hint.not_ready": "Kombucha is not ready yet!",
+    "kombucha.hint.add_water": "The jar is empty. Add water first."
 }
