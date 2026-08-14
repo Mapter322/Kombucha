@@ -26,7 +26,7 @@ public class WaterJarBlock extends Block {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
                                            BlockPos pos, Player player, InteractionHand hand,
                                            BlockHitResult hitResult) {
-        // Empty bucket - pick up water
+        // empty bucket picks the water up
         if (stack.is(Items.BUCKET)) {
             if (!level.isClientSide()) {
                 level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
@@ -38,7 +38,7 @@ public class WaterJarBlock extends Block {
             return InteractionResult.SUCCESS;
         }
 
-        // Tea mix - kombucha jar
+        // tea mix starts the brew
         TeaType teaType = TeaType.fromStack(stack);
         if (teaType != null) {
             if (!level.isClientSide()) {
@@ -56,7 +56,7 @@ public class WaterJarBlock extends Block {
             return InteractionResult.SUCCESS;
         }
 
-        // Any other item - hint
+        // anything else: hint
         if (!level.isClientSide()) {
             player.sendOverlayMessage(
                     Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));

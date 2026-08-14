@@ -1,6 +1,11 @@
 {
     "model": {
         "type": "minecraft:model",
-        "model": "kombucha:block/water_jar"
+        "model": "kombucha:block/water_jar",
+        "tints": [
+            {
+                "type": "kombucha:water"
+            }
+        ]
     }
 }

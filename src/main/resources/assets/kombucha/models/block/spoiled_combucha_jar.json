@@ -84,7 +84,7 @@
     "credit": "Made with Blockbench",
     "textures": {
         "0": "kombucha:block/jar_glass",
-        "1": "kombucha:block/tea_mixture",
+        "1": "kombucha:block/liquid",
         "2": "kombucha:block/rope_and_cloth",
         "3": "kombucha:block/combucha_shroom_dead",
         "4": "kombucha:block/white_wool",
@@ -1057,7 +1057,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "east": {
                     "uv": [
@@ -1066,7 +1067,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "south": {
                     "uv": [
@@ -1075,7 +1077,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "west": {
                     "uv": [
@@ -1084,7 +1087,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "up": {
                     "uv": [
@@ -1093,7 +1097,8 @@
                         0,
                         0
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "down": {
                     "uv": [
@@ -1102,7 +1107,8 @@
                         0,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 }
             }
         }
@@ -1145,5 +1151,6 @@
             ]
         },
         12
-    ]
+    ],
+    "render_type": "minecraft:translucent"
 }

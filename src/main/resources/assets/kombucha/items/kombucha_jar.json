@@ -8,27 +8,47 @@
                 "when": "unsealed",
                 "model": {
                     "type": "minecraft:model",
-                    "model": "kombucha:block/filled_unsealed_combucha_jar"
+                    "model": "kombucha:block/filled_unsealed_combucha_jar",
+                    "tints": [
+                        {
+                            "type": "kombucha:tea_type"
+                        }
+                    ]
                 }
             },
             {
                 "when": "sealed",
                 "model": {
                     "type": "minecraft:model",
-                    "model": "kombucha:block/filled_sealed_combucha_jar"
+                    "model": "kombucha:block/filled_sealed_combucha_jar",
+                    "tints": [
+                        {
+                            "type": "kombucha:tea_type"
+                        }
+                    ]
                 }
             },
             {
                 "when": "infested",
                 "model": {
                     "type": "minecraft:model",
-                    "model": "kombucha:block/infested_combucha_jar"
+                    "model": "kombucha:block/infested_combucha_jar",
+                    "tints": [
+                        {
+                            "type": "kombucha:tea_type"
+                        }
+                    ]
                 }
             }
         ],
         "fallback": {
             "type": "minecraft:model",
-            "model": "kombucha:block/filled_unsealed_combucha_jar"
+            "model": "kombucha:block/filled_unsealed_combucha_jar",
+            "tints": [
+                {
+                    "type": "kombucha:tea_type"
+                }
+            ]
         }
     }
 }

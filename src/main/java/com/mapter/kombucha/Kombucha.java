@@ -3,12 +3,15 @@ package com.mapter.kombucha;
 import com.mapter.kombucha.block.EmptyJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlockEntity;
+import com.mapter.kombucha.block.TeaType;
 import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
+import com.mapter.kombucha.loot.CopyJarDataFunction;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -22,6 +25,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -32,6 +36,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 
+import java.util.EnumMap;
+
 @Mod(Kombucha.MODID)
 public class Kombucha {
     public static final String MODID = "kombucha";
@@ -41,8 +47,13 @@ public class Kombucha {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
+    public static final DeferredRegister<MapCodec<? extends LootItemFunction>> LOOT_FUNCTIONS =
+            DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, MODID);
 
-    // Empty jar
+    static {
+        LOOT_FUNCTIONS.register("copy_jar_data", () -> CopyJarDataFunction.CODEC);
+    }
+
     public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
             id -> new EmptyJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
@@ -51,7 +62,6 @@ public class Kombucha {
             id -> new BlockItem(EMPTY_KOMBUCHA_JAR.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
 
-    // Kombucha jar (unsealed / sealed / infested)
     public static final DeferredBlock<KombuchaJarBlock> KOMBUCHA_JAR = BLOCKS.register("kombucha_jar",
             id -> new KombuchaJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
@@ -64,51 +74,27 @@ public class Kombucha {
             BLOCK_ENTITIES.register("kombucha_jar",
                     () -> new BlockEntityType<>(KombuchaJarBlockEntity::new, KOMBUCHA_JAR.get()));
 
-    // Empty kombucha bottle
     public static final DeferredItem<Item> EMPTY_KOMBUCHA_BOTTLE = ITEMS.register("empty_combucha_bottle",
             id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))
                     .stacksTo(16)));
 
-    // Kombucha drinks
-    public static final DeferredItem<KombuchaDrinkItem> KOMBUCHA_DRINK = ITEMS.register("kombucha_drink",
-            id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
-    public static final DeferredItem<KombuchaDrinkItem> APPLE_KOMBUCHA_DRINK = ITEMS.register("apple_kombucha_drink",
-            id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
-    public static final DeferredItem<KombuchaDrinkItem> MELON_KOMBUCHA_DRINK = ITEMS.register("melon_kombucha_drink",
-            id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
-    public static final DeferredItem<KombuchaDrinkItem> NETHER_KOMBUCHA_DRINK = ITEMS.register("nether_kombucha_drink",
-            id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
-    public static final DeferredItem<KombuchaDrinkItem> ENDER_KOMBUCHA_DRINK = ITEMS.register("ender_kombucha_drink",
-            id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
-    public static final DeferredItem<KombuchaDrinkItem> GOLDEN_KOMBUCHA_DRINK = ITEMS.register("golden_kombucha_drink",
-            id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get())));
+    // one mix + one drink per tea type — add a value to the enum and it shows up here
+    public static final EnumMap<TeaType, DeferredItem<Item>> TEA_MIXES = new EnumMap<>(TeaType.class);
+    public static final EnumMap<TeaType, DeferredItem<KombuchaDrinkItem>> KOMBUCHA_DRINKS = new EnumMap<>(TeaType.class);
 
-    // Water jar
+    static {
+        for (TeaType type : TeaType.values()) {
+            TEA_MIXES.put(type, ITEMS.register(type.getMixId(), id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id)))));
+            KOMBUCHA_DRINKS.put(type, ITEMS.register(type.getDrinkId(), id -> new KombuchaDrinkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get()))));
+        }
+    }
+
     public static final DeferredBlock<WaterJarBlock> WATER_JAR = BLOCKS.register("water_jar",
             id -> new WaterJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
@@ -117,54 +103,21 @@ public class Kombucha {
             id -> new BlockItem(WATER_JAR.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
 
-    // Tea leaves
     public static final DeferredItem<Item> TEA_LEAVES = ITEMS.register("tea_leaves",
             id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
 
-    // Tea mixes
-    public static final DeferredItem<Item> TEA_MIX = ITEMS.register("tea_mix",
-            id -> new Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))));
-    public static final DeferredItem<Item> APPLE_TEA_MIX = ITEMS.register("apple_tea_mix",
-            id -> new Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))));
-    public static final DeferredItem<Item> MELON_TEA_MIX = ITEMS.register("melon_tea_mix",
-            id -> new Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))));
-    public static final DeferredItem<Item> NETHER_TEA_MIX = ITEMS.register("nether_tea_mix",
-            id -> new Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))));
-    public static final DeferredItem<Item> ENDER_TEA_MIX = ITEMS.register("ender_tea_mix",
-            id -> new Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))));
-    public static final DeferredItem<Item> GOLDEN_TEA_MIX = ITEMS.register("golden_tea_mix",
-            id -> new Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))));
-
-    // Creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> KOMBUCHA_TAB = CREATIVE_MODE_TABS.register("kombucha_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.kombucha"))
                     .withTabsBefore(CreativeModeTabs.FOOD_AND_DRINKS)
-                    .icon(() -> KOMBUCHA_DRINK.get().getDefaultInstance())
+                    .icon(() -> KOMBUCHA_DRINKS.get(TeaType.TEA).get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
-                        output.accept(KOMBUCHA_DRINK.get());
-                        output.accept(APPLE_KOMBUCHA_DRINK.get());
-                        output.accept(MELON_KOMBUCHA_DRINK.get());
-                        output.accept(NETHER_KOMBUCHA_DRINK.get());
-                        output.accept(ENDER_KOMBUCHA_DRINK.get());
-                        output.accept(GOLDEN_KOMBUCHA_DRINK.get());
+                        KOMBUCHA_DRINKS.forEach((type, drink) -> output.accept(drink.get()));
                         output.accept(EMPTY_KOMBUCHA_BOTTLE.get());
                         output.accept(EMPTY_KOMBUCHA_JAR_ITEM.get());
                         output.accept(TEA_LEAVES.get());
-
-                        output.accept(TEA_MIX.get());
-                        output.accept(APPLE_TEA_MIX.get());
-                        output.accept(MELON_TEA_MIX.get());
-                        output.accept(NETHER_TEA_MIX.get());
-                        output.accept(ENDER_TEA_MIX.get());
-                        output.accept(GOLDEN_TEA_MIX.get());
+                        TEA_MIXES.forEach((type, mix) -> output.accept(mix.get()));
 
                         ItemStack unsealed = new ItemStack(KOMBUCHA_JAR_ITEM.get());
                         unsealed.set(ModDataComponents.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED);
@@ -187,6 +140,7 @@ public class Kombucha {
         BLOCK_ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
+        LOOT_FUNCTIONS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.SERVER, KombuchaConfig.SPEC);
     }

@@ -84,7 +84,7 @@
     "credit": "Made with Blockbench",
     "textures": {
         "0": "kombucha:block/jar_glass",
-        "1": "kombucha:block/tea_mixture",
+        "1": "kombucha:block/liquid",
         "3": "kombucha:block/combucha_shroom",
         "particle": "kombucha:block/jar_glass"
     },
@@ -92,12 +92,12 @@
         {
             "from": [
                 4,
-                11.5,
+                8.0,
                 4
             ],
             "to": [
                 12,
-                12.5,
+                9.0,
                 12
             ],
             "rotation": {
@@ -169,12 +169,12 @@
         {
             "from": [
                 4,
-                9.5,
+                6.0,
                 4
             ],
             "to": [
                 12,
-                10.5,
+                7.0,
                 12
             ],
             "rotation": {
@@ -246,12 +246,12 @@
         {
             "from": [
                 4,
-                7.5,
+                4.0,
                 4
             ],
             "to": [
                 12,
-                8.5,
+                5.0,
                 12
             ],
             "rotation": {
@@ -897,7 +897,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "east": {
                     "uv": [
@@ -906,7 +907,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "south": {
                     "uv": [
@@ -915,7 +917,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "west": {
                     "uv": [
@@ -924,7 +927,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "up": {
                     "uv": [
@@ -933,7 +937,8 @@
                         0,
                         0
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 },
                 "down": {
                     "uv": [
@@ -942,7 +947,8 @@
                         0,
                         16
                     ],
-                    "texture": "#1"
+                    "texture": "#1",
+                    "tintindex": 0
                 }
             }
         }
@@ -983,5 +989,6 @@
             ]
         },
         10
-    ]
+    ],
+    "render_type": "minecraft:translucent"
 }

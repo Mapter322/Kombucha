@@ -69,41 +69,38 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         KombuchaJarBlock.JarType jarType = state.getValue(KombuchaJarBlock.JAR_TYPE);
 
         if (jarType != KombuchaJarBlock.JarType.SEALED && jarType != KombuchaJarBlock.JarType.INFESTED) {
-            // Paused — unsealed jar, don't count ticks but preserve progress
+            // unsealed — paused, but the progress stays
             return;
         }
 
         if (!level.isClientSide()) {
-            // Server side: count ticks and handle stage transitions
             be.fermentationTicks++;
             be.setChanged();
 
             int ticksPerStage = KombuchaConfig.TICKS_PER_STAGE.get();
+            FermentationStage stage = FermentationStage.of(be.fermentationTicks, ticksPerStage);
 
-            // Stage 1 - Stage 2: SEALED becomes INFESTED after ticksPerStage ticks
-            if (be.fermentationTicks >= ticksPerStage && jarType == KombuchaJarBlock.JarType.SEALED) {
+            // the mushroom appears: a sealed jar turns infested
+            if (stage != FermentationStage.ONE && jarType == KombuchaJarBlock.JarType.SEALED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.INFESTED), 3);
             }
 
-            // Stage 4: INFESTED spoils after 3 full stages (the mushroom dies)
-            if (be.fermentationTicks >= 3 * ticksPerStage && jarType == KombuchaJarBlock.JarType.INFESTED) {
+            // the mushroom dies: an infested jar spoils
+            if (stage == FermentationStage.SPOILED && jarType == KombuchaJarBlock.JarType.INFESTED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.SPOILED), 3);
             }
 
-            // Bubbles for stages 1 and 2
-            boolean stage3 = jarType == KombuchaJarBlock.JarType.INFESTED
-                    && be.fermentationTicks >= 2 * ticksPerStage;
+            // bubbles while it's growing, witch particles once it's ready
+            boolean matured = stage == FermentationStage.THREE;
 
-            if (!stage3 && level.getGameTime() % 15 == 0) {
-                // Stages 1 & 2: vanilla bubbles
+            if (!matured && level.getGameTime() % 15 == 0) {
                 double x = pos.getX() + 0.3 + level.getRandom().nextDouble() * 0.4;
                 double y = pos.getY() + 0.9;
                 double z = pos.getZ() + 0.3 + level.getRandom().nextDouble() * 0.4;
                 ((ServerLevel) level).sendParticles(ParticleTypes.BUBBLE, x, y, z, 1, 0, 0.05, 0, 0.1);
             }
 
-            // Stage 3: witch particles
-            if (stage3 && level.getGameTime() % 10 == 0) {
+            if (matured && level.getGameTime() % 10 == 0) {
                 double x = pos.getX() + 0.3 + level.getRandom().nextDouble() * 0.4;
                 double y = pos.getY() + 1.0;
                 double z = pos.getZ() + 0.3 + level.getRandom().nextDouble() * 0.4;
