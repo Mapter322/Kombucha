@@ -88,7 +88,8 @@
         "2": "kombucha:block/rope_and_cloth",
         "3": "kombucha:block/combucha_shroom",
         "4": "kombucha:block/white_wool",
-        "particle": "kombucha:block/jar_glass"
+        "particle": "kombucha:block/jar_glass",
+        "5": "kombucha:block/lava"
     },
     "elements": [
         {
@@ -1107,6 +1108,90 @@
                     ],
                     "texture": "#1",
                     "tintindex": 0
+                }
+            }
+        },
+        {
+            "name": "lava_mixture",
+            "from": [
+                3,
+                1,
+                3
+            ],
+            "to": [
+                13,
+                4,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    1,
+                    3
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "up": {
+                    "uv": [
+                        16,
+                        16,
+                        0,
+                        0
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "down": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
                 }
             }
         }

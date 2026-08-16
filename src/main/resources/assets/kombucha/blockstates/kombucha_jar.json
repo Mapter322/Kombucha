@@ -71,6 +71,18 @@
         },
         "jar_type=spoiled,fill=full": {
             "model": "kombucha:block/spoiled_combucha_jar"
+        },
+        "jar_type=unsealed_lava_infested,fill=empty": {
+            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+        },
+        "jar_type=unsealed_lava_infested,fill=one_third": {
+            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+        },
+        "jar_type=unsealed_lava_infested,fill=two_thirds": {
+            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+        },
+        "jar_type=unsealed_lava_infested,fill=full": {
+            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
         }
     }
 }

@@ -13,6 +13,8 @@
     "item.kombucha.kombucha_jar": "Банка с чайным грибом",
     "block.kombucha.water_jar": "Банка с водой",
     "item.kombucha.water_jar": "Банка с водой",
+    "block.kombucha.lava_jar": "Банка с лавой",
+    "item.kombucha.lava_jar": "Банка с лавой",
     "item.kombucha.tea_leaves": "Чайные листья",
     "item.kombucha.tea_mix": "Чайный микс",
     "item.kombucha.apple_tea_mix": "Яблочный чайный микс",
@@ -26,5 +28,8 @@
     "kombucha.progress.spoiled": "Комбуча испортилась. Чайный гриб погиб.",
     "kombucha.hint.add_tea_mix": "Добавь чайный микс",
     "kombucha.hint.not_ready": "Чайный гриб еще не готов!",
-    "kombucha.hint.add_water": "Банка пуста. Сначала добавь воды."
+    "kombucha.hint.add_water": "Банка пуста. Сначала добавь воды.",
+    "kombucha.hint.add_lava": "Банка пуста. Сначала добавь лавы.",
+    "kombucha.hint.add_nether_mix": "Добавь адский чайный микс",
+    "kombucha.hint.nether_needs_lava": "Адский микс работает только в банке с лавой"
 }

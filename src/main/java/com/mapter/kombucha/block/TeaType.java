@@ -53,4 +53,9 @@ public enum TeaType implements StringRepresentable {
         }
         return null;
     }
+
+    // the nether mix only brews in a lava jar, so it gets its own check
+    public static boolean isNetherMix(ItemStack stack) {
+        return stack.is(Kombucha.TEA_MIXES.get(NETHER).get());
+    }
 }

@@ -37,6 +37,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         INFESTED("infested"),
         UNSEALED_INFESTED("unsealed_infested"),
         UNSEALED_WATER_INFESTED("unsealed_water_infested"),
+        UNSEALED_LAVA_INFESTED("unsealed_lava_infested"),
         SPOILED("spoiled");
 
         public static final Codec<JarType> CODEC = StringRepresentable.fromEnum(JarType::values);
@@ -138,8 +139,12 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             if (!level.isClientSide()) {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     if (be.getFillsLeft() <= 0) {
+                        // the nether brew is refilled with lava, everything else with water
                         player.sendOverlayMessage(
-                                Component.translatable("kombucha.hint.add_water").withStyle(ChatFormatting.WHITE));
+                                Component.translatable(be.getTeaType() == TeaType.NETHER
+                                                ? "kombucha.hint.add_lava"
+                                                : "kombucha.hint.add_water")
+                                        .withStyle(ChatFormatting.WHITE));
                     } else if (FermentationStage.of(be.getFermentationTicks(),
                             KombuchaConfig.TICKS_PER_STAGE.get()) == FermentationStage.THREE) {
                         fillBottle(level, pos, state, player, stack, be);
@@ -166,23 +171,61 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        // add tea mix — a new batch starts at stage 2
-        TeaType teaType = TeaType.fromStack(stack);
-        if (teaType != null && jarType == JarType.UNSEALED_WATER_INFESTED) {
+        // add lava to a drained nether jar
+        if (stack.is(Items.LAVA_BUCKET) && jarType == JarType.UNSEALED_INFESTED
+                && state.getValue(FILL) == Fill.EMPTY) {
             if (!level.isClientSide()) {
-                if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
-                    be.setTeaType(teaType);
-                    // the SCOBY is already mature, so we start from stage 2
-                    be.setFermentationTicks(KombuchaConfig.TICKS_PER_STAGE.get());
-                    be.setFillsLeft(3);
-                }
-                level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_INFESTED), 3);
+                level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_LAVA_INFESTED)
+                        .setValue(FILL, Fill.FULL), 3);
                 if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
+                    player.setItemInHand(hand, new ItemStack(Items.BUCKET));
                 }
-                level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
+        }
+
+        // add tea mix — a new batch starts at stage 2
+        TeaType teaType = TeaType.fromStack(stack);
+        if (teaType != null) {
+            boolean waterJar = jarType == JarType.UNSEALED_WATER_INFESTED;
+            boolean lavaJar = jarType == JarType.UNSEALED_LAVA_INFESTED;
+            boolean nether = teaType == TeaType.NETHER;
+
+            if (waterJar && !nether || lavaJar && nether) {
+                if (!level.isClientSide()) {
+                    if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+                        be.setTeaType(teaType);
+                        // the SCOBY is already mature, so we start from stage 2
+                        be.setFermentationTicks(KombuchaConfig.TICKS_PER_STAGE.get());
+                        be.setFillsLeft(3);
+                    }
+                    level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_INFESTED), 3);
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
+                }
+                return InteractionResult.SUCCESS;
+            }
+
+            // the nether mix needs a lava jar
+            if (nether && waterJar) {
+                if (!level.isClientSide()) {
+                    player.sendOverlayMessage(
+                            Component.translatable("kombucha.hint.nether_needs_lava").withStyle(ChatFormatting.WHITE));
+                }
+                return InteractionResult.SUCCESS;
+            }
+
+            // only the nether mix brews in lava
+            if (lavaJar && !nether) {
+                if (!level.isClientSide()) {
+                    player.sendOverlayMessage(
+                            Component.translatable("kombucha.hint.add_nether_mix").withStyle(ChatFormatting.WHITE));
+                }
+                return InteractionResult.SUCCESS;
+            }
         }
 
         // shift+RMB: take the lid off
@@ -205,10 +248,13 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
 
         // still waiting for a tea mix
-        if (jarType == JarType.UNSEALED_WATER_INFESTED) {
+        if (jarType == JarType.UNSEALED_WATER_INFESTED || jarType == JarType.UNSEALED_LAVA_INFESTED) {
             if (!level.isClientSide()) {
                 player.sendOverlayMessage(
-                        Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+                        Component.translatable(jarType == JarType.UNSEALED_LAVA_INFESTED
+                                        ? "kombucha.hint.add_nether_mix"
+                                        : "kombucha.hint.add_tea_mix")
+                                .withStyle(ChatFormatting.WHITE));
             }
             return InteractionResult.SUCCESS;
         }
@@ -250,10 +296,13 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
 
         // still waiting for a tea mix
-        if (jarType == JarType.UNSEALED_WATER_INFESTED) {
+        if (jarType == JarType.UNSEALED_WATER_INFESTED || jarType == JarType.UNSEALED_LAVA_INFESTED) {
             if (!level.isClientSide()) {
                 player.sendOverlayMessage(
-                        Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+                        Component.translatable(jarType == JarType.UNSEALED_LAVA_INFESTED
+                                        ? "kombucha.hint.add_nether_mix"
+                                        : "kombucha.hint.add_tea_mix")
+                                .withStyle(ChatFormatting.WHITE));
             }
             return InteractionResult.SUCCESS;
         }

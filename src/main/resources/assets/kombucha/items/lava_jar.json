@@ -1,0 +1,11 @@
+{
+    "model": {
+        "type": "minecraft:model",
+        "model": "kombucha:block/lava_jar",
+        "tints": [
+            {
+                "type": "kombucha:lava"
+            }
+        ]
+    }
+}

@@ -13,6 +13,8 @@
     "item.kombucha.kombucha_jar": "Kombucha Jar",
     "block.kombucha.water_jar": "Water Jar",
     "item.kombucha.water_jar": "Water Jar",
+    "block.kombucha.lava_jar": "Lava Jar",
+    "item.kombucha.lava_jar": "Lava Jar",
     "item.kombucha.tea_leaves": "Tea Leaves",
     "item.kombucha.tea_mix": "Tea Mix",
     "item.kombucha.apple_tea_mix": "Apple Tea Mix",
@@ -26,5 +28,8 @@
     "kombucha.progress.spoiled": "The kombucha has spoiled. The mushroom is dead.",
     "kombucha.hint.add_tea_mix": "Add a tea mix",
     "kombucha.hint.not_ready": "Kombucha is not ready yet!",
-    "kombucha.hint.add_water": "The jar is empty. Add water first."
+    "kombucha.hint.add_water": "The jar is empty. Add water first.",
+    "kombucha.hint.add_lava": "The jar is empty. Add lava first.",
+    "kombucha.hint.add_nether_mix": "Add the nether tea mix",
+    "kombucha.hint.nether_needs_lava": "The nether mix only works in a lava jar"
 }

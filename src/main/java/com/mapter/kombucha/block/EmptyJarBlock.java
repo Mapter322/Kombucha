@@ -34,6 +34,16 @@ public class EmptyJarBlock extends Block {
             }
             return InteractionResult.SUCCESS;
         }
+        if (stack.is(Items.LAVA_BUCKET)) {
+            if (!level.isClientSide()) {
+                level.setBlock(pos, Kombucha.LAVA_JAR.get().defaultBlockState(), 3);
+                if (!player.getAbilities().instabuild) {
+                    player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+                }
+                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 }

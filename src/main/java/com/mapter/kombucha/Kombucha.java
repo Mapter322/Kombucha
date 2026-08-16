@@ -3,6 +3,7 @@ package com.mapter.kombucha;
 import com.mapter.kombucha.block.EmptyJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlockEntity;
+import com.mapter.kombucha.block.LavaJarBlock;
 import com.mapter.kombucha.block.TeaType;
 import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
@@ -103,6 +104,14 @@ public class Kombucha {
             id -> new BlockItem(WATER_JAR.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
 
+    public static final DeferredBlock<LavaJarBlock> LAVA_JAR = BLOCKS.register("lava_jar",
+            id -> new LavaJarBlock(BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, id))
+                    .noOcclusion()));
+    public static final DeferredItem<BlockItem> LAVA_JAR_ITEM = ITEMS.register("lava_jar",
+            id -> new BlockItem(LAVA_JAR.get(), new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+
     public static final DeferredItem<Item> TEA_LEAVES = ITEMS.register("tea_leaves",
             id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
@@ -132,6 +141,7 @@ public class Kombucha {
                         output.accept(infested);
 
                         output.accept(WATER_JAR_ITEM.get());
+                        output.accept(LAVA_JAR_ITEM.get());
                     }).build());
 
     public Kombucha(IEventBus modEventBus, ModContainer modContainer) {

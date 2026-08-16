@@ -16,9 +16,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class WaterJarBlock extends Block {
+/**
+ * A jar full of lava. Only the nether tea mix works here — it turns the
+ * jar into a kombucha jar brewing nether kombucha.
+ */
+public class LavaJarBlock extends Block {
 
-    public WaterJarBlock(Properties properties) {
+    public LavaJarBlock(Properties properties) {
         super(properties);
     }
 
@@ -26,40 +30,31 @@ public class WaterJarBlock extends Block {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
                                            BlockPos pos, Player player, InteractionHand hand,
                                            BlockHitResult hitResult) {
-        // empty bucket picks the water up
+        // empty bucket picks the lava up
         if (stack.is(Items.BUCKET)) {
             if (!level.isClientSide()) {
                 level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
                 if (!player.getAbilities().instabuild) {
-                    player.setItemInHand(hand, new ItemStack(Items.WATER_BUCKET));
+                    player.setItemInHand(hand, new ItemStack(Items.LAVA_BUCKET));
                 }
-                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }
 
-        // tea mix starts the brew
-        TeaType teaType = TeaType.fromStack(stack);
-        if (teaType != null) {
-            // the nether mix needs a lava jar instead
-            if (teaType == TeaType.NETHER) {
-                if (!level.isClientSide()) {
-                    player.sendOverlayMessage(
-                            Component.translatable("kombucha.hint.nether_needs_lava").withStyle(ChatFormatting.WHITE));
-                }
-                return InteractionResult.SUCCESS;
-            }
+        // the nether mix starts the brew
+        if (TeaType.isNetherMix(stack)) {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
                         .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED);
                 level.setBlock(pos, kombuchaState, 3);
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
-                    be.setTeaType(teaType);
+                    be.setTeaType(TeaType.NETHER);
                 }
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
-                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }
@@ -67,7 +62,7 @@ public class WaterJarBlock extends Block {
         // anything else: hint
         if (!level.isClientSide()) {
             player.sendOverlayMessage(
-                    Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+                    Component.translatable("kombucha.hint.add_nether_mix").withStyle(ChatFormatting.WHITE));
         }
         return InteractionResult.SUCCESS;
     }
@@ -77,7 +72,7 @@ public class WaterJarBlock extends Block {
                                                 Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             player.sendOverlayMessage(
-                    Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+                    Component.translatable("kombucha.hint.add_nether_mix").withStyle(ChatFormatting.WHITE));
         }
         return InteractionResult.SUCCESS;
     }
