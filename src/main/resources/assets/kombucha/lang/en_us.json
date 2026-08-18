@@ -24,6 +24,8 @@
     "item.kombucha.golden_tea_mix": "Golden Tea Mix",
     "item.kombucha.cave_combucha_monster_spawn_egg": "Cave Combucha Monster Spawn Egg",
     "item.kombucha.nether_combucha_monster_spawn_egg": "Nether Combucha Monster Spawn Egg",
+    "item.kombucha.uncommon_combucha_shroom": "Unusual Combucha Mushroom",
+    "item.kombucha.nether_combucha_shroom": "Fiery Combucha Mushroom",
     "entity.kombucha.cave_combucha_monster": "Cave Combucha Monster",
     "entity.kombucha.nether_combucha_monster": "Nether Combucha Monster",
     "kombucha.progress.fermenting": "Kombucha mushroom maturing... %s",

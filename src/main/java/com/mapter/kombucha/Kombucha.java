@@ -9,7 +9,9 @@ import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
 import com.mapter.kombucha.entity.CaveCombuchaMonster;
+import com.mapter.kombucha.entity.MagmaCombuchaProjectile;
 import com.mapter.kombucha.entity.NetherCombuchaMonster;
+import com.mapter.kombucha.entity.SlimeCombuchaProjectile;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
@@ -21,6 +23,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -31,12 +35,14 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -70,6 +76,14 @@ public class Kombucha {
             ENTITY_TYPES.registerEntityType("nether_combucha_monster", NetherCombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).fireImmune().notInPeaceful());
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SlimeCombuchaProjectile>> SLIME_COMBUCHA_PROJECTILE =
+            ENTITY_TYPES.registerEntityType("slime_combucha_projectile", SlimeCombuchaProjectile::new, MobCategory.MISC,
+                    b -> b.sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MagmaCombuchaProjectile>> MAGMA_COMBUCHA_PROJECTILE =
+            ENTITY_TYPES.registerEntityType("magma_combucha_projectile", MagmaCombuchaProjectile::new, MobCategory.MISC,
+                    b -> b.sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
+
     public static final DeferredItem<Item> CAVE_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
             "cave_combucha_monster_spawn_egg", SpawnEggItem::new,
             () -> new Item.Properties().spawnEgg(CAVE_COMBUCHA_MONSTER.get()));
@@ -77,6 +91,12 @@ public class Kombucha {
     public static final DeferredItem<Item> NETHER_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
             "nether_combucha_monster_spawn_egg", SpawnEggItem::new,
             () -> new Item.Properties().spawnEgg(NETHER_COMBUCHA_MONSTER.get()));
+
+    public static final DeferredItem<Item> UNCOMMON_COMBUCHA_SHROOM = ITEMS.register("uncommon_combucha_shroom",
+            id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
+
+    public static final DeferredItem<Item> NETHER_COMBUCHA_SHROOM = ITEMS.register("nether_combucha_shroom",
+            id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
 
     public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
             id -> new EmptyJarBlock(BlockBehaviour.Properties.of()
@@ -168,6 +188,8 @@ public class Kombucha {
 
                         output.accept(CAVE_COMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(NETHER_COMBUCHA_MONSTER_SPAWN_EGG.get());
+                        output.accept(UNCOMMON_COMBUCHA_SHROOM.get());
+                        output.accept(NETHER_COMBUCHA_SHROOM.get());
                     }).build());
 
     public Kombucha(IEventBus modEventBus, ModContainer modContainer) {
@@ -180,6 +202,7 @@ public class Kombucha {
         LOOT_FUNCTIONS.register(modEventBus);
 
         modEventBus.addListener(Kombucha::registerEntityAttributes);
+        modEventBus.addListener(Kombucha::registerSpawnPlacements);
 
         modContainer.registerConfig(ModConfig.Type.SERVER, KombuchaConfig.SPEC);
     }
@@ -187,5 +210,14 @@ public class Kombucha {
     private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
         event.put(CAVE_COMBUCHA_MONSTER.get(), CaveCombuchaMonster.createAttributes().build());
         event.put(NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonster.createAttributes().build());
+    }
+
+    private static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(CAVE_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(NETHER_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

@@ -1,0 +1,78 @@
+package com.mapter.kombucha.entity;
+
+import java.util.EnumSet;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+
+public class CombuchaTargetGoal extends Goal {
+    private final Monster mob;
+    private LivingEntity target;
+
+    public CombuchaTargetGoal(Monster mob) {
+        this.mob = mob;
+        this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+    }
+
+    @Override
+    public boolean canUse() {
+        if (this.mob.getTarget() != null) {
+            return false;
+        }
+
+        ServerLevel level = (ServerLevel) this.mob.level();
+        double x = this.mob.getX();
+        double y = this.mob.getEyeY();
+        double z = this.mob.getZ();
+        double followRange = this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+        TargetingConditions conditions = TargetingConditions.forCombat()
+                .range(followRange)
+                .ignoreLineOfSight();
+        LivingEntity playerTarget = level.getNearestPlayer(conditions, this.mob, x, y, z);
+        Mob mobTarget = level.getNearestEntity(
+                level.getEntitiesOfClass(
+                        Mob.class,
+                        new AABB(x - followRange, y - followRange, z - followRange,
+                                x + followRange, y + followRange, z + followRange),
+                        candidate -> candidate != this.mob
+                                && !(candidate instanceof NetherCombuchaMonster)
+                                && !(candidate instanceof CaveCombuchaMonster)),
+                conditions, this.mob, x, y, z);
+
+        if (playerTarget == null) {
+            this.target = mobTarget;
+        } else if (mobTarget == null || this.mob.distanceToSqr(playerTarget) <= this.mob.distanceToSqr(mobTarget)) {
+            this.target = playerTarget;
+        } else {
+            this.target = mobTarget;
+        }
+        return this.target != null;
+    }
+
+    @Override
+    public boolean canContinueToUse() {
+        LivingEntity currentTarget = this.mob.getTarget();
+        return currentTarget != null
+                && currentTarget.isAlive()
+                && this.mob.canAttack(currentTarget)
+                && this.mob.distanceToSqr(currentTarget)
+                <= this.mob.getAttributeValue(Attributes.FOLLOW_RANGE) * this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+    }
+
+    @Override
+    public void start() {
+        this.mob.setTarget(this.target);
+    }
+
+    @Override
+    public void stop() {
+        this.mob.setTarget(null);
+        this.target = null;
+    }
+}

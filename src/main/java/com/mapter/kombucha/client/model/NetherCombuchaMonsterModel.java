@@ -1,6 +1,8 @@
 package com.mapter.kombucha.client.model;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
+import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -28,6 +30,10 @@ public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderSt
     private final ModelPart tentacle2;
     private final ModelPart tentacle3;
     private final ModelPart tentacle4;
+    private final KeyframeAnimation idleAnimation;
+    private final KeyframeAnimation attackAnimation;
+    private final KeyframeAnimation shootAnimation;
+    private final KeyframeAnimation walkAnimation;
 
     public NetherCombuchaMonsterModel(ModelPart root) {
         super(root);
@@ -42,6 +48,10 @@ public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderSt
         this.tentacle2 = root.getChild("tentacle2");
         this.tentacle3 = root.getChild("tentacle3");
         this.tentacle4 = root.getChild("tentacle4");
+        this.idleAnimation = nether_combucha_monsterAnimation.idle.bake(root);
+        this.attackAnimation = nether_combucha_monsterAnimation.attack.bake(root);
+        this.shootAnimation = nether_combucha_monsterAnimation.shoot.bake(root);
+        this.walkAnimation = nether_combucha_monsterAnimation.walk.bake(root);
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -111,5 +121,25 @@ public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderSt
         PartDefinition cube_r12 = tentacle4.addOrReplaceChild("cube_r12", CubeListBuilder.create().texOffs(82, 87).addBox(-1.0F, -2.0F, -5.0F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.2346F, -0.5F, -7.8206F, -0.48F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
+    }
+
+    @Override
+    public void setupAnim(LivingEntityRenderState state) {
+        super.setupAnim(state);
+        this.idleAnimation.apply((long) (state.ageInTicks * 50.0F), 1.0F);
+        this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 2.5F, 4.0F);
+        if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.attackTime > 0.0F) {
+            this.attackAnimation.apply((long) (combuchaState.attackTime * 800.0F), 1.5F);
+        }
+        if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.shootTime > 0) {
+            long elapsed = (long) ((8 - combuchaState.shootTime) * 50L);
+            this.shootAnimation.apply(elapsed, 1.0F);
+        }
+        if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.isJumping) {
+            this.tentacle.xRot += 0.45F;
+            this.tentacle2.xRot += 0.45F;
+            this.tentacle3.xRot += 0.45F;
+            this.tentacle4.xRot += 0.45F;
+        }
     }
 }

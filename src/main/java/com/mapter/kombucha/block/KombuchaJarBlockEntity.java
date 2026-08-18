@@ -2,6 +2,7 @@ package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.config.KombuchaConfig;
+import com.mapter.kombucha.entity.CaveCombuchaMonster;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -97,6 +98,16 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             // the mushroom dies: an infested jar spoils
             if (stage == FermentationStage.SPOILED && jarType == KombuchaJarBlock.JarType.INFESTED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.SPOILED), 3);
+
+                if (be.teaType != TeaType.NETHER
+                        && !level.canSeeSky(pos)
+                        && level.getMaxLocalRawBrightness(pos) <= 7
+                        && level.getRandom().nextFloat() < 0.10F) {
+                    CaveCombuchaMonster monster = new CaveCombuchaMonster(Kombucha.CAVE_COMBUCHA_MONSTER.get(), level);
+                    monster.setPos(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D);
+                    monster.setYRot(level.getRandom().nextFloat() * 360.0F);
+                    level.addFreshEntity(monster);
+                }
             }
 
             // bubbles while it's growing, witch particles once it's ready

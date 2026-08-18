@@ -9,6 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 
 @Mod(value = Kombucha.MODID, dist = Dist.CLIENT)
 public class KombuchaClient {
@@ -22,6 +23,8 @@ public class KombuchaClient {
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(Kombucha.CAVE_COMBUCHA_MONSTER.get(), CaveCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonsterRenderer::new);
+        event.registerEntityRenderer(Kombucha.SLIME_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, false));
+        event.registerEntityRenderer(Kombucha.MAGMA_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, true));
     }
 
     private static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
