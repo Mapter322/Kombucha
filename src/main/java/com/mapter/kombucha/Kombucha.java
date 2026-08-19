@@ -16,7 +16,6 @@ import com.mapter.kombucha.effect.ModEffects;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -49,14 +48,11 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.slf4j.Logger;
-
 import java.util.EnumMap;
 
 @Mod(Kombucha.MODID)
 public class Kombucha {
     public static final String MODID = "kombucha";
-    public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
