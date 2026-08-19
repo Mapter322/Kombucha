@@ -12,6 +12,7 @@ import com.mapter.kombucha.entity.CaveCombuchaMonster;
 import com.mapter.kombucha.entity.MagmaCombuchaProjectile;
 import com.mapter.kombucha.entity.NetherCombuchaMonster;
 import com.mapter.kombucha.entity.SlimeCombuchaProjectile;
+import com.mapter.kombucha.effect.ModEffects;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
@@ -33,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -131,12 +133,40 @@ public class Kombucha {
         for (TeaType type : TeaType.values()) {
             TEA_MIXES.put(type, ITEMS.register(type.getMixId(), id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id)))));
-            KOMBUCHA_DRINKS.put(type, ITEMS.register(type.getDrinkId(), id -> new KombuchaDrinkItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, id))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
-                    .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get()))));
+            KOMBUCHA_DRINKS.put(type, ITEMS.register(type.getDrinkId(), id -> {
+                Item.Properties properties = new Item.Properties()
+                        .setId(ResourceKey.create(Registries.ITEM, id))
+                        .stacksTo(16)
+                        .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
+                        .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get());
+                FoodProperties food = foodProperties(type);
+                if (food != null) {
+                    properties.food(food, Consumables.DEFAULT_DRINK);
+                }
+                return new KombuchaDrinkItem(type, properties);
+            }));
         }
+    }
+
+    private static FoodProperties foodProperties(TeaType type) {
+        return switch (type) {
+            case TEA -> new FoodProperties.Builder()
+                    .nutrition(3)
+                    .saturationModifier(4.0F / (3 * 2))
+                    .alwaysEdible()
+                    .build();
+            case APPLE, NETHER, ENDER, GOLDEN -> new FoodProperties.Builder()
+                    .nutrition(4)
+                    .saturationModifier(5.0F / (4 * 2))
+                    .alwaysEdible()
+                    .build();
+            case MELON -> new FoodProperties.Builder()
+                    .nutrition(3)
+                    .saturationModifier(3.5F / (3 * 2))
+                    .alwaysEdible()
+                    .build();
+            default -> null;
+        };
     }
 
     public static final DeferredBlock<WaterJarBlock> WATER_JAR = BLOCKS.register("water_jar",
@@ -198,6 +228,7 @@ public class Kombucha {
         BLOCK_ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         ENTITY_TYPES.register(modEventBus);
+        ModEffects.EFFECTS.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         LOOT_FUNCTIONS.register(modEventBus);
 
@@ -220,4 +251,5 @@ public class Kombucha {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
+
 }

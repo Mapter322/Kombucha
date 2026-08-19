@@ -23,6 +23,9 @@ public class CombuchaTargetGoal extends Goal {
     @Override
     public boolean canUse() {
         if (this.mob.getTarget() != null) {
+            if (CombuchaRelations.isFriendOfCombuchas(this.mob.getTarget())) {
+                this.mob.setTarget(null);
+            }
             return false;
         }
 
@@ -33,7 +36,8 @@ public class CombuchaTargetGoal extends Goal {
         double followRange = this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
         TargetingConditions conditions = TargetingConditions.forCombat()
                 .range(followRange)
-                .ignoreLineOfSight();
+                .ignoreLineOfSight()
+                .selector((entity, ignored) -> !CombuchaRelations.isFriendOfCombuchas(entity));
         LivingEntity playerTarget = level.getNearestPlayer(conditions, this.mob, x, y, z);
         Mob mobTarget = level.getNearestEntity(
                 level.getEntitiesOfClass(
@@ -60,6 +64,7 @@ public class CombuchaTargetGoal extends Goal {
         LivingEntity currentTarget = this.mob.getTarget();
         return currentTarget != null
                 && currentTarget.isAlive()
+                && !CombuchaRelations.isFriendOfCombuchas(currentTarget)
                 && this.mob.canAttack(currentTarget)
                 && this.mob.distanceToSqr(currentTarget)
                 <= this.mob.getAttributeValue(Attributes.FOLLOW_RANGE) * this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
