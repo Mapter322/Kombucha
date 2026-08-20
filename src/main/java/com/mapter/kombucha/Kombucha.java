@@ -9,6 +9,8 @@ import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
 import com.mapter.kombucha.entity.CaveCombuchaMonster;
+import com.mapter.kombucha.entity.EnderCombuchaMonster;
+import com.mapter.kombucha.entity.EnderCombuchaProjectile;
 import com.mapter.kombucha.entity.MagmaCombuchaProjectile;
 import com.mapter.kombucha.entity.NetherCombuchaMonster;
 import com.mapter.kombucha.entity.SlimeCombuchaProjectile;
@@ -74,12 +76,20 @@ public class Kombucha {
             ENTITY_TYPES.registerEntityType("nether_combucha_monster", NetherCombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).fireImmune().notInPeaceful());
 
+    public static final DeferredHolder<EntityType<?>, EntityType<EnderCombuchaMonster>> ENDER_COMBUCHA_MONSTER =
+            ENTITY_TYPES.registerEntityType("ender_combucha_monster", EnderCombuchaMonster::new, MobCategory.MONSTER,
+                    b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).fireImmune().notInPeaceful());
+
     public static final DeferredHolder<EntityType<?>, EntityType<SlimeCombuchaProjectile>> SLIME_COMBUCHA_PROJECTILE =
             ENTITY_TYPES.registerEntityType("slime_combucha_projectile", SlimeCombuchaProjectile::new, MobCategory.MISC,
                     b -> b.sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
 
     public static final DeferredHolder<EntityType<?>, EntityType<MagmaCombuchaProjectile>> MAGMA_COMBUCHA_PROJECTILE =
             ENTITY_TYPES.registerEntityType("magma_combucha_projectile", MagmaCombuchaProjectile::new, MobCategory.MISC,
+                    b -> b.sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EnderCombuchaProjectile>> ENDER_COMBUCHA_PROJECTILE =
+            ENTITY_TYPES.registerEntityType("ender_combucha_projectile", EnderCombuchaProjectile::new, MobCategory.MISC,
                     b -> b.sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
 
     public static final DeferredItem<Item> CAVE_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
@@ -90,10 +100,17 @@ public class Kombucha {
             "nether_combucha_monster_spawn_egg", SpawnEggItem::new,
             () -> new Item.Properties().spawnEgg(NETHER_COMBUCHA_MONSTER.get()));
 
+    public static final DeferredItem<Item> ENDER_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
+            "ender_combucha_monster_spawn_egg", SpawnEggItem::new,
+            () -> new Item.Properties().spawnEgg(ENDER_COMBUCHA_MONSTER.get()));
+
     public static final DeferredItem<Item> UNCOMMON_COMBUCHA_SHROOM = ITEMS.register("uncommon_combucha_shroom",
             id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
 
     public static final DeferredItem<Item> NETHER_COMBUCHA_SHROOM = ITEMS.register("nether_combucha_shroom",
+            id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
+
+    public static final DeferredItem<Item> ENDER_COMBUCHA_SHROOM = ITEMS.register("ender_combucha_shroom",
             id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
 
     public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
@@ -214,8 +231,10 @@ public class Kombucha {
 
                         output.accept(CAVE_COMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(NETHER_COMBUCHA_MONSTER_SPAWN_EGG.get());
+                        output.accept(ENDER_COMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(UNCOMMON_COMBUCHA_SHROOM.get());
                         output.accept(NETHER_COMBUCHA_SHROOM.get());
+                        output.accept(ENDER_COMBUCHA_SHROOM.get());
                     }).build());
 
     public Kombucha(IEventBus modEventBus, ModContainer modContainer) {
@@ -237,6 +256,7 @@ public class Kombucha {
     private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
         event.put(CAVE_COMBUCHA_MONSTER.get(), CaveCombuchaMonster.createAttributes().build());
         event.put(NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonster.createAttributes().build());
+        event.put(ENDER_COMBUCHA_MONSTER.get(), EnderCombuchaMonster.createAttributes().build());
     }
 
     private static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {

@@ -2,8 +2,10 @@ package com.mapter.kombucha;
 
 import com.mapter.kombucha.client.KombuchaTints;
 import com.mapter.kombucha.client.model.CaveCombuchaMonsterModel;
+import com.mapter.kombucha.client.model.EnderCombuchaMonsterModel;
 import com.mapter.kombucha.client.model.NetherCombuchaMonsterModel;
 import com.mapter.kombucha.client.renderer.entity.CaveCombuchaMonsterRenderer;
+import com.mapter.kombucha.client.renderer.entity.EnderCombuchaMonsterRenderer;
 import com.mapter.kombucha.client.renderer.entity.NetherCombuchaMonsterRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -23,12 +25,15 @@ public class KombuchaClient {
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(Kombucha.CAVE_COMBUCHA_MONSTER.get(), CaveCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonsterRenderer::new);
+        event.registerEntityRenderer(Kombucha.ENDER_COMBUCHA_MONSTER.get(), EnderCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.SLIME_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, false));
         event.registerEntityRenderer(Kombucha.MAGMA_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, true));
+        event.registerEntityRenderer(Kombucha.ENDER_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, false));
     }
 
     private static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(CaveCombuchaMonsterModel.LAYER_LOCATION, CaveCombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(NetherCombuchaMonsterModel.LAYER_LOCATION, NetherCombuchaMonsterModel::createBodyLayer);
+        event.registerLayerDefinition(EnderCombuchaMonsterModel.LAYER_LOCATION, EnderCombuchaMonsterModel::createBodyLayer);
     }
 }

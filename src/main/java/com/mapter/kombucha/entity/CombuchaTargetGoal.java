@@ -44,9 +44,10 @@ public class CombuchaTargetGoal extends Goal {
                         Mob.class,
                         new AABB(x - followRange, y - followRange, z - followRange,
                                 x + followRange, y + followRange, z + followRange),
-                        candidate -> candidate != this.mob
-                                && !(candidate instanceof NetherCombuchaMonster)
-                                && !(candidate instanceof CaveCombuchaMonster)),
+                                 candidate -> candidate != this.mob
+                                 && !(candidate instanceof EnderCombuchaMonster)
+                                 && !(candidate instanceof NetherCombuchaMonster)
+                                 && !(candidate instanceof CaveCombuchaMonster)),
                 conditions, this.mob, x, y, z);
 
         if (playerTarget == null) {
