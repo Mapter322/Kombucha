@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "kombucha:item/friendly_kombucha_monster_egg"
+    }
+}

@@ -2,9 +2,11 @@ package com.mapter.kombucha;
 
 import com.mapter.kombucha.client.KombuchaTints;
 import com.mapter.kombucha.client.model.SpoiledCombuchaMonsterModel;
+import com.mapter.kombucha.client.model.FriendlyKombuchaMonsterModel;
 import com.mapter.kombucha.client.model.EnderCombuchaMonsterModel;
 import com.mapter.kombucha.client.model.NetherCombuchaMonsterModel;
 import com.mapter.kombucha.client.renderer.entity.SpoiledCombuchaMonsterRenderer;
+import com.mapter.kombucha.client.renderer.entity.FriendlyKombuchaMonsterRenderer;
 import com.mapter.kombucha.client.renderer.entity.EnderCombuchaMonsterRenderer;
 import com.mapter.kombucha.client.renderer.entity.NetherCombuchaMonsterRenderer;
 import net.neoforged.api.distmarker.Dist;
@@ -24,6 +26,7 @@ public class KombuchaClient {
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(Kombucha.SPOILED_COMBUCHA_MONSTER.get(), SpoiledCombuchaMonsterRenderer::new);
+        event.registerEntityRenderer(Kombucha.FRIENDLY_KOMBUCHA_MONSTER.get(), FriendlyKombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.ENDER_COMBUCHA_MONSTER.get(), EnderCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.SLIME_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, false));
@@ -33,6 +36,7 @@ public class KombuchaClient {
 
     private static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SpoiledCombuchaMonsterModel.LAYER_LOCATION, SpoiledCombuchaMonsterModel::createBodyLayer);
+        event.registerLayerDefinition(FriendlyKombuchaMonsterModel.LAYER_LOCATION, FriendlyKombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(NetherCombuchaMonsterModel.LAYER_LOCATION, NetherCombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(EnderCombuchaMonsterModel.LAYER_LOCATION, EnderCombuchaMonsterModel::createBodyLayer);
     }
