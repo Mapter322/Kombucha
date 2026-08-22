@@ -2,7 +2,7 @@ package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.config.KombuchaConfig;
-import com.mapter.kombucha.entity.CaveCombuchaMonster;
+import com.mapter.kombucha.entity.SpoiledCombuchaMonster;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -79,7 +79,17 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         KombuchaJarBlock.JarType jarType = state.getValue(KombuchaJarBlock.JAR_TYPE);
 
         if (jarType != KombuchaJarBlock.JarType.SEALED && jarType != KombuchaJarBlock.JarType.INFESTED) {
-            // unsealed — paused, but the progress stays
+            // unsealed — paused, but a ready jar keeps the same particles as a closed one
+            if (!level.isClientSide()
+                    && jarType == KombuchaJarBlock.JarType.UNSEALED_INFESTED
+                    && FermentationStage.of(be.fermentationTicks,
+                    KombuchaConfig.TICKS_TO_INFESTED.get(),
+                    KombuchaConfig.TICKS_TO_FERMENTED.get(),
+                    KombuchaConfig.TICKS_TO_SPOILED.get())
+                    == FermentationStage.THREE
+                    && level.getGameTime() % 10 == 0) {
+                sendReadyParticles(level, pos);
+            }
             return;
         }
 
@@ -87,8 +97,11 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             be.fermentationTicks++;
             be.setChanged();
 
-            int ticksPerStage = KombuchaConfig.TICKS_PER_STAGE.get();
-            FermentationStage stage = FermentationStage.of(be.fermentationTicks, ticksPerStage);
+            int ticksToInfested = KombuchaConfig.TICKS_TO_INFESTED.get();
+            int ticksToFermented = KombuchaConfig.TICKS_TO_FERMENTED.get();
+            int ticksToSpoiled = KombuchaConfig.TICKS_TO_SPOILED.get();
+            FermentationStage stage = FermentationStage.of(be.fermentationTicks, ticksToInfested,
+                    ticksToFermented, ticksToSpoiled);
 
             // the mushroom appears: a sealed jar turns infested
             if (stage != FermentationStage.ONE && jarType == KombuchaJarBlock.JarType.SEALED) {
@@ -103,7 +116,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
                         && !level.canSeeSky(pos)
                         && level.getMaxLocalRawBrightness(pos) <= 7
                         && level.getRandom().nextFloat() < 0.10F) {
-                    CaveCombuchaMonster monster = new CaveCombuchaMonster(Kombucha.CAVE_COMBUCHA_MONSTER.get(), level);
+                    SpoiledCombuchaMonster monster = new SpoiledCombuchaMonster(Kombucha.SPOILED_COMBUCHA_MONSTER.get(), level);
                     monster.setPos(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D);
                     monster.setYRot(level.getRandom().nextFloat() * 360.0F);
                     level.addFreshEntity(monster);
@@ -121,12 +134,16 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             }
 
             if (matured && level.getGameTime() % 10 == 0) {
-                double x = pos.getX() + 0.3 + level.getRandom().nextDouble() * 0.4;
-                double y = pos.getY() + 1.0;
-                double z = pos.getZ() + 0.3 + level.getRandom().nextDouble() * 0.4;
-                ((ServerLevel) level).sendParticles(ParticleTypes.WITCH, x, y, z, 1, 0, 0.02, 0, 0.02);
+                sendReadyParticles(level, pos);
             }
         }
+    }
+
+    private static void sendReadyParticles(Level level, BlockPos pos) {
+        double x = pos.getX() + 0.3 + level.getRandom().nextDouble() * 0.4;
+        double y = pos.getY() + 1.0;
+        double z = pos.getZ() + 0.3 + level.getRandom().nextDouble() * 0.4;
+        ((ServerLevel) level).sendParticles(ParticleTypes.WITCH, x, y, z, 1, 0, 0.02, 0, 0.02);
     }
 
     @Override

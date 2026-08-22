@@ -1,6 +1,7 @@
 package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.config.KombuchaConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,6 +39,25 @@ public class WaterJarBlock extends Block {
             return InteractionResult.SUCCESS;
         }
 
+        // a starter mushroom puts the water jar at stage 2, waiting for tea mix
+        if (stack.is(Kombucha.COMBUCHA_SHROOM.get())) {
+            if (!level.isClientSide()) {
+                BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
+                        .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)
+                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL);
+                level.setBlock(pos, kombuchaState, 3);
+                if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+                    be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
+                    be.setFillsLeft(3);
+                }
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         // tea mix starts the brew
         TeaType teaType = TeaType.fromStack(stack);
         if (teaType != null) {
@@ -67,7 +87,7 @@ public class WaterJarBlock extends Block {
         // anything else: hint
         if (!level.isClientSide()) {
             player.sendOverlayMessage(
-                    Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+                    Component.translatable("kombucha.hint.add_tea_or_shroom").withStyle(ChatFormatting.WHITE));
         }
         return InteractionResult.SUCCESS;
     }
@@ -77,7 +97,7 @@ public class WaterJarBlock extends Block {
                                                 Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             player.sendOverlayMessage(
-                    Component.translatable("kombucha.hint.add_tea_mix").withStyle(ChatFormatting.WHITE));
+                    Component.translatable("kombucha.hint.add_tea_or_shroom").withStyle(ChatFormatting.WHITE));
         }
         return InteractionResult.SUCCESS;
     }

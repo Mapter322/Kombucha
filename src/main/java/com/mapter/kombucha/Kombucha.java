@@ -8,7 +8,7 @@ import com.mapter.kombucha.block.TeaType;
 import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
-import com.mapter.kombucha.entity.CaveCombuchaMonster;
+import com.mapter.kombucha.entity.SpoiledCombuchaMonster;
 import com.mapter.kombucha.entity.EnderCombuchaMonster;
 import com.mapter.kombucha.entity.EnderCombuchaProjectile;
 import com.mapter.kombucha.entity.MagmaCombuchaProjectile;
@@ -33,6 +33,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.food.FoodProperties;
@@ -68,8 +69,8 @@ public class Kombucha {
         LOOT_FUNCTIONS.register("copy_jar_data", () -> CopyJarDataFunction.CODEC);
     }
 
-    public static final DeferredHolder<EntityType<?>, EntityType<CaveCombuchaMonster>> CAVE_COMBUCHA_MONSTER =
-            ENTITY_TYPES.registerEntityType("cave_combucha_monster", CaveCombuchaMonster::new, MobCategory.MONSTER,
+    public static final DeferredHolder<EntityType<?>, EntityType<SpoiledCombuchaMonster>> SPOILED_COMBUCHA_MONSTER =
+            ENTITY_TYPES.registerEntityType("spoiled_combucha_monster", SpoiledCombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).notInPeaceful());
 
     public static final DeferredHolder<EntityType<?>, EntityType<NetherCombuchaMonster>> NETHER_COMBUCHA_MONSTER =
@@ -92,9 +93,9 @@ public class Kombucha {
             ENTITY_TYPES.registerEntityType("ender_combucha_projectile", EnderCombuchaProjectile::new, MobCategory.MISC,
                     b -> b.sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
 
-    public static final DeferredItem<Item> CAVE_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
-            "cave_combucha_monster_spawn_egg", SpawnEggItem::new,
-            () -> new Item.Properties().spawnEgg(CAVE_COMBUCHA_MONSTER.get()));
+    public static final DeferredItem<Item> SPOILED_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
+            "spoiled_combucha_monster_spawn_egg", SpawnEggItem::new,
+            () -> new Item.Properties().spawnEgg(SPOILED_COMBUCHA_MONSTER.get()));
 
     public static final DeferredItem<Item> NETHER_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
             "nether_combucha_monster_spawn_egg", SpawnEggItem::new,
@@ -105,13 +106,29 @@ public class Kombucha {
             () -> new Item.Properties().spawnEgg(ENDER_COMBUCHA_MONSTER.get()));
 
     public static final DeferredItem<Item> UNCOMMON_COMBUCHA_SHROOM = ITEMS.register("uncommon_combucha_shroom",
-            id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .rarity(Rarity.UNCOMMON)));
+
+    public static final DeferredItem<Item> COMBUCHA_SHROOM = ITEMS.register("combucha_shroom",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .rarity(Rarity.COMMON)));
+
+    public static final DeferredItem<Item> LIVING_COMBUCHA_SHROOM = ITEMS.register("living_combucha_shroom",
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .rarity(Rarity.EPIC)));
 
     public static final DeferredItem<Item> NETHER_COMBUCHA_SHROOM = ITEMS.register("nether_combucha_shroom",
-            id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .rarity(Rarity.RARE)));
 
     public static final DeferredItem<Item> ENDER_COMBUCHA_SHROOM = ITEMS.register("ender_combucha_shroom",
-            id -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
+            id -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))
+                    .rarity(Rarity.RARE)));
 
     public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_combucha_jar",
             id -> new EmptyJarBlock(BlockBehaviour.Properties.of()
@@ -149,6 +166,7 @@ public class Kombucha {
             KOMBUCHA_DRINKS.put(type, ITEMS.register(type.getDrinkId(), id -> {
                 Item.Properties properties = new Item.Properties()
                         .setId(ResourceKey.create(Registries.ITEM, id))
+                        .rarity(Rarity.UNCOMMON)
                         .stacksTo(16)
                         .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
                         .usingConvertsTo(EMPTY_KOMBUCHA_BOTTLE.get());
@@ -193,9 +211,14 @@ public class Kombucha {
     public static final DeferredBlock<LavaJarBlock> LAVA_JAR = BLOCKS.register("lava_jar",
             id -> new LavaJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .lightLevel(state -> 15)));
     public static final DeferredItem<BlockItem> LAVA_JAR_ITEM = ITEMS.register("lava_jar",
             id -> new BlockItem(LAVA_JAR.get(), new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, id))));
+
+    public static final DeferredItem<Item> DRIED_FERN = ITEMS.register("dried_fern",
+            id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
 
     public static final DeferredItem<Item> TEA_LEAVES = ITEMS.register("tea_leaves",
@@ -211,6 +234,7 @@ public class Kombucha {
                         KOMBUCHA_DRINKS.forEach((type, drink) -> output.accept(drink.get()));
                         output.accept(EMPTY_KOMBUCHA_BOTTLE.get());
                         output.accept(EMPTY_KOMBUCHA_JAR_ITEM.get());
+                        output.accept(DRIED_FERN.get());
                         output.accept(TEA_LEAVES.get());
                         TEA_MIXES.forEach((type, mix) -> output.accept(mix.get()));
 
@@ -229,9 +253,11 @@ public class Kombucha {
                         output.accept(WATER_JAR_ITEM.get());
                         output.accept(LAVA_JAR_ITEM.get());
 
-                        output.accept(CAVE_COMBUCHA_MONSTER_SPAWN_EGG.get());
+                        output.accept(SPOILED_COMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(NETHER_COMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(ENDER_COMBUCHA_MONSTER_SPAWN_EGG.get());
+                        output.accept(COMBUCHA_SHROOM.get());
+                        output.accept(LIVING_COMBUCHA_SHROOM.get());
                         output.accept(UNCOMMON_COMBUCHA_SHROOM.get());
                         output.accept(NETHER_COMBUCHA_SHROOM.get());
                         output.accept(ENDER_COMBUCHA_SHROOM.get());
@@ -254,13 +280,13 @@ public class Kombucha {
     }
 
     private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-        event.put(CAVE_COMBUCHA_MONSTER.get(), CaveCombuchaMonster.createAttributes().build());
+        event.put(SPOILED_COMBUCHA_MONSTER.get(), SpoiledCombuchaMonster.createAttributes().build());
         event.put(NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonster.createAttributes().build());
         event.put(ENDER_COMBUCHA_MONSTER.get(), EnderCombuchaMonster.createAttributes().build());
     }
 
     private static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
-        event.register(CAVE_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
+        event.register(SPOILED_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(NETHER_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,

@@ -2,7 +2,7 @@ package com.mapter.kombucha.block;
 
 /**
  * Fermentation progress of a jar, derived purely from the ticks.
- * Stage N ends after N * ticksPerStage; past 3 stages the brew is spoiled.
+ * The stage boundaries are cumulative durations from the three config values.
  */
 public enum FermentationStage {
     ONE,    // sealed tea, no mushroom yet
@@ -10,10 +10,15 @@ public enum FermentationStage {
     THREE,  // matured, ready to bottle
     SPOILED;
 
-    public static FermentationStage of(int fermentationTicks, int ticksPerStage) {
-        if (fermentationTicks < ticksPerStage) return ONE;
-        if (fermentationTicks < 2 * ticksPerStage) return TWO;
-        if (fermentationTicks < 3 * ticksPerStage) return THREE;
+    public static FermentationStage of(int fermentationTicks, int ticksToInfested,
+                                       int ticksToFermented, int ticksToSpoiled) {
+        long infestedAt = ticksToInfested;
+        long fermentedAt = infestedAt + ticksToFermented;
+        long spoiledAt = fermentedAt + ticksToSpoiled;
+
+        if (fermentationTicks < infestedAt) return ONE;
+        if (fermentationTicks < fermentedAt) return TWO;
+        if (fermentationTicks < spoiledAt) return THREE;
         return SPOILED;
     }
 }

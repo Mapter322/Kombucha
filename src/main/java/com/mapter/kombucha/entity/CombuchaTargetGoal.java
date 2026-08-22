@@ -47,7 +47,7 @@ public class CombuchaTargetGoal extends Goal {
                                  candidate -> candidate != this.mob
                                  && !(candidate instanceof EnderCombuchaMonster)
                                  && !(candidate instanceof NetherCombuchaMonster)
-                                 && !(candidate instanceof CaveCombuchaMonster)),
+                                  && !(candidate instanceof SpoiledCombuchaMonster)),
                 conditions, this.mob, x, y, z);
 
         if (playerTarget == null) {

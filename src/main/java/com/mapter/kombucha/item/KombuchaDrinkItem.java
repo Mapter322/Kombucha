@@ -114,7 +114,7 @@ public class KombuchaDrinkItem extends Item {
         level.playSound(null, x, y, z,
                 SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 0.8F, 1.2F);
 
-        Kombucha.CAVE_COMBUCHA_MONSTER.get().spawn(level, spawnPos, EntitySpawnReason.MOB_SUMMONED);
+        Kombucha.SPOILED_COMBUCHA_MONSTER.get().spawn(level, spawnPos, EntitySpawnReason.MOB_SUMMONED);
 
         level.sendParticles(ParticleTypes.POOF, x, y, z, 12, 0.45D, 0.5D, 0.45D, 0.08D);
         level.playSound(null, x, y, z,

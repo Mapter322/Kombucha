@@ -2,9 +2,9 @@ package com.mapter.kombucha.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mapter.kombucha.Kombucha;
-import com.mapter.kombucha.client.model.CaveCombuchaMonsterModel;
+import com.mapter.kombucha.client.model.SpoiledCombuchaMonsterModel;
 import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
-import com.mapter.kombucha.entity.CaveCombuchaMonster;
+import com.mapter.kombucha.entity.SpoiledCombuchaMonster;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -14,12 +14,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CaveCombuchaMonsterRenderer extends MobRenderer<CaveCombuchaMonster, CombuchaMonsterRenderState, CaveCombuchaMonsterModel> {
+public class SpoiledCombuchaMonsterRenderer extends MobRenderer<SpoiledCombuchaMonster, CombuchaMonsterRenderState, SpoiledCombuchaMonsterModel> {
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/cave_combucha_monster.png");
+            Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/spoiled_combucha_monster.png");
 
-    public CaveCombuchaMonsterRenderer(EntityRendererProvider.Context context) {
-        super(context, new CaveCombuchaMonsterModel(context.bakeLayer(CaveCombuchaMonsterModel.LAYER_LOCATION)), 0.4F);
+    public SpoiledCombuchaMonsterRenderer(EntityRendererProvider.Context context) {
+        super(context, new SpoiledCombuchaMonsterModel(context.bakeLayer(SpoiledCombuchaMonsterModel.LAYER_LOCATION)), 0.4F);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CaveCombuchaMonsterRenderer extends MobRenderer<CaveCombuchaMonster
     }
 
     @Override
-    public void extractRenderState(CaveCombuchaMonster entity, CombuchaMonsterRenderState state, float partialTicks) {
+    public void extractRenderState(SpoiledCombuchaMonster entity, CombuchaMonsterRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.isJumping = !entity.onGround();
         state.attackTime = entity.getAttackAnim(partialTicks);

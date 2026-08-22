@@ -26,15 +26,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.Level;
 
-public class CaveCombuchaMonster extends Monster implements RangedAttackMob {
+public class SpoiledCombuchaMonster extends Monster implements RangedAttackMob {
     private static final EntityDataAccessor<Integer> SHOOT_TIME =
-            SynchedEntityData.defineId(CaveCombuchaMonster.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(SpoiledCombuchaMonster.class, EntityDataSerializers.INT);
     private double rangedTargetX;
     private double rangedTargetY;
     private double rangedTargetZ;
     private float rangedPower;
 
-    public CaveCombuchaMonster(EntityType<? extends CaveCombuchaMonster> type, Level level) {
+    public SpoiledCombuchaMonster(EntityType<? extends SpoiledCombuchaMonster> type, Level level) {
         super(type, level);
     }
 
@@ -104,7 +104,12 @@ public class CaveCombuchaMonster extends Monster implements RangedAttackMob {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
-        if (this.random.nextFloat() < 0.5F) {
+        float dropRoll = this.random.nextFloat();
+        if (dropRoll < 0.10F) {
+            this.spawnAtLocation(level, Kombucha.LIVING_COMBUCHA_SHROOM.get());
+        } else if (dropRoll < 0.80F) {
+            this.spawnAtLocation(level, Kombucha.COMBUCHA_SHROOM.get());
+        } else {
             this.spawnAtLocation(level, Kombucha.UNCOMMON_COMBUCHA_SHROOM.get());
         }
     }

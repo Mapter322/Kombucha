@@ -14,12 +14,14 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
-public class CaveCombuchaMonsterModel extends EntityModel<LivingEntityRenderState> {
+public class SpoiledCombuchaMonsterModel extends EntityModel<LivingEntityRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(Identifier.fromNamespaceAndPath(Kombucha.MODID, "cave_combucha_monster"), "main");
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath(Kombucha.MODID, "spoiled_combucha_monster"), "main");
 
     private final ModelPart head;
+    private final ModelPart eyes;
     private final ModelPart mouth_tentacle;
     private final ModelPart mouth_tentacle2;
     private final ModelPart mouth_tentacle3;
@@ -36,9 +38,10 @@ public class CaveCombuchaMonsterModel extends EntityModel<LivingEntityRenderStat
     private final KeyframeAnimation spitAnimation;
     private final KeyframeAnimation walkAnimation;
 
-    public CaveCombuchaMonsterModel(ModelPart root) {
+    public SpoiledCombuchaMonsterModel(ModelPart root) {
         super(root);
         this.head = root.getChild("head");
+        this.eyes = this.head.getChild("eyes");
         this.mouth_tentacle = this.head.getChild("mouth_tentacle");
         this.mouth_tentacle2 = this.head.getChild("mouth_tentacle2");
         this.mouth_tentacle3 = this.head.getChild("mouth_tentacle3");
@@ -62,9 +65,11 @@ public class CaveCombuchaMonsterModel extends EntityModel<LivingEntityRenderStat
 
         PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 19).addBox(-9.0F, -2.0F, -9.0F, 18.0F, 2.0F, 17.0F, new CubeDeformation(0.0F))
         .texOffs(0, 55).addBox(-8.0F, -4.0F, -8.0F, 16.0F, 2.0F, 15.0F, new CubeDeformation(0.0F))
-        .texOffs(62, 38).addBox(-7.0F, -6.0F, -7.0F, 14.0F, 2.0F, 13.0F, new CubeDeformation(0.0F))
-        .texOffs(52, 80).addBox(-5.0F, -8.0F, -4.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-        .texOffs(64, 80).addBox(2.0F, -8.0F, -4.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 14.0F, 0.0F));
+        .texOffs(62, 38).addBox(-7.0F, -6.0F, -7.0F, 14.0F, 2.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 14.0F, 0.0F));
+
+        head.addOrReplaceChild("eyes", CubeListBuilder.create()
+                .texOffs(52, 80).addBox(-5.0F, -8.0F, -4.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(64, 80).addBox(2.0F, -8.0F, -4.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.ZERO);
 
         PartDefinition cloth_r1 = head.addOrReplaceChild("cloth_r1", CubeListBuilder.create().texOffs(62, 53).addBox(-6.0F, -1.0F, 2.0F, 10.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -8.75F, 0.0F, -0.4913F, 0.7092F, -0.0769F));
 
@@ -130,6 +135,7 @@ public class CaveCombuchaMonsterModel extends EntityModel<LivingEntityRenderStat
         super.setupAnim(state);
         this.basicAnimation.apply((long) (state.ageInTicks * 50.0F), 1.0F);
         this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 2.5F, 4.0F);
+        this.eyes.yRot = Mth.clamp(state.yRot, -35.0F, 35.0F) * Mth.DEG_TO_RAD;
         if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.attackTime > 0.0F) {
             this.attackAnimation.apply((long) (combuchaState.attackTime * 1125.0F), 1.5F);
         }

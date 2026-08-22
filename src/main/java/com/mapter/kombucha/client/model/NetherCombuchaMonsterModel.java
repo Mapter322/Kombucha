@@ -14,12 +14,14 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
 public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath(Kombucha.MODID, "nether_combucha_monster"), "main");
 
     private final ModelPart head;
+    private final ModelPart eyes;
     private final ModelPart mouth_tentacle4;
     private final ModelPart mouth_tentacle3;
     private final ModelPart mouth_tentacle2;
@@ -38,6 +40,7 @@ public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderSt
     public NetherCombuchaMonsterModel(ModelPart root) {
         super(root);
         this.head = root.getChild("head");
+        this.eyes = this.head.getChild("eyes");
         this.mouth_tentacle4 = this.head.getChild("mouth_tentacle4");
         this.mouth_tentacle3 = this.head.getChild("mouth_tentacle3");
         this.mouth_tentacle2 = this.head.getChild("mouth_tentacle2");
@@ -64,10 +67,11 @@ public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderSt
         .texOffs(70, 75).addBox(3.0F, -7.0F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
         .texOffs(56, 28).addBox(2.0F, -8.0F, 1.0F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
         .texOffs(66, 75).addBox(-5.0F, -8.0F, 4.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-        .texOffs(72, 18).addBox(-6.0F, -10.0F, 3.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-        .texOffs(68, 28).addBox(-4.0F, -8.0F, -4.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-        .texOffs(72, 23).addBox(2.0F, -8.0F, -4.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 13.0F, 0.0F));
+        .texOffs(72, 18).addBox(-6.0F, -10.0F, 3.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 13.0F, 0.0F));
 
+        head.addOrReplaceChild("eyes", CubeListBuilder.create()
+                .texOffs(68, 28).addBox(-4.0F, -8.0F, -4.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(72, 23).addBox(2.0F, -8.0F, -4.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.ZERO);
         PartDefinition mouth_tentacle4 = head.addOrReplaceChild("mouth_tentacle4", CubeListBuilder.create().texOffs(54, 75).addBox(-1.0F, -1.0F, -1.0F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.5F, -1.0F, -7.75F, 0.0F, -0.1745F, 0.0F));
 
         PartDefinition cube_r1 = mouth_tentacle4.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(60, 75).addBox(-1.0F, -1.0F, -1.0F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.5F, -1.75F, -0.5236F, 0.0F, 0.0F));
@@ -128,6 +132,7 @@ public class NetherCombuchaMonsterModel extends EntityModel<LivingEntityRenderSt
         super.setupAnim(state);
         this.idleAnimation.apply((long) (state.ageInTicks * 50.0F), 1.0F);
         this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 2.5F, 4.0F);
+        this.eyes.yRot = Mth.clamp(state.yRot, -35.0F, 35.0F) * Mth.DEG_TO_RAD;
         if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.attackTime > 0.0F) {
             this.attackAnimation.apply((long) (combuchaState.attackTime * 800.0F), 1.5F);
         }

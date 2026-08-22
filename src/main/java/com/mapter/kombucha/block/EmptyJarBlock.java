@@ -1,7 +1,9 @@
 package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -44,6 +46,20 @@ public class EmptyJarBlock extends Block {
             }
             return InteractionResult.SUCCESS;
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (!level.isClientSide()) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.add_liquid").withStyle(ChatFormatting.WHITE));
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+                                                Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide()) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.add_liquid").withStyle(ChatFormatting.WHITE));
+        }
+        return InteractionResult.SUCCESS;
     }
 }

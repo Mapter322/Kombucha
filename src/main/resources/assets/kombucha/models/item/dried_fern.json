@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "minecraft:item/creeper_spawn_egg"
+        "layer0": "kombucha:item/dried_fern"
     }
 }
