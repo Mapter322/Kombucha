@@ -1,0 +1,8 @@
+{
+    "item.empty_combucha_bottle.whistle": {
+        "subtitle": "subtitles.item.kombucha.empty_combucha_bottle.whistle",
+        "sounds": [
+            "kombucha:item/jug/blow1"
+        ]
+    }
+}

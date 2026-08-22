@@ -18,6 +18,8 @@ import com.mapter.kombucha.effect.ModEffects;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
+import com.mapter.kombucha.item.EmptyCombuchaBottleItem;
+import com.mapter.kombucha.sound.ModSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -151,7 +153,7 @@ public class Kombucha {
                     () -> new BlockEntityType<>(KombuchaJarBlockEntity::new, KOMBUCHA_JAR.get()));
 
     public static final DeferredItem<Item> EMPTY_KOMBUCHA_BOTTLE = ITEMS.register("empty_combucha_bottle",
-            id -> new Item(new Item.Properties()
+            id -> new EmptyCombuchaBottleItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))
                     .stacksTo(16)));
 
@@ -269,6 +271,7 @@ public class Kombucha {
         BLOCK_ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         ENTITY_TYPES.register(modEventBus);
+        ModSounds.SOUNDS.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         LOOT_FUNCTIONS.register(modEventBus);
