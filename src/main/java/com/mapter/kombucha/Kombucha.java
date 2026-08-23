@@ -20,6 +20,7 @@ import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
 import com.mapter.kombucha.item.EmptyCombuchaBottleItem;
+import com.mapter.kombucha.network.FriendlyKombuchaUpgradePayload;
 import com.mapter.kombucha.sound.ModSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponents;
@@ -50,6 +51,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -288,6 +290,7 @@ public class Kombucha {
 
         modEventBus.addListener(Kombucha::registerEntityAttributes);
         modEventBus.addListener(Kombucha::registerSpawnPlacements);
+        modEventBus.addListener(Kombucha::registerPayloads);
 
         modContainer.registerConfig(ModConfig.Type.SERVER, KombuchaConfig.SPEC);
     }
@@ -306,6 +309,20 @@ public class Kombucha {
         event.register(NETHER_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
+    }
+
+    private static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        event.registrar("1").playToServer(FriendlyKombuchaUpgradePayload.TYPE,
+                FriendlyKombuchaUpgradePayload.STREAM_CODEC, (payload, context) -> context.enqueueWork(() -> {
+                    if (!(context.player().level().getEntity(payload.entityId())
+                            instanceof FriendlyKombuchaMonster kombucha)
+                            || !kombucha.isTame()
+                            || !kombucha.isOwnedBy(context.player())
+                            || kombucha.distanceToSqr(context.player()) > 64.0D) {
+                        return;
+                    }
+                    kombucha.upgradeStat(payload.stat());
+                }));
     }
 
 }

@@ -66,5 +66,8 @@
     "screen.kombucha.melee_speed": "Melee speed",
     "screen.kombucha.ranged_speed": "Ranged speed",
     "screen.kombucha.seconds": "s",
-    "screen.kombucha.health": "HP"
+    "screen.kombucha.health": "HP",
+    "screen.kombucha.level": "Level",
+    "screen.kombucha.experience": "Experience: %s / %s",
+    "kombucha.hint.feed_cooldown": "The kombucha is not hungry yet"
 }

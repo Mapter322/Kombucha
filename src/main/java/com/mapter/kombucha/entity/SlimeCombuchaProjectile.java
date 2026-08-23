@@ -25,6 +25,7 @@ public class SlimeCombuchaProjectile extends CombuchaBlobProjectile {
 
     @Override
     protected float getDamage() {
-        return DAMAGE;
+        return this.getOwner() instanceof FriendlyKombuchaMonster friendly
+                ? friendly.getRangedDamage() : DAMAGE;
     }
 }

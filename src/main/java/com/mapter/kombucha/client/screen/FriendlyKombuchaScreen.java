@@ -2,7 +2,7 @@ package com.mapter.kombucha.client.screen;
 
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.entity.FriendlyKombuchaMonster;
-import com.mapter.kombucha.entity.SlimeCombuchaProjectile;
+import com.mapter.kombucha.network.FriendlyKombuchaUpgradePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -33,7 +34,7 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int MODEL_X = 20;
     private static final int MODEL_Y = 22;
     private static final int MODEL_WIDTH = 109;
-    private static final int MODEL_HEIGHT = 68;
+    private static final int MODEL_HEIGHT = 65;
     private static final int INFO_X = 14;
     private static final int INFO_Y = 102;
     private static final int INFO_WIDTH = 248;
@@ -41,13 +42,20 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int INFO_COLUMN_WIDTH = (INFO_WIDTH - INFO_DIVIDER) / 2;
     private static final int INFO_CONTENT_TOP = INFO_Y + 24;
     private static final int INFO_CONTENT_BOTTOM = GUI_HEIGHT - 24;
-    private static final int CHARACTERISTIC_ROW_COUNT = 7;
+    private static final int CHARACTERISTIC_ROW_COUNT = 8;
     private static final int SCROLLBAR_X = INFO_X + INFO_COLUMN_WIDTH;
     private static final int SCROLLBAR_WIDTH = INFO_DIVIDER;
     private static final int SCROLLBAR_TOP = INFO_Y + 2;
     private static final int SCROLLBAR_BOTTOM = GUI_HEIGHT - 13;
     private static final int SCROLLBAR_MIN_THUMB_HEIGHT = 16;
     private static final int MODEL_SCALE = 32;
+    private static final int EXPERIENCE_BAR_X = INFO_X + 2;
+    private static final int EXPERIENCE_BAR_Y = 90;
+    private static final int EXPERIENCE_BAR_WIDTH = INFO_WIDTH - 4;
+    private static final int EXPERIENCE_BAR_HEIGHT = 10;
+    private static final int PLUS_X = INFO_X + INFO_COLUMN_WIDTH - 14;
+    private static final int PLUS_WIDTH = 12;
+    private static final int PLUS_HEIGHT = 12;
 
     private static final int COLOR_TITLE = 0xFF3F321F;
     private static final int COLOR_TEXT = 0xFF4A3A24;
@@ -56,6 +64,17 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int COLOR_CLOSE_HOVER = 0xFF4A3A24;
     private static final int COLOR_SCROLLBAR_THUMB = 0xCC4A3A24;
     private static final int COLOR_SCROLLBAR_THUMB_HOVER = 0xFF3F321F;
+    private static final int COLOR_EXPERIENCE_FRAME = 0xCC4A3A24;
+    private static final int COLOR_EXPERIENCE_INNER_FRAME = 0xFFE0BD70;
+    private static final int COLOR_EXPERIENCE_BACKGROUND = 0xAA4A3A24;
+    private static final int COLOR_EXPERIENCE = 0xFFB77B2B;
+    private static final int COLOR_EXPERIENCE_HIGHLIGHT = 0xFFD49B3A;
+    private static final int COLOR_EXPERIENCE_LIGHT_GREEN = 0xFF91C46C;
+    private static final int COLOR_EXPERIENCE_LIGHT_GREEN_HIGHLIGHT = 0xFFB8E28B;
+    private static final int COLOR_EXPERIENCE_DARK_GREEN = 0xFF3F7A45;
+    private static final int COLOR_EXPERIENCE_DARK_GREEN_HIGHLIGHT = 0xFF6FA96F;
+    private static final int COLOR_PLUS = 0xCC4A3A24;
+    private static final int COLOR_PLUS_HOVER = 0xFF3F321F;
 
     private static final int CLOSE_X = GUI_WIDTH - 24;
     private static final int CLOSE_Y = 2;
@@ -92,6 +111,7 @@ public class FriendlyKombuchaScreen extends Screen {
                 leftPos, topPos, 0.0F, 0.0F, GUI_WIDTH, GUI_HEIGHT,
                 GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
 
+        drawExperienceBar(graphics);
         extractKombucha(graphics, partialTick);
     }
 
@@ -118,6 +138,12 @@ public class FriendlyKombuchaScreen extends Screen {
         graphics.pose().popMatrix();
 
         drawPanelLabels(graphics, mouseX, mouseY);
+        if (isInside(mouseX - leftPos, mouseY - topPos,
+                EXPERIENCE_BAR_X, EXPERIENCE_BAR_Y, EXPERIENCE_BAR_WIDTH, EXPERIENCE_BAR_HEIGHT)) {
+            graphics.setTooltipForNextFrame(
+                    Component.translatable("screen.kombucha.experience",
+                            kombucha.getExperience(), kombucha.getExperienceToNextLevel()), mouseX, mouseY);
+        }
     }
 
     private void drawPanelLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
@@ -133,13 +159,17 @@ public class FriendlyKombuchaScreen extends Screen {
                 leftPos + INFO_X + INFO_WIDTH, topPos + INFO_CONTENT_BOTTOM);
         graphics.pose().pushMatrix();
         graphics.pose().translate(0.0F, -(float) scrollOffset);
-        drawStat(graphics, "screen.kombucha.health", formatHealth(), statsX, statsY);
-        drawStat(graphics, "screen.kombucha.speed", formatNumber(kombucha.getAttributeValue(Attributes.MOVEMENT_SPEED)), statsX, statsY + STAT_ROW_SPACING);
-        drawStat(graphics, "screen.kombucha.melee_damage", formatNumber(kombucha.getAttributeValue(Attributes.ATTACK_DAMAGE)), statsX, statsY + STAT_ROW_SPACING * 2);
-        drawStat(graphics, "screen.kombucha.ranged_damage", formatNumber(SlimeCombuchaProjectile.DAMAGE), statsX, statsY + STAT_ROW_SPACING * 3);
-        drawStat(graphics, "screen.kombucha.melee_speed", formatAttackInterval(FriendlyKombuchaMonster.MELEE_ATTACK_INTERVAL_TICKS), statsX, statsY + STAT_ROW_SPACING * 4);
-        drawStat(graphics, "screen.kombucha.ranged_speed", formatAttackInterval(FriendlyKombuchaMonster.RANGED_ATTACK_INTERVAL_TICKS), statsX, statsY + STAT_ROW_SPACING * 5);
-        drawStat(graphics, "screen.kombucha.projectile_speed", formatProjectileSpeed(), statsX, statsY + STAT_ROW_SPACING * 6);
+        drawStat(graphics, "screen.kombucha.level", Integer.toString(kombucha.getLevel()), statsX, statsY);
+        drawStat(graphics, "screen.kombucha.health", formatHealth(), statsX, statsY + STAT_ROW_SPACING);
+        drawStat(graphics, "screen.kombucha.speed", formatNumber(kombucha.getAttributeValue(Attributes.MOVEMENT_SPEED)), statsX, statsY + STAT_ROW_SPACING * 2);
+        drawStat(graphics, "screen.kombucha.melee_damage", formatNumber(kombucha.getAttributeValue(Attributes.ATTACK_DAMAGE)), statsX, statsY + STAT_ROW_SPACING * 3);
+        drawStat(graphics, "screen.kombucha.ranged_damage", formatNumber(kombucha.getRangedDamage()), statsX, statsY + STAT_ROW_SPACING * 4);
+        drawStat(graphics, "screen.kombucha.melee_speed", formatAttackInterval(kombucha.getMeleeAttackIntervalTicks()), statsX, statsY + STAT_ROW_SPACING * 5);
+        drawStat(graphics, "screen.kombucha.ranged_speed", formatAttackInterval(kombucha.getRangedAttackIntervalTicks()), statsX, statsY + STAT_ROW_SPACING * 6);
+        drawStat(graphics, "screen.kombucha.projectile_speed", formatProjectileSpeed(), statsX, statsY + STAT_ROW_SPACING * 7);
+        for (int row = 1; row <= 7; row++) {
+            drawUpgradeButton(graphics, row, statsY, mouseX, mouseY);
+        }
 
         graphics.text(font, Component.translatable("screen.kombucha.perks.placeholder"),
                 leftPos + INFO_X + INFO_COLUMN_WIDTH + INFO_DIVIDER + 7, statsY + 18, COLOR_MUTED, false);
@@ -199,6 +229,63 @@ public class FriendlyKombuchaScreen extends Screen {
         graphics.text(font, value, x + font.width(label) + 4, y, COLOR_TEXT, false);
     }
 
+    private void drawExperienceBar(GuiGraphicsExtractor graphics) {
+        int x = leftPos + EXPERIENCE_BAR_X;
+        int y = topPos + EXPERIENCE_BAR_Y;
+        drawRoundedRect(graphics, x, y, EXPERIENCE_BAR_WIDTH, EXPERIENCE_BAR_HEIGHT, 3, COLOR_EXPERIENCE_FRAME);
+        drawRoundedRect(graphics, x + 1, y + 1, EXPERIENCE_BAR_WIDTH - 2, EXPERIENCE_BAR_HEIGHT - 2,
+                2, COLOR_EXPERIENCE_INNER_FRAME);
+        drawRoundedRect(graphics, x + 2, y + 2, EXPERIENCE_BAR_WIDTH - 4, EXPERIENCE_BAR_HEIGHT - 4,
+                2, COLOR_EXPERIENCE_BACKGROUND);
+        int required = kombucha.getExperienceToNextLevel();
+        int progressWidth = Mth.clamp((int) ((EXPERIENCE_BAR_WIDTH - 4)
+                * (kombucha.getExperience() / (float) required)), 0, EXPERIENCE_BAR_WIDTH - 4);
+        if (progressWidth > 0) {
+            float progress = kombucha.getExperience() / (float) required;
+            int experienceColor = getExperienceColor(progress);
+            drawRoundedRect(graphics, x + 2, y + 2, progressWidth, EXPERIENCE_BAR_HEIGHT - 4,
+                    2, experienceColor);
+            if (progressWidth > 2) {
+                graphics.fill(x + 3, y + 2, x + progressWidth + 1, y + 3,
+                        getExperienceHighlightColor(progress));
+            }
+        }
+    }
+
+    private int getExperienceColor(float progress) {
+        if (progress <= 1.0F / 3.0F) {
+            return COLOR_EXPERIENCE;
+        }
+        return progress <= 2.0F / 3.0F ? COLOR_EXPERIENCE_LIGHT_GREEN : COLOR_EXPERIENCE_DARK_GREEN;
+    }
+
+    private int getExperienceHighlightColor(float progress) {
+        if (progress <= 1.0F / 3.0F) {
+            return COLOR_EXPERIENCE_HIGHLIGHT;
+        }
+        return progress <= 2.0F / 3.0F
+                ? COLOR_EXPERIENCE_LIGHT_GREEN_HIGHLIGHT : COLOR_EXPERIENCE_DARK_GREEN_HIGHLIGHT;
+    }
+
+    private void drawRoundedRect(GuiGraphicsExtractor graphics, int x, int y, int width, int height,
+                                 int radius, int color) {
+        for (int row = 0; row < height; row++) {
+            int inset = Math.max(0, radius - Math.min(row, height - 1 - row));
+            graphics.fill(x + inset, y + row, x + width - inset, y + row + 1, color);
+        }
+    }
+
+    private void drawUpgradeButton(GuiGraphicsExtractor graphics, int row, int statsY, int mouseX, int mouseY) {
+        if (kombucha.getAvailableUpgradePoints() <= 0) {
+            return;
+        }
+        int buttonY = statsY + STAT_ROW_SPACING * row - (int) scrollOffset - 2;
+        boolean hovered = isInside(mouseX - leftPos, mouseY - topPos,
+                PLUS_X, buttonY - topPos, PLUS_WIDTH, PLUS_HEIGHT);
+        graphics.text(font, "+", leftPos + PLUS_X + 3, statsY + STAT_ROW_SPACING * row - 1,
+                hovered ? COLOR_PLUS_HOVER : COLOR_PLUS, false);
+    }
+
     private void extractKombucha(GuiGraphicsExtractor graphics, float partialTick) {
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         EntityRenderer<? super FriendlyKombuchaMonster, ?> renderer = dispatcher.getRenderer(kombucha);
@@ -229,9 +316,8 @@ public class FriendlyKombuchaScreen extends Screen {
     }
 
     private String formatProjectileSpeed() {
-        return String.format(Locale.ROOT, "%.2f - %.2f",
-                FriendlyKombuchaMonster.getRangedProjectileSpeed(FriendlyKombuchaMonster.RANGED_PROJECTILE_MIN_POWER),
-                FriendlyKombuchaMonster.getRangedProjectileSpeed(FriendlyKombuchaMonster.RANGED_PROJECTILE_MAX_POWER));
+        return String.format(Locale.ROOT, "%.2f",
+                kombucha.getRangedProjectileSpeedWithUpgrades(FriendlyKombuchaMonster.RANGED_PROJECTILE_MIN_POWER));
     }
 
     private String formatAttackInterval(int ticks) {
@@ -256,6 +342,17 @@ public class FriendlyKombuchaScreen extends Screen {
             if (isInside(x, y, CLOSE_X, CLOSE_Y, CLOSE_WIDTH, CLOSE_HEIGHT)) {
                 onClose();
                 return true;
+            }
+
+            if (kombucha.getAvailableUpgradePoints() > 0) {
+                for (int row = 1; row <= 7; row++) {
+                    int buttonY = INFO_Y + 7 + 18 + STAT_ROW_SPACING * row - (int) scrollOffset - 2;
+                    if (isInside(x, y, PLUS_X, buttonY, PLUS_WIDTH, PLUS_HEIGHT)) {
+                        ClientPacketDistributor.sendToServer(
+                                new FriendlyKombuchaUpgradePayload(kombucha.getId(), row - 1));
+                        return true;
+                    }
+                }
             }
 
             if (isInside(x, y, SCROLLBAR_X, SCROLLBAR_TOP,

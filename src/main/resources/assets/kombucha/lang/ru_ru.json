@@ -66,5 +66,8 @@
     "screen.kombucha.melee_speed": "Скор. ближ.",
     "screen.kombucha.ranged_speed": "Скор. дальн.",
     "screen.kombucha.seconds": "с",
-    "screen.kombucha.health": "ХП"
+    "screen.kombucha.health": "ХП",
+    "screen.kombucha.level": "Уровень",
+    "screen.kombucha.experience": "Опыт: %s / %s",
+    "kombucha.hint.feed_cooldown": "Комбуча пока не хочет есть"
 }

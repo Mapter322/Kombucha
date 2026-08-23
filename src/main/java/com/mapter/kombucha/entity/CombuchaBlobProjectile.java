@@ -40,8 +40,14 @@ public abstract class CombuchaBlobProjectile extends ThrowableItemProjectile {
         Entity owner = this.getOwner();
         LivingEntity livingOwner = owner instanceof LivingEntity ? (LivingEntity) owner : null;
         if (livingTarget.hurtOrSimulate(this.damageSources().mobProjectile(this, livingOwner), this.getDamage())
-                && this.setsTargetOnFire()) {
-            livingTarget.setRemainingFireTicks(60);
+                ) {
+            if (owner instanceof FriendlyKombuchaMonster friendly
+                    && livingTarget instanceof net.minecraft.world.entity.Mob mob && !mob.isAlive()) {
+                friendly.addExperience(FriendlyKombuchaMonster.EXPERIENCE_PER_KILL);
+            }
+            if (this.setsTargetOnFire()) {
+                livingTarget.setRemainingFireTicks(60);
+            }
         }
     }
 
