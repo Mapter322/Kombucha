@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
@@ -65,7 +66,13 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             }
             return InteractionResult.SUCCESS;
         }
-        return super.mobInteract(player, hand);
+        if (!this.isTame()) {
+            if (!this.level().isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("kombucha.hint.tame"));
+            }
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override

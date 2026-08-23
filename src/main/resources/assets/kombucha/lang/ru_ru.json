@@ -53,5 +53,14 @@
     "kombucha.hint.add_water": "Банка пуста. Сначала добавь воды.",
     "kombucha.hint.add_lava": "Банка пуста. Сначала добавь лавы.",
     "kombucha.hint.add_nether_mix": "Добавь адский чайный микс",
-    "kombucha.hint.nether_needs_lava": "Адский микс работает только в банке с лавой"
+    "kombucha.hint.nether_needs_lava": "Адский микс работает только в банке с лавой",
+    "kombucha.hint.tame": "Прикорми Комбучу сахаром",
+    "screen.kombucha.title": "Комбуча",
+    "screen.kombucha.model": "Комбуча",
+    "screen.kombucha.stats": "Статы",
+    "screen.kombucha.speed": "Скорость",
+    "screen.kombucha.damage": "Урон",
+    "screen.kombucha.health": "ХП",
+    "screen.kombucha.commands": "Команды",
+    "screen.kombucha.commands.placeholder": "Скоро..."
 }

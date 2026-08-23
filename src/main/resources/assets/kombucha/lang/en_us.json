@@ -53,5 +53,14 @@
     "kombucha.hint.add_water": "The jar is empty. Add water first.",
     "kombucha.hint.add_lava": "The jar is empty. Add lava first.",
     "kombucha.hint.add_nether_mix": "Add the nether tea mix",
-    "kombucha.hint.nether_needs_lava": "The nether mix only works in a lava jar"
+    "kombucha.hint.nether_needs_lava": "The nether mix only works in a lava jar",
+    "kombucha.hint.tame": "Feed the kombucha sugar",
+    "screen.kombucha.title": "Kombucha",
+    "screen.kombucha.model": "Kombucha",
+    "screen.kombucha.stats": "Stats",
+    "screen.kombucha.speed": "Speed",
+    "screen.kombucha.damage": "Damage",
+    "screen.kombucha.health": "HP",
+    "screen.kombucha.commands": "Commands",
+    "screen.kombucha.commands.placeholder": "Coming soon..."
 }
