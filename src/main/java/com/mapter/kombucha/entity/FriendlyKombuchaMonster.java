@@ -1,8 +1,11 @@
 package com.mapter.kombucha.entity;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.component.FriendlyKombuchaPerkData;
+import com.mapter.kombucha.component.FriendlyKombuchaStateData;
 import com.mapter.kombucha.component.LivingShroomData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -105,6 +108,8 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PROJECTILE_SPEED_UPGRADES =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> INCREASED_JUMP_PERK_LEVEL =
+            SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MOVEMENT_MODE =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COMBAT_MODE =
@@ -169,6 +174,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
                 this.navigation.stop();
                 this.level().broadcastEntityEvent(this, (byte) 7);
                 itemStack.consume(1, player);
+                playEatingSound();
                 this.feedCooldown = FEED_COOLDOWN_TICKS;
                 this.addExperience(EXPERIENCE_PER_FEED);
             }
@@ -189,9 +195,18 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             }
             if (!this.level().isClientSide()) {
                 itemStack.consume(1, player);
+                playEatingSound();
                 this.feedCooldown = FEED_COOLDOWN_TICKS;
                 this.addExperience(EXPERIENCE_PER_FEED);
                 this.level().broadcastEntityEvent(this, (byte) 7);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (isPerkMushroom(itemStack)) {
+            if (!this.level().isClientSide()) {
+                itemStack.consume(1, player);
+                playEatingSound();
+                this.rollPerk(player);
             }
             return InteractionResult.SUCCESS;
         }
@@ -212,6 +227,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         entityData.define(MELEE_SPEED_UPGRADES, 0);
         entityData.define(RANGED_SPEED_UPGRADES, 0);
         entityData.define(PROJECTILE_SPEED_UPGRADES, 0);
+        entityData.define(INCREASED_JUMP_PERK_LEVEL, 0);
         entityData.define(MOVEMENT_MODE, MovementMode.FOLLOW.ordinal());
         entityData.define(COMBAT_MODE, CombatMode.DEFEND.ordinal());
         entityData.define(ATTACK_MODE, AttackMode.MELEE.ordinal());
@@ -329,6 +345,25 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public int getProjectileSpeedUpgrades() {
         return this.entityData.get(PROJECTILE_SPEED_UPGRADES);
+    }
+
+    public int getPerkLevel(FriendlyKombuchaPerk perk) {
+        return switch (perk) {
+            case INCREASED_JUMP -> this.entityData.get(INCREASED_JUMP_PERK_LEVEL);
+        };
+    }
+
+    public int getIncreasedJumpPerkLevel() {
+        return getPerkLevel(FriendlyKombuchaPerk.INCREASED_JUMP);
+    }
+
+    public float getPerkStepHeight() {
+        return switch (getIncreasedJumpPerkLevel()) {
+            case 1 -> 1.5F;
+            case 2 -> 2.0F;
+            case 3 -> 2.5F;
+            default -> 0.6F;
+        };
     }
 
     public MovementMode getMovementMode() {
@@ -480,6 +515,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(MELEE_SPEED_UPGRADES, input.getIntOr("KombuchaMeleeSpeedUpgrades", 0));
         this.entityData.set(RANGED_SPEED_UPGRADES, input.getIntOr("KombuchaRangedSpeedUpgrades", 0));
         this.entityData.set(PROJECTILE_SPEED_UPGRADES, input.getIntOr("KombuchaProjectileSpeedUpgrades", 0));
+        this.entityData.set(INCREASED_JUMP_PERK_LEVEL,
+                Math.max(0, Math.min(FriendlyKombuchaPerk.INCREASED_JUMP.getMaxLevel(),
+                        input.getIntOr("KombuchaIncreasedJumpPerkLevel", 0))));
         this.entityData.set(MOVEMENT_MODE, input.getIntOr("KombuchaMovementMode", MovementMode.FOLLOW.ordinal()));
         this.entityData.set(COMBAT_MODE, input.getIntOr("KombuchaCombatMode", CombatMode.DEFEND.ordinal()));
         this.entityData.set(ATTACK_MODE, input.getIntOr("KombuchaAttackMode", AttackMode.MELEE.ordinal()));
@@ -489,6 +527,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
                 input.getIntOr("KombuchaPatrolZ", this.blockPosition().getZ()));
         this.feedCooldown = input.getIntOr("KombuchaFeedCooldown", 0);
         applyUpgradedAttributes();
+        applyPerkAttributes();
     }
 
     @Override
@@ -504,6 +543,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         output.putInt("KombuchaMeleeSpeedUpgrades", getMeleeSpeedUpgrades());
         output.putInt("KombuchaRangedSpeedUpgrades", getRangedSpeedUpgrades());
         output.putInt("KombuchaProjectileSpeedUpgrades", getProjectileSpeedUpgrades());
+        output.putInt("KombuchaIncreasedJumpPerkLevel", getIncreasedJumpPerkLevel());
         output.putInt("KombuchaMovementMode", getMovementMode().ordinal());
         output.putInt("KombuchaCombatMode", getCombatMode().ordinal());
         output.putInt("KombuchaAttackMode", getAttackMode().ordinal());
@@ -535,8 +575,10 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return new LivingShroomData(owner, name, getLevel(), getAvailableUpgradePoints(),
                 getHealthUpgrades(), getSpeedUpgrades(), getMeleeDamageUpgrades(),
                 getRangedDamageUpgrades(), getMeleeSpeedUpgrades(), getRangedSpeedUpgrades(),
-                getProjectileSpeedUpgrades(), this.feedCooldown, this.isOrderedToSit(),
-                getMovementMode().ordinal(), getCombatMode().ordinal(), getAttackMode().ordinal());
+                getProjectileSpeedUpgrades(), this.feedCooldown,
+                new FriendlyKombuchaStateData(this.isOrderedToSit(), getMovementMode().ordinal(),
+                        getCombatMode().ordinal(), getAttackMode().ordinal()),
+                new FriendlyKombuchaPerkData(getIncreasedJumpPerkLevel()));
     }
 
     public void applyLivingShroomData(LivingShroomData data) {
@@ -560,10 +602,14 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(MELEE_SPEED_UPGRADES, data.meleeSpeedUpgrades());
         this.entityData.set(RANGED_SPEED_UPGRADES, data.rangedSpeedUpgrades());
         this.entityData.set(PROJECTILE_SPEED_UPGRADES, data.projectileSpeedUpgrades());
+        this.entityData.set(INCREASED_JUMP_PERK_LEVEL,
+                Math.max(0, Math.min(FriendlyKombuchaPerk.INCREASED_JUMP.getMaxLevel(),
+                        data.perkData().increasedJumpLevel())));
         this.feedCooldown = data.feedCooldown();
         // the experience bar is the only thing that does not survive death
         this.entityData.set(EXPERIENCE, 0);
         applyUpgradedAttributes();
+        applyPerkAttributes();
         // come back to life at full health
         this.setHealth(this.getMaxHealth());
     }
@@ -607,5 +653,41 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
                 .add(Attributes.ATTACK_DAMAGE, 6.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
+    }
+
+    private static boolean isPerkMushroom(ItemStack stack) {
+        return stack.is(Kombucha.UNCOMMON_COMBUCHA_SHROOM.get());
+    }
+
+    @Override
+    protected void playEatingSound() {
+        this.playSound(SoundEvents.PLAYER_BURP, 0.8F, 0.9F + this.random.nextFloat() * 0.2F);
+    }
+
+    private void rollPerk(Player player) {
+        FriendlyKombuchaPerk perk = FriendlyKombuchaPerk.values()[this.random.nextInt(FriendlyKombuchaPerk.values().length)];
+        int currentLevel = getPerkLevel(perk);
+        if (currentLevel < perk.getMaxLevel()) {
+            setPerkLevel(perk, currentLevel + 1);
+            applyPerkAttributes();
+            player.sendOverlayMessage(Component.translatable("kombucha.perk.received", this.getName(),
+                    Component.translatable(perk.getDisplayNameKey()), currentLevel + 1)
+                    .withStyle(ChatFormatting.GREEN));
+        } else {
+            addExperience(getExperienceToNextLevel());
+            player.sendOverlayMessage(Component.translatable("kombucha.perk.level_up", this.getName(), getLevel())
+                    .withStyle(ChatFormatting.GREEN));
+        }
+    }
+
+    private void setPerkLevel(FriendlyKombuchaPerk perk, int level) {
+        int clampedLevel = Math.max(0, Math.min(perk.getMaxLevel(), level));
+        switch (perk) {
+            case INCREASED_JUMP -> this.entityData.set(INCREASED_JUMP_PERK_LEVEL, clampedLevel);
+        }
+    }
+
+    private void applyPerkAttributes() {
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(getPerkStepHeight());
     }
 }

@@ -84,5 +84,9 @@
     "screen.kombucha.experience": "Experience: %s / %s",
     "kombucha.hint.feed_cooldown": "The kombucha is not hungry yet",
     "kombucha.progress.living_ready": "The living mushroom has matured. Open the jar!",
-    "kombucha.hint.living_not_ready": "The living mushroom is not ready yet"
+    "kombucha.hint.living_not_ready": "The living mushroom is not ready yet",
+    "kombucha.perk.received": "%s received perk %s (level %s)",
+    "kombucha.perk.level_up": "%s reached level %s",
+    "screen.kombucha.perk.increased_jump": "Increased jump",
+    "screen.kombucha.perk.increased_jump.description": "Allows the kombucha to climb blocks up to %s blocks high."
 }

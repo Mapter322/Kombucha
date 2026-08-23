@@ -29,13 +29,12 @@ public record LivingShroomData(
         int rangedSpeedUpgrades,
         int projectileSpeedUpgrades,
         int feedCooldown,
-        boolean sitting,
-        int movementMode,
-        int combatMode,
-        int attackMode) {
+        FriendlyKombuchaStateData stateData,
+        FriendlyKombuchaPerkData perkData) {
 
     public static final LivingShroomData DEFAULT = new LivingShroomData(
-            Optional.empty(), Optional.empty(), 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0, 0);
+            Optional.empty(), Optional.empty(), 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            FriendlyKombuchaStateData.DEFAULT, FriendlyKombuchaPerkData.DEFAULT);
 
     public static final Codec<LivingShroomData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             UUIDUtil.CODEC.optionalFieldOf("owner_uuid").forGetter(LivingShroomData::ownerUuid),
@@ -50,11 +49,27 @@ public record LivingShroomData(
             Codec.INT.optionalFieldOf("ranged_speed_upgrades", 0).forGetter(LivingShroomData::rangedSpeedUpgrades),
             Codec.INT.optionalFieldOf("projectile_speed_upgrades", 0).forGetter(LivingShroomData::projectileSpeedUpgrades),
             Codec.INT.optionalFieldOf("feed_cooldown", 0).forGetter(LivingShroomData::feedCooldown),
-            Codec.BOOL.optionalFieldOf("sitting", false).forGetter(LivingShroomData::sitting),
-            Codec.INT.optionalFieldOf("movement_mode", 0).forGetter(LivingShroomData::movementMode),
-            Codec.INT.optionalFieldOf("combat_mode", 0).forGetter(LivingShroomData::combatMode),
-            Codec.INT.optionalFieldOf("attack_mode", 0).forGetter(LivingShroomData::attackMode)
+            FriendlyKombuchaStateData.CODEC.optionalFieldOf("state_data", FriendlyKombuchaStateData.DEFAULT)
+                    .forGetter(LivingShroomData::stateData),
+            FriendlyKombuchaPerkData.CODEC.optionalFieldOf("perk_data", FriendlyKombuchaPerkData.DEFAULT)
+                    .forGetter(LivingShroomData::perkData)
     ).apply(instance, LivingShroomData::new));
+
+    public boolean sitting() {
+        return stateData.sitting();
+    }
+
+    public int movementMode() {
+        return stateData.movementMode();
+    }
+
+    public int combatMode() {
+        return stateData.combatMode();
+    }
+
+    public int attackMode() {
+        return stateData.attackMode();
+    }
 
     /** The shroom item as it drops on death - carries the whole monster. */
     public ItemStack toItemStack() {

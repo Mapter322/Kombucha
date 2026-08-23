@@ -84,5 +84,9 @@
     "screen.kombucha.experience": "Опыт: %s / %s",
     "kombucha.hint.feed_cooldown": "Комбуча пока не хочет есть",
     "kombucha.progress.living_ready": "Живой гриб созрел. Открой банку!",
-    "kombucha.hint.living_not_ready": "Живой гриб еще не созрел"
+    "kombucha.hint.living_not_ready": "Живой гриб еще не созрел",
+    "kombucha.perk.received": "%s получил перк «%s» (уровень %s)",
+    "kombucha.perk.level_up": "%s повысил свой уровень до %s",
+    "screen.kombucha.perk.increased_jump": "Увеличенный прыжок",
+    "screen.kombucha.perk.increased_jump.description": "Позволяет комбуче забираться на блоки высотой до %s."
 }

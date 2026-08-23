@@ -6,6 +6,7 @@ import com.mapter.kombucha.entity.FriendlyKombuchaMonster;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,13 +22,22 @@ public final class KombuchaClientEvents {
     public static void onFriendlyKombuchaInteract(PlayerInteractEvent.EntityInteract event) {
         if (!(event.getEntity() instanceof LocalPlayer)
                 || !(event.getTarget() instanceof FriendlyKombuchaMonster kombucha)
-                || !kombucha.isTame()
-                || event.getItemStack().is(Items.SUGAR)) {
+                || event.getItemStack().is(Items.SUGAR)
+                || isKombuchaMushroom(event.getItemStack())
+                || !kombucha.isTame()) {
             return;
         }
 
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
         Minecraft.getInstance().setScreen(new FriendlyKombuchaScreen(kombucha));
+    }
+
+    private static boolean isKombuchaMushroom(ItemStack stack) {
+        return stack.is(Kombucha.COMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.UNCOMMON_COMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.NETHER_COMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.LIVING_COMBUCHA_SHROOM.get());
     }
 }

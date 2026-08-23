@@ -87,6 +87,8 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int COLOR_EXPERIENCE_DARK_GREEN_HIGHLIGHT = 0xFF6FA96F;
     private static final int COLOR_PLUS = 0xCC4A3A24;
     private static final int COLOR_PLUS_HOVER = 0xFF3F321F;
+    private static final int COLOR_PERK_INCREASED_JUMP = 0xFF00AAAA;
+    private static final int COLOR_PERK_OUTLINE = 0xD9F8EAC5;
     private static final int COLOR_STATE_BUTTON = 0x664A3A24;
     private static final int COLOR_STATE_BUTTON_HOVER = 0xAA4A3A24;
     private static final int COLOR_STATE_SELECTED = 0xFFD49B3A;
@@ -208,8 +210,22 @@ public class FriendlyKombuchaScreen extends Screen {
             drawUpgradeButton(graphics, row, statsY, mouseX, mouseY);
         }
 
-        graphics.text(font, Component.translatable("screen.kombucha.perks.placeholder"),
-                leftPos + INFO_X + INFO_COLUMN_WIDTH + INFO_DIVIDER + 7, statsY + 18, COLOR_MUTED, false);
+        int perksX = leftPos + INFO_X + INFO_COLUMN_WIDTH + INFO_DIVIDER + 7;
+        int perkLevel = kombucha.getIncreasedJumpPerkLevel();
+        if (perkLevel == 0) {
+            graphics.text(font, Component.translatable("screen.kombucha.perks.placeholder"),
+                    perksX, statsY, COLOR_MUTED, false);
+        } else {
+            String perkName = Component.translatable("screen.kombucha.perk.increased_jump").getString();
+            String perkText = font.plainSubstrByWidth(perkName + " " + toRoman(perkLevel), INFO_COLUMN_WIDTH - 14);
+            drawOutlinedPerkText(graphics, perkText, perksX, statsY, COLOR_PERK_INCREASED_JUMP);
+            int perkY = statsY - (int) scrollOffset;
+            if (isInside(mouseX, mouseY, perksX, perkY, INFO_COLUMN_WIDTH - 14, STAT_ROW_SPACING)) {
+                graphics.setTooltipForNextFrame(
+                        Component.translatable("screen.kombucha.perk.increased_jump.description",
+                                String.format(Locale.ROOT, "%.1f", kombucha.getPerkStepHeight())), mouseX, mouseY);
+            }
+        }
         graphics.pose().popMatrix();
         graphics.disableScissor();
 
@@ -458,6 +474,26 @@ public class FriendlyKombuchaScreen extends Screen {
 
     private String formatNumber(double value) {
         return String.format(Locale.ROOT, "%.2f", value);
+    }
+
+    private String toRoman(int level) {
+        return switch (level) {
+            case 1 -> "I";
+            case 2 -> "II";
+            case 3 -> "III";
+            default -> Integer.toString(level);
+        };
+    }
+
+    private void drawOutlinedPerkText(GuiGraphicsExtractor graphics, String text, int x, int y, int color) {
+        for (int offsetX = -1; offsetX <= 1; offsetX++) {
+            for (int offsetY = -1; offsetY <= 1; offsetY++) {
+                if (offsetX != 0 || offsetY != 0) {
+                    graphics.text(font, text, x + offsetX, y + offsetY, COLOR_PERK_OUTLINE, false);
+                }
+            }
+        }
+        graphics.text(font, text, x, y, color, false);
     }
 
     private boolean isInside(int x, int y, int boxX, int boxY, int boxWidth, int boxHeight) {
