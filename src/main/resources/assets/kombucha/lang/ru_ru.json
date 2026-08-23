@@ -84,6 +84,7 @@
     "screen.kombucha.experience": "Опыт: %s / %s",
     "screen.kombucha.max_level": "Максимальный уровень",
     "kombucha.hint.feed_cooldown": "Комбуча пока не хочет есть",
+    "kombucha.hint.baby_not_ready": "Комбуча еще маленькая и пока не готова к прокачке",
     "kombucha.progress.living_ready": "Живой гриб созрел. Открой банку!",
     "kombucha.hint.living_not_ready": "Живой гриб еще не созрел",
     "kombucha.perk.received": "%s получил перк «%s» (уровень %s)",

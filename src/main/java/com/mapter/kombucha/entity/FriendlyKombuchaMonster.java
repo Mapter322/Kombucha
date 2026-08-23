@@ -71,6 +71,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     public static final int MAX_LEVEL = 40;
     private static final double BASE_HEALTH = 20.0D;
     private static final double MAX_HEALTH = 80.0D;
+    private static final double BABY_STAT_MULTIPLIER = 0.5D;
     private static final int MAX_HEALTH_UPGRADES = 30;
     private static final double BASE_SPEED = 0.20D;
     private static final double[] MOVEMENT_SPEED_BY_UPGRADE = {
@@ -257,6 +258,12 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             }
             return InteractionResult.SUCCESS;
         }
+        if (isBaby()) {
+            if (!this.level().isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("kombucha.hint.baby_not_ready"));
+            }
+            return InteractionResult.SUCCESS;
+        }
         if (isPerkMushroom(itemStack)) {
             if (!this.level().isClientSide()) {
                 itemStack.consume(1, player);
@@ -336,7 +343,8 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public float getRangedProjectileSpeedWithUpgrades(float power) {
         int upgrades = Math.min(getProjectileSpeedUpgrades(), MAX_PROJECTILE_SPEED_UPGRADES);
-        return Math.max(MIN_PROJECTILE_SPEED, getRangedProjectileSpeed(power) + upgrades * 0.05F);
+        return (float) (Math.max(MIN_PROJECTILE_SPEED, getRangedProjectileSpeed(power) + upgrades * 0.05F)
+                * getBabyStatMultiplier());
     }
 
     public boolean canUpgradeProjectileSpeed() {
@@ -367,7 +375,12 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     @Override
     public FriendlyKombuchaMonster getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return Kombucha.FRIENDLY_KOMBUCHA_MONSTER.get().create(level, EntitySpawnReason.BREEDING);
+        FriendlyKombuchaMonster offspring = Kombucha.FRIENDLY_KOMBUCHA_MONSTER.get()
+                .create(level, EntitySpawnReason.BREEDING);
+        if (offspring != null) {
+            offspring.setBaby(true);
+        }
+        return offspring;
     }
 
     @Override
@@ -404,6 +417,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public boolean canUpgradeStat(int stat) {
+        if (isBaby()) {
+            return false;
+        }
         return switch (stat) {
             case STAT_HEALTH -> getHealthUpgrades() < MAX_HEALTH_UPGRADES;
             case STAT_SPEED -> canUpgradeSpeed();
@@ -509,7 +525,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public boolean setState(int category, int state) {
-        if (this.level().isClientSide()) {
+        if (this.level().isClientSide() || isBaby()) {
             return false;
         }
         return switch (category) {
@@ -567,21 +583,23 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public float getRangedDamage() {
         int upgrades = Math.min(getRangedDamageUpgrades(), MAX_RANGED_DAMAGE_UPGRADES);
-        return SlimeCombuchaProjectile.DAMAGE + upgrades * 0.5F;
+        return (float) ((SlimeCombuchaProjectile.DAMAGE + upgrades * 0.5F) * getBabyStatMultiplier());
     }
 
     public int getMeleeAttackIntervalTicks() {
         int upgrades = Math.min(getMeleeSpeedUpgrades(), MAX_MELEE_SPEED_UPGRADES);
-        return Math.max(1, MELEE_ATTACK_INTERVAL_TICKS - upgrades * 2);
+        int interval = Math.max(1, MELEE_ATTACK_INTERVAL_TICKS - upgrades * 2);
+        return isBaby() ? Math.max(1, (int) Math.ceil(interval / BABY_STAT_MULTIPLIER)) : interval;
     }
 
     public int getRangedAttackIntervalTicks() {
         int upgrades = Math.min(getRangedSpeedUpgrades(), MAX_RANGED_SPEED_UPGRADES);
-        return Math.max(1, RANGED_ATTACK_INTERVAL_TICKS - upgrades * 2);
+        int interval = Math.max(1, RANGED_ATTACK_INTERVAL_TICKS - upgrades * 2);
+        return isBaby() ? Math.max(1, (int) Math.ceil(interval / BABY_STAT_MULTIPLIER)) : interval;
     }
 
     public void addExperience(int amount) {
-        if (this.level().isClientSide() || amount <= 0 || getLevel() >= MAX_LEVEL) {
+        if (this.level().isClientSide() || isBaby() || amount <= 0 || getLevel() >= MAX_LEVEL) {
             return;
         }
         int experience = getExperience() + amount;
@@ -605,7 +623,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public boolean upgradeStat(int stat) {
-        if (this.level().isClientSide() || getAvailableUpgradePoints() <= 0
+        if (this.level().isClientSide() || isBaby() || getAvailableUpgradePoints() <= 0
                 || stat < STAT_HEALTH || stat > STAT_PROJECTILE_SPEED) {
             return false;
         }
@@ -632,17 +650,33 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     private void applyUpgradedAttributes() {
+        double multiplier = getBabyStatMultiplier();
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(
-                Math.min(MAX_HEALTH, BASE_HEALTH + getHealthUpgrades() * 2.0D));
+                Math.min(MAX_HEALTH, BASE_HEALTH + getHealthUpgrades() * 2.0D) * multiplier);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(
-                BASE_MELEE_DAMAGE + Math.min(getMeleeDamageUpgrades(), MAX_MELEE_DAMAGE_UPGRADES));
+                (BASE_MELEE_DAMAGE + Math.min(getMeleeDamageUpgrades(), MAX_MELEE_DAMAGE_UPGRADES)) * multiplier);
+        this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(32.0D * multiplier);
         this.setHealth(Math.min(this.getHealth(), this.getMaxHealth()));
     }
 
     private double getMovementSpeed() {
         int upgradeLevel = Math.max(0, Math.min(getSpeedUpgrades(), MOVEMENT_SPEED_BY_UPGRADE.length - 1));
         return MOVEMENT_SPEED_BY_UPGRADE[upgradeLevel];
+    }
+
+    private double getBabyStatMultiplier() {
+        return isBaby() ? BABY_STAT_MULTIPLIER : 1.0D;
+    }
+
+    @Override
+    protected void ageBoundaryReached() {
+        super.ageBoundaryReached();
+        if (this.getAttribute(Attributes.MAX_HEALTH) != null) {
+            applyUpgradedAttributes();
+            applyPerkAttributes();
+            this.setHealth(this.getMaxHealth());
+        }
     }
 
     @Override
@@ -810,6 +844,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         kombucha.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
         kombucha.setYRot(level.getRandom().nextFloat() * 360.0F);
         kombucha.applyLivingShroomData(data);
+        kombucha.setBaby(true);
         return kombucha;
     }
 

@@ -2,9 +2,12 @@ package com.mapter.kombucha.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.client.model.BabyFriendlyKombuchaMonsterModel;
 import com.mapter.kombucha.client.model.FriendlyKombuchaMonsterModel;
 import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
 import com.mapter.kombucha.entity.FriendlyKombuchaMonster;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -14,12 +17,26 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class FriendlyKombuchaMonsterRenderer extends MobRenderer<FriendlyKombuchaMonster, CombuchaMonsterRenderState, FriendlyKombuchaMonsterModel> {
-    private static final Identifier TEXTURE =
+public class FriendlyKombuchaMonsterRenderer extends MobRenderer<FriendlyKombuchaMonster, CombuchaMonsterRenderState, EntityModel<LivingEntityRenderState>> {
+    private static final Identifier ADULT_TEXTURE =
             Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/friendly_kombucha_monster.png");
+    private static final Identifier BABY_TEXTURE =
+            Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/baby_combucha_monster.png");
+    private final EntityModel<LivingEntityRenderState> adultModel;
+    private final EntityModel<LivingEntityRenderState> babyModel;
 
     public FriendlyKombuchaMonsterRenderer(EntityRendererProvider.Context context) {
-        super(context, new FriendlyKombuchaMonsterModel(context.bakeLayer(FriendlyKombuchaMonsterModel.LAYER_LOCATION)), 0.4F);
+        this(context,
+                new FriendlyKombuchaMonsterModel(context.bakeLayer(FriendlyKombuchaMonsterModel.LAYER_LOCATION)),
+                new BabyFriendlyKombuchaMonsterModel(context.bakeLayer(BabyFriendlyKombuchaMonsterModel.LAYER_LOCATION)));
+    }
+
+    private FriendlyKombuchaMonsterRenderer(EntityRendererProvider.Context context,
+                                             EntityModel<LivingEntityRenderState> adultModel,
+                                             EntityModel<LivingEntityRenderState> babyModel) {
+        super(context, adultModel, 0.4F);
+        this.adultModel = adultModel;
+        this.babyModel = babyModel;
     }
 
     @Override
@@ -29,7 +46,7 @@ public class FriendlyKombuchaMonsterRenderer extends MobRenderer<FriendlyKombuch
 
     @Override
     public Identifier getTextureLocation(CombuchaMonsterRenderState state) {
-        return TEXTURE;
+        return state.isBaby ? BABY_TEXTURE : ADULT_TEXTURE;
     }
 
     @Override
@@ -41,15 +58,9 @@ public class FriendlyKombuchaMonsterRenderer extends MobRenderer<FriendlyKombuch
     }
 
     @Override
-    protected void scale(CombuchaMonsterRenderState state, PoseStack poseStack) {
-        if (state.isBaby) {
-            poseStack.scale(0.5F, 0.5F, 0.5F);
-        }
-    }
-
-    @Override
     public void submit(CombuchaMonsterRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
                        CameraRenderState camera) {
+        this.model = state.isBaby ? this.babyModel : this.adultModel;
         this.getModel().setupAnim(state);
         super.submit(state, poseStack, submitNodeCollector, camera);
     }

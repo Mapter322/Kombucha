@@ -25,7 +25,8 @@ public final class KombuchaClientEvents {
                 || event.getItemStack().is(Items.SUGAR)
                 || isKombuchaMushroom(event.getItemStack())
                 || isRegenerationMushroom(event.getItemStack())
-                || !kombucha.isTame()) {
+                || !kombucha.isTame()
+                || kombucha.isBaby()) {
             return;
         }
 

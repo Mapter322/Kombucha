@@ -318,6 +318,7 @@ public class Kombucha {
                     if (!(context.player().level().getEntity(payload.entityId())
                             instanceof FriendlyKombuchaMonster kombucha)
                             || !kombucha.isTame()
+                            || kombucha.isBaby()
                             || !kombucha.isOwnedBy(context.player())
                             || kombucha.distanceToSqr(context.player()) > 64.0D) {
                         return;
@@ -329,6 +330,7 @@ public class Kombucha {
                     if (!(context.player().level().getEntity(payload.entityId())
                             instanceof FriendlyKombuchaMonster kombucha)
                             || !kombucha.isTame()
+                            || kombucha.isBaby()
                             || !kombucha.isOwnedBy(context.player())
                             || kombucha.distanceToSqr(context.player()) > 64.0D) {
                         return;

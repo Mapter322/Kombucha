@@ -1,6 +1,7 @@
 package com.mapter.kombucha;
 
 import com.mapter.kombucha.client.KombuchaTints;
+import com.mapter.kombucha.client.model.BabyFriendlyKombuchaMonsterModel;
 import com.mapter.kombucha.client.model.SpoiledCombuchaMonsterModel;
 import com.mapter.kombucha.client.model.FriendlyKombuchaMonsterModel;
 import com.mapter.kombucha.client.model.EnderCombuchaMonsterModel;
@@ -37,6 +38,7 @@ public class KombuchaClient {
     private static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SpoiledCombuchaMonsterModel.LAYER_LOCATION, SpoiledCombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(FriendlyKombuchaMonsterModel.LAYER_LOCATION, FriendlyKombuchaMonsterModel::createBodyLayer);
+        event.registerLayerDefinition(BabyFriendlyKombuchaMonsterModel.LAYER_LOCATION, BabyFriendlyKombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(NetherCombuchaMonsterModel.LAYER_LOCATION, NetherCombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(EnderCombuchaMonsterModel.LAYER_LOCATION, EnderCombuchaMonsterModel::createBodyLayer);
     }
