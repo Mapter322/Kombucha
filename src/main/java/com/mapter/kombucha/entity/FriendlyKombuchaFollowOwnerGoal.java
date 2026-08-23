@@ -13,6 +13,7 @@ public class FriendlyKombuchaFollowOwnerGoal extends Goal {
     private final float stopDistance;
     private @Nullable LivingEntity owner;
     private int timeToRecalculatePath;
+    private boolean directMovement;
 
     public FriendlyKombuchaFollowOwnerGoal(TamableAnimal mob, double speedModifier,
                                            float startDistance, float stopDistance) {
@@ -51,6 +52,7 @@ public class FriendlyKombuchaFollowOwnerGoal extends Goal {
     @Override
     public void start() {
         this.timeToRecalculatePath = 0;
+        this.directMovement = false;
     }
 
     @Override
@@ -65,17 +67,19 @@ public class FriendlyKombuchaFollowOwnerGoal extends Goal {
         }
 
         if (this.timeToRecalculatePath-- <= 0) {
-            this.timeToRecalculatePath = 10;
-            if (!this.mob.getNavigation().moveTo(this.owner, this.speedModifier)) {
-                this.mob.getMoveControl().setWantedPosition(
-                        this.owner.getX(), this.owner.getY(), this.owner.getZ(), this.speedModifier);
-            }
+            this.timeToRecalculatePath = 5;
+            this.directMovement = !this.mob.getNavigation().moveTo(this.owner, this.speedModifier);
+        }
+        if (this.directMovement) {
+            this.mob.getMoveControl().setWantedPosition(
+                    this.owner.getX(), this.owner.getY(), this.owner.getZ(), this.speedModifier);
         }
     }
 
     @Override
     public void stop() {
         this.owner = null;
+        this.directMovement = false;
         this.mob.getNavigation().stop();
     }
 }

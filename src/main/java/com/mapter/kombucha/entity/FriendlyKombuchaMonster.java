@@ -26,6 +26,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
@@ -68,7 +69,11 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     public static final int EXPERIENCE_PER_FEED = 2;
     private static final int BASE_LEVEL_EXPERIENCE = 10;
     private static final double BASE_HEALTH = 20.0D;
-    private static final double BASE_SPEED = 0.25D;
+    private static final double BASE_SPEED = 0.20D;
+    private static final double[] MOVEMENT_SPEED_BY_UPGRADE = {
+            0.20D, 0.25D, 0.29D, 0.32D, 0.34D, 0.35D,
+            0.36D, 0.37D, 0.38D, 0.39D, 0.40D
+    };
     private static final double BASE_MELEE_DAMAGE = 6.0D;
     public static final int STAT_HEALTH = 0;
     public static final int STAT_SPEED = 1;
@@ -125,6 +130,38 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public FriendlyKombuchaMonster(EntityType<? extends FriendlyKombuchaMonster> type, Level level) {
         super(type, level);
+        this.moveControl = new MoveControl(this) {
+            private double smoothedX;
+            private double smoothedY;
+            private double smoothedZ;
+            private boolean hasTarget;
+            private int ticksSinceCommand;
+
+            @Override
+            public void setWantedPosition(double x, double y, double z, double speed) {
+                if (!this.hasTarget || this.ticksSinceCommand > 2) {
+                    this.smoothedX = FriendlyKombuchaMonster.this.getX();
+                    this.smoothedY = FriendlyKombuchaMonster.this.getY();
+                    this.smoothedZ = FriendlyKombuchaMonster.this.getZ();
+                    this.hasTarget = true;
+                }
+
+                this.smoothedX += (x - this.smoothedX) * 0.65D;
+                this.smoothedY += (y - this.smoothedY) * 0.65D;
+                this.smoothedZ += (z - this.smoothedZ) * 0.65D;
+                this.ticksSinceCommand = 0;
+                super.setWantedPosition(this.smoothedX, this.smoothedY, this.smoothedZ, speed);
+            }
+
+            @Override
+            public void tick() {
+                this.ticksSinceCommand++;
+                if (this.ticksSinceCommand > 2) {
+                    this.hasTarget = false;
+                }
+                super.tick();
+            }
+        };
     }
 
     @Override
@@ -327,6 +364,10 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return this.entityData.get(SPEED_UPGRADES);
     }
 
+    public boolean canUpgradeSpeed() {
+        return getSpeedUpgrades() < MOVEMENT_SPEED_BY_UPGRADE.length - 1;
+    }
+
     public int getMeleeDamageUpgrades() {
         return this.entityData.get(MELEE_DAMAGE_UPGRADES);
     }
@@ -486,6 +527,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         if (accessor == null) {
             return false;
         }
+        if (stat == STAT_SPEED && !canUpgradeSpeed()) {
+            return false;
+        }
         if (stat == STAT_PROJECTILE_SPEED && !canUpgradeProjectileSpeed()) {
             return false;
         }
@@ -497,9 +541,14 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     private void applyUpgradedAttributes() {
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH + getHealthUpgrades() * 2.0D);
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(BASE_SPEED + getSpeedUpgrades() * 0.05D);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(BASE_MELEE_DAMAGE + getMeleeDamageUpgrades());
         this.setHealth(Math.min(this.getHealth(), this.getMaxHealth()));
+    }
+
+    private double getMovementSpeed() {
+        int upgradeLevel = Math.max(0, Math.min(getSpeedUpgrades(), MOVEMENT_SPEED_BY_UPGRADE.length - 1));
+        return MOVEMENT_SPEED_BY_UPGRADE[upgradeLevel];
     }
 
     @Override
@@ -651,7 +700,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.ATTACK_DAMAGE, 6.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.MOVEMENT_SPEED, BASE_SPEED)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 

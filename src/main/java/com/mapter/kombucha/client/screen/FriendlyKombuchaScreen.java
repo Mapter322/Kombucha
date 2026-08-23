@@ -422,7 +422,8 @@ public class FriendlyKombuchaScreen extends Screen {
     }
 
     private void drawUpgradeButton(GuiGraphicsExtractor graphics, int row, int statsY, int mouseX, int mouseY) {
-        if (kombucha.getAvailableUpgradePoints() <= 0) {
+        if (kombucha.getAvailableUpgradePoints() <= 0
+                || (row == 2 && !kombucha.canUpgradeSpeed())) {
             return;
         }
         int buttonY = statsY + STAT_ROW_SPACING * row - (int) scrollOffset - 2;
@@ -517,7 +518,8 @@ public class FriendlyKombuchaScreen extends Screen {
             if (kombucha.getAvailableUpgradePoints() > 0) {
                 for (int row = 1; row <= 7; row++) {
                     int buttonY = INFO_Y + 7 + 18 + STAT_ROW_SPACING * row - (int) scrollOffset - 2;
-                    if (isInside(x, y, PLUS_X, buttonY, PLUS_WIDTH, PLUS_HEIGHT)) {
+                    if (isInside(x, y, PLUS_X, buttonY, PLUS_WIDTH, PLUS_HEIGHT)
+                            && (row != 2 || kombucha.canUpgradeSpeed())) {
                         ClientPacketDistributor.sendToServer(
                                 new FriendlyKombuchaUpgradePayload(kombucha.getId(), row - 1));
                         return true;

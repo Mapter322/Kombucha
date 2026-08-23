@@ -56,7 +56,7 @@
     "kombucha.hint.nether_needs_lava": "The nether mix only works in a lava jar",
     "kombucha.hint.tame": "Feed the kombucha sugar",
     "screen.kombucha.title": "Kombucha",
-    "screen.kombucha.characteristics": "Characteristics",
+    "screen.kombucha.characteristics": "Stats",
     "screen.kombucha.perks": "Perks",
     "screen.kombucha.perks.placeholder": "None yet",
     "screen.kombucha.states": "States",
@@ -87,6 +87,6 @@
     "kombucha.hint.living_not_ready": "The living mushroom is not ready yet",
     "kombucha.perk.received": "%s received perk %s (level %s)",
     "kombucha.perk.level_up": "%s reached level %s",
-    "screen.kombucha.perk.increased_jump": "Increased jump",
+    "screen.kombucha.perk.increased_jump": "High Step",
     "screen.kombucha.perk.increased_jump.description": "Allows the kombucha to climb blocks up to %s blocks high."
 }

@@ -163,7 +163,7 @@ public class FriendlyKombuchaMonsterModel extends EntityModel<LivingEntityRender
     public void setupAnim(LivingEntityRenderState state) {
         super.setupAnim(state);
         this.basicAnimation.apply((long) (state.ageInTicks * 50.0F), 1.0F);
-        this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 2.5F, 4.0F);
+        this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 3.5F, 4.0F);
         this.eyes.yRot = Mth.clamp(state.yRot, -35.0F, 35.0F) * Mth.DEG_TO_RAD;
         if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.attackTime > 0.0F) {
             this.attackAnimation.apply((long) (combuchaState.attackTime * 1125.0F), 1.5F);
