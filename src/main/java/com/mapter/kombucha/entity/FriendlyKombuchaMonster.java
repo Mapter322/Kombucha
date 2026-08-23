@@ -24,8 +24,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.player.Player;
@@ -40,6 +38,28 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAttackMob {
+    public enum MovementMode {
+        FOLLOW,
+        STAY,
+        PATROL
+    }
+
+    public enum CombatMode {
+        DEFEND,
+        PASSIVE,
+        AGGRESSIVE
+    }
+
+    public enum AttackMode {
+        MELEE,
+        RANGED
+    }
+
+    public static final int STATE_MOVEMENT = 0;
+    public static final int STATE_COMBAT = 1;
+    public static final int STATE_ATTACK = 2;
+    public static final int PATROL_RADIUS = 20;
+
     public static final int FEED_COOLDOWN_TICKS = 6000;
     public static final int EXPERIENCE_PER_KILL = 5;
     public static final int EXPERIENCE_PER_FEED = 2;
@@ -85,7 +105,14 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PROJECTILE_SPEED_UPGRADES =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MOVEMENT_MODE =
+            SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> COMBAT_MODE =
+            SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ATTACK_MODE =
+            SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private int feedCooldown;
+    private BlockPos patrolCenter = BlockPos.ZERO;
     private double rangedTargetX;
     private double rangedTargetY;
     private double rangedTargetZ;
@@ -98,16 +125,39 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CombuchaRangedAttackGoal(this, 1.0,
+        this.goalSelector.addGoal(1, new KombuchaRangedAttackGoal(this, 1.0,
                 this::getRangedAttackIntervalTicks, 12.0F));
-        this.goalSelector.addGoal(2, new CombuchaMeleeAttackGoal(this, 1.0, true,
+        this.goalSelector.addGoal(2, new KombuchaMeleeAttackGoal(this, 1.0, true,
                 this::getMeleeAttackIntervalTicks));
         this.goalSelector.addGoal(3, new FriendlyKombuchaFollowOwnerGoal(this, 1.0, 3.0F, 2.0F));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(4, new FriendlyKombuchaPatrolGoal(this, 1.0));
         this.goalSelector.addGoal(5, new FriendlyKombuchaLookAtOwnerGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return FriendlyKombuchaMonster.this.getCombatMode() == CombatMode.DEFEND && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return FriendlyKombuchaMonster.this.getCombatMode() == CombatMode.DEFEND
+                        && super.canContinueToUse();
+            }
+        });
+        this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return FriendlyKombuchaMonster.this.getCombatMode() == CombatMode.DEFEND && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return FriendlyKombuchaMonster.this.getCombatMode() == CombatMode.DEFEND
+                        && super.canContinueToUse();
+            }
+        });
+        this.targetSelector.addGoal(3, new KombuchaTargetGoal(this));
     }
 
     @Override
@@ -162,6 +212,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         entityData.define(MELEE_SPEED_UPGRADES, 0);
         entityData.define(RANGED_SPEED_UPGRADES, 0);
         entityData.define(PROJECTILE_SPEED_UPGRADES, 0);
+        entityData.define(MOVEMENT_MODE, MovementMode.FOLLOW.ordinal());
+        entityData.define(COMBAT_MODE, CombatMode.DEFEND.ordinal());
+        entityData.define(ATTACK_MODE, AttackMode.MELEE.ordinal());
     }
 
     @Override
@@ -278,6 +331,75 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return this.entityData.get(PROJECTILE_SPEED_UPGRADES);
     }
 
+    public MovementMode getMovementMode() {
+        return enumValue(MovementMode.values(), this.entityData.get(MOVEMENT_MODE));
+    }
+
+    public CombatMode getCombatMode() {
+        return enumValue(CombatMode.values(), this.entityData.get(COMBAT_MODE));
+    }
+
+    public AttackMode getAttackMode() {
+        return enumValue(AttackMode.values(), this.entityData.get(ATTACK_MODE));
+    }
+
+    public boolean setState(int category, int state) {
+        if (this.level().isClientSide()) {
+            return false;
+        }
+        return switch (category) {
+            case STATE_MOVEMENT -> setMovementMode(state);
+            case STATE_COMBAT -> setCombatMode(state);
+            case STATE_ATTACK -> setAttackMode(state);
+            default -> false;
+        };
+    }
+
+    private boolean setMovementMode(int state) {
+        if (state < 0 || state >= MovementMode.values().length) {
+            return false;
+        }
+        MovementMode mode = MovementMode.values()[state];
+        this.entityData.set(MOVEMENT_MODE, state);
+        this.setOrderedToSit(mode == MovementMode.STAY);
+        this.setInSittingPose(mode == MovementMode.STAY);
+        this.setTarget(null);
+        this.setAggressive(false);
+        if (mode == MovementMode.PATROL) {
+            this.patrolCenter = this.blockPosition();
+        }
+        this.getNavigation().stop();
+        return true;
+    }
+
+    private boolean setCombatMode(int state) {
+        if (state < 0 || state >= CombatMode.values().length) {
+            return false;
+        }
+        this.entityData.set(COMBAT_MODE, state);
+        this.setTarget(null);
+        this.getNavigation().stop();
+        return true;
+    }
+
+    private boolean setAttackMode(int state) {
+        if (state < 0 || state >= AttackMode.values().length) {
+            return false;
+        }
+        this.entityData.set(ATTACK_MODE, state);
+        this.setTarget(null);
+        this.getNavigation().stop();
+        return true;
+    }
+
+    public BlockPos getPatrolCenter() {
+        return this.patrolCenter;
+    }
+
+    private static <T> T enumValue(T[] values, int index) {
+        return values[Math.max(0, Math.min(index, values.length - 1))];
+    }
+
     public float getRangedDamage() {
         return SlimeCombuchaProjectile.DAMAGE + getRangedDamageUpgrades() * 0.5F;
     }
@@ -358,6 +480,13 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(MELEE_SPEED_UPGRADES, input.getIntOr("KombuchaMeleeSpeedUpgrades", 0));
         this.entityData.set(RANGED_SPEED_UPGRADES, input.getIntOr("KombuchaRangedSpeedUpgrades", 0));
         this.entityData.set(PROJECTILE_SPEED_UPGRADES, input.getIntOr("KombuchaProjectileSpeedUpgrades", 0));
+        this.entityData.set(MOVEMENT_MODE, input.getIntOr("KombuchaMovementMode", MovementMode.FOLLOW.ordinal()));
+        this.entityData.set(COMBAT_MODE, input.getIntOr("KombuchaCombatMode", CombatMode.DEFEND.ordinal()));
+        this.entityData.set(ATTACK_MODE, input.getIntOr("KombuchaAttackMode", AttackMode.MELEE.ordinal()));
+        this.setOrderedToSit(getMovementMode() == MovementMode.STAY);
+        this.patrolCenter = new BlockPos(input.getIntOr("KombuchaPatrolX", this.blockPosition().getX()),
+                input.getIntOr("KombuchaPatrolY", this.blockPosition().getY()),
+                input.getIntOr("KombuchaPatrolZ", this.blockPosition().getZ()));
         this.feedCooldown = input.getIntOr("KombuchaFeedCooldown", 0);
         applyUpgradedAttributes();
     }
@@ -375,6 +504,12 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         output.putInt("KombuchaMeleeSpeedUpgrades", getMeleeSpeedUpgrades());
         output.putInt("KombuchaRangedSpeedUpgrades", getRangedSpeedUpgrades());
         output.putInt("KombuchaProjectileSpeedUpgrades", getProjectileSpeedUpgrades());
+        output.putInt("KombuchaMovementMode", getMovementMode().ordinal());
+        output.putInt("KombuchaCombatMode", getCombatMode().ordinal());
+        output.putInt("KombuchaAttackMode", getAttackMode().ordinal());
+        output.putInt("KombuchaPatrolX", this.patrolCenter.getX());
+        output.putInt("KombuchaPatrolY", this.patrolCenter.getY());
+        output.putInt("KombuchaPatrolZ", this.patrolCenter.getZ());
         output.putInt("KombuchaFeedCooldown", this.feedCooldown);
     }
 
@@ -400,7 +535,8 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return new LivingShroomData(owner, name, getLevel(), getAvailableUpgradePoints(),
                 getHealthUpgrades(), getSpeedUpgrades(), getMeleeDamageUpgrades(),
                 getRangedDamageUpgrades(), getMeleeSpeedUpgrades(), getRangedSpeedUpgrades(),
-                getProjectileSpeedUpgrades(), this.feedCooldown, this.isOrderedToSit());
+                getProjectileSpeedUpgrades(), this.feedCooldown, this.isOrderedToSit(),
+                getMovementMode().ordinal(), getCombatMode().ordinal(), getAttackMode().ordinal());
     }
 
     public void applyLivingShroomData(LivingShroomData data) {
@@ -409,7 +545,12 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             this.setOwnerReference(EntityReference.of(uuid));
             this.setTame(true, false);
         });
-        this.setOrderedToSit(data.sitting());
+        this.entityData.set(MOVEMENT_MODE, data.sitting() ? MovementMode.STAY.ordinal()
+                : data.movementMode());
+        this.entityData.set(COMBAT_MODE, data.combatMode());
+        this.entityData.set(ATTACK_MODE, data.attackMode());
+        this.setOrderedToSit(getMovementMode() == MovementMode.STAY);
+        this.patrolCenter = this.blockPosition();
         this.entityData.set(LEVEL, data.level());
         this.entityData.set(UPGRADE_POINTS, data.upgradePoints());
         this.entityData.set(HEALTH_UPGRADES, data.healthUpgrades());

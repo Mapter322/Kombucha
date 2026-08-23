@@ -17,7 +17,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -27,22 +26,22 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.Level;
 
-public class NetherCombuchaMonster extends Monster implements RangedAttackMob {
+public class NetherKombuchaMonster extends Monster implements RangedAttackMob {
     private static final EntityDataAccessor<Integer> SHOOT_TIME =
-            SynchedEntityData.defineId(NetherCombuchaMonster.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(NetherKombuchaMonster.class, EntityDataSerializers.INT);
     private double rangedTargetX;
     private double rangedTargetY;
     private double rangedTargetZ;
     private float rangedPower;
 
-    public NetherCombuchaMonster(EntityType<? extends NetherCombuchaMonster> type, Level level) {
+    public NetherKombuchaMonster(EntityType<? extends NetherKombuchaMonster> type, Level level) {
         super(type, level);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CombuchaRangedAttackGoal(this, 1.0, 45, 12.0F));
+        this.goalSelector.addGoal(1, new KombuchaRangedAttackGoal(this, 1.0, 45, 12.0F));
         this.goalSelector.addGoal(2, new CombuchaFollowPlayerGoal(this, 1.0, 3.0, 16.0));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, true));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
@@ -50,7 +49,7 @@ public class NetherCombuchaMonster extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new CombuchaHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new CombuchaTargetGoal(this));
+        this.targetSelector.addGoal(2, new KombuchaTargetGoal(this));
     }
 
     @Override

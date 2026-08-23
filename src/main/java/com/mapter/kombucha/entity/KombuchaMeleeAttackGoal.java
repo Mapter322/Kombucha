@@ -6,11 +6,11 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 import java.util.function.IntSupplier;
 
-public class CombuchaMeleeAttackGoal extends MeleeAttackGoal {
+public class KombuchaMeleeAttackGoal extends MeleeAttackGoal {
     private final IntSupplier attackInterval;
     private int ticksUntilNextAttack;
 
-    public CombuchaMeleeAttackGoal(PathfinderMob mob, double speedModifier,
+    public KombuchaMeleeAttackGoal(PathfinderMob mob, double speedModifier,
                                    boolean followingTargetEvenIfNotSeen, IntSupplier attackInterval) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
         this.attackInterval = attackInterval;
@@ -20,6 +20,26 @@ public class CombuchaMeleeAttackGoal extends MeleeAttackGoal {
     public void start() {
         super.start();
         this.ticksUntilNextAttack = 0;
+    }
+
+    @Override
+    public boolean canUse() {
+        if (!super.canUse()) {
+            return false;
+        }
+        return !(this.mob instanceof FriendlyKombuchaMonster friendly)
+                || friendly.getAttackMode() == FriendlyKombuchaMonster.AttackMode.MELEE
+                || this.mob.isWithinMeleeAttackRange(this.mob.getTarget());
+    }
+
+    @Override
+    public boolean canContinueToUse() {
+        if (!super.canContinueToUse()) {
+            return false;
+        }
+        return !(this.mob instanceof FriendlyKombuchaMonster friendly)
+                || friendly.getAttackMode() == FriendlyKombuchaMonster.AttackMode.MELEE
+                || this.mob.isWithinMeleeAttackRange(this.mob.getTarget());
     }
 
     @Override

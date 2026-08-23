@@ -9,7 +9,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import java.util.EnumSet;
 import java.util.function.IntSupplier;
 
-public class CombuchaRangedAttackGoal extends Goal {
+public class KombuchaRangedAttackGoal extends Goal {
     private static final double MELEE_DISTANCE_SQR = 2.5D * 2.5D;
     private final Mob mob;
     private final double speedModifier;
@@ -21,11 +21,11 @@ public class CombuchaRangedAttackGoal extends Goal {
     private int attackTime = -1;
     private int seeTime;
 
-    public CombuchaRangedAttackGoal(RangedAttackMob mob, double speedModifier, int attackInterval, float attackRadius) {
+    public KombuchaRangedAttackGoal(RangedAttackMob mob, double speedModifier, int attackInterval, float attackRadius) {
         this(mob, speedModifier, () -> attackInterval, attackRadius);
     }
 
-    public CombuchaRangedAttackGoal(RangedAttackMob mob, double speedModifier,
+    public KombuchaRangedAttackGoal(RangedAttackMob mob, double speedModifier,
                                     IntSupplier attackInterval, float attackRadius) {
         this.rangedAttackMob = mob;
         this.mob = (Mob) mob;
@@ -42,14 +42,21 @@ public class CombuchaRangedAttackGoal extends Goal {
         if (target == null || !target.isAlive() || this.mob.distanceToSqr(target) <= MELEE_DISTANCE_SQR) {
             return false;
         }
+        if (this.mob instanceof FriendlyKombuchaMonster friendly
+                && friendly.getAttackMode() == FriendlyKombuchaMonster.AttackMode.MELEE
+                && this.mob.getNavigation().createPath(target, 0) != null) {
+            return false;
+        }
         this.target = target;
         return true;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return this.target != null && this.target.isAlive()
-                && this.mob.distanceToSqr(this.target) > MELEE_DISTANCE_SQR;
+        if (this.target == null || !this.target.isAlive()) {
+            return false;
+        }
+        return this.mob.distanceToSqr(this.target) > MELEE_DISTANCE_SQR;
     }
 
     @Override

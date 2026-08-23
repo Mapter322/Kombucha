@@ -3,7 +3,7 @@ package com.mapter.kombucha.block;
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.component.LivingShroomData;
 import com.mapter.kombucha.config.KombuchaConfig;
-import com.mapter.kombucha.entity.SpoiledCombuchaMonster;
+import com.mapter.kombucha.entity.SpoiledKombuchaMonster;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -140,7 +140,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
                         && !level.canSeeSky(pos)
                         && level.getMaxLocalRawBrightness(pos) <= 7
                         && level.getRandom().nextFloat() < 0.10F) {
-                    SpoiledCombuchaMonster monster = new SpoiledCombuchaMonster(Kombucha.SPOILED_COMBUCHA_MONSTER.get(), level);
+                    SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(Kombucha.SPOILED_COMBUCHA_MONSTER.get(), level);
                     monster.setPos(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D);
                     monster.setYRot(level.getRandom().nextFloat() * 360.0F);
                     level.addFreshEntity(monster);

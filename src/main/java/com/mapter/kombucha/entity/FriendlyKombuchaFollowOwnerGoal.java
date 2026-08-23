@@ -25,6 +25,10 @@ public class FriendlyKombuchaFollowOwnerGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (((FriendlyKombuchaMonster) this.mob).getMovementMode() != FriendlyKombuchaMonster.MovementMode.FOLLOW
+                || this.mob.getTarget() != null) {
+            return false;
+        }
         LivingEntity owner = this.mob.getOwner();
         if (owner == null || this.mob.unableToMoveToOwner()) {
             return false;
@@ -36,7 +40,9 @@ public class FriendlyKombuchaFollowOwnerGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.owner != null
+        return ((FriendlyKombuchaMonster) this.mob).getMovementMode() == FriendlyKombuchaMonster.MovementMode.FOLLOW
+                && this.mob.getTarget() == null
+                && this.owner != null
                 && this.owner.isAlive()
                 && !this.mob.unableToMoveToOwner()
                 && this.mob.distanceToSqr(this.owner) > this.stopDistance * this.stopDistance;

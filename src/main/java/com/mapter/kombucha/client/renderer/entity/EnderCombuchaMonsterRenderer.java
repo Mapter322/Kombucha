@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.client.model.EnderCombuchaMonsterModel;
 import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
-import com.mapter.kombucha.entity.EnderCombuchaMonster;
+import com.mapter.kombucha.entity.EnderKombuchaMonster;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -14,7 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class EnderCombuchaMonsterRenderer extends MobRenderer<EnderCombuchaMonster, CombuchaMonsterRenderState, EnderCombuchaMonsterModel> {
+public class EnderCombuchaMonsterRenderer extends MobRenderer<EnderKombuchaMonster, CombuchaMonsterRenderState, EnderCombuchaMonsterModel> {
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/ender_combucha_monster.png");
 
@@ -33,7 +33,7 @@ public class EnderCombuchaMonsterRenderer extends MobRenderer<EnderCombuchaMonst
     }
 
     @Override
-    public void extractRenderState(EnderCombuchaMonster entity, CombuchaMonsterRenderState state, float partialTicks) {
+    public void extractRenderState(EnderKombuchaMonster entity, CombuchaMonsterRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.isJumping = !entity.onGround();
         state.attackTime = entity.getAttackAnim(partialTicks);

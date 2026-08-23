@@ -2,6 +2,7 @@ package com.mapter.kombucha.client.screen;
 
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.entity.FriendlyKombuchaMonster;
+import com.mapter.kombucha.network.FriendlyKombuchaStatePayload;
 import com.mapter.kombucha.network.FriendlyKombuchaUpgradePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -49,6 +50,17 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int SCROLLBAR_BOTTOM = GUI_HEIGHT - 13;
     private static final int SCROLLBAR_MIN_THUMB_HEIGHT = 16;
     private static final int MODEL_SCALE = 32;
+    private static final int STATE_X = 139;
+    private static final int STATE_TITLE_Y = 23;
+    private static final int STATE_LABEL_X = STATE_X + 4;
+    private static final int STATE_BUTTON_X = STATE_X + 56;
+    private static final int STATE_BUTTON_WIDTH = 62;
+    private static final int STATE_BUTTON_HEIGHT = 14;
+    private static final int STATE_FIRST_ROW_Y = 36;
+    private static final int STATE_ROW_SPACING = 16;
+    private static final int STATE_OPTION_HEIGHT = 12;
+    private static final int STATE_OPTION_PADDING = 5;
+    private static final int STATE_MENU_WIDTH = 124;
     private static final int EXPERIENCE_BAR_X = INFO_X + 2;
     private static final int EXPERIENCE_BAR_Y = 90;
     private static final int EXPERIENCE_BAR_WIDTH = INFO_WIDTH - 4;
@@ -75,6 +87,13 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int COLOR_EXPERIENCE_DARK_GREEN_HIGHLIGHT = 0xFF6FA96F;
     private static final int COLOR_PLUS = 0xCC4A3A24;
     private static final int COLOR_PLUS_HOVER = 0xFF3F321F;
+    private static final int COLOR_STATE_BUTTON = 0x664A3A24;
+    private static final int COLOR_STATE_BUTTON_HOVER = 0xAA4A3A24;
+    private static final int COLOR_STATE_SELECTED = 0xFFD49B3A;
+    private static final int COLOR_STATE_MENU = 0xF52F2418;
+    private static final int COLOR_STATE_MENU_HOVER = 0xFF6B5130;
+    private static final int COLOR_STATE_MENU_TEXT = 0xFFF8EAC5;
+    private static final int COLOR_STATE_MENU_BORDER = 0xFFE0BD70;
 
     private static final int CLOSE_X = GUI_WIDTH - 24;
     private static final int CLOSE_Y = 2;
@@ -87,6 +106,23 @@ public class FriendlyKombuchaScreen extends Screen {
     private double scrollOffset;
     private boolean draggingScrollbar;
     private double scrollbarDragOffset;
+    private int openStateCategory = -1;
+
+    private static final String[] STATE_CATEGORY_KEYS = {
+            "screen.kombucha.state.movement",
+            "screen.kombucha.state.combat",
+            "screen.kombucha.state.attack"
+    };
+    private static final String[][] STATE_OPTION_KEYS = {
+            {"screen.kombucha.state.follow", "screen.kombucha.state.stay", "screen.kombucha.state.patrol"},
+            {"screen.kombucha.state.defend", "screen.kombucha.state.passive", "screen.kombucha.state.aggressive"},
+            {"screen.kombucha.state.melee", "screen.kombucha.state.ranged"}
+    };
+    private static final String[][] STATE_BUTTON_OPTION_KEYS = {
+            {"screen.kombucha.state.follow", "screen.kombucha.state.stay", "screen.kombucha.state.patrol.short"},
+            STATE_OPTION_KEYS[1],
+            STATE_OPTION_KEYS[2]
+    };
 
     public FriendlyKombuchaScreen(FriendlyKombuchaMonster kombucha) {
         super(Component.translatable("screen.kombucha.title"));
@@ -138,6 +174,7 @@ public class FriendlyKombuchaScreen extends Screen {
         graphics.pose().popMatrix();
 
         drawPanelLabels(graphics, mouseX, mouseY);
+        drawStatePanel(graphics, mouseX, mouseY);
         if (isInside(mouseX - leftPos, mouseY - topPos,
                 EXPERIENCE_BAR_X, EXPERIENCE_BAR_Y, EXPERIENCE_BAR_WIDTH, EXPERIENCE_BAR_HEIGHT)) {
             graphics.setTooltipForNextFrame(
@@ -177,6 +214,99 @@ public class FriendlyKombuchaScreen extends Screen {
         graphics.disableScissor();
 
         drawScrollbar(graphics, mouseX, mouseY);
+    }
+
+    private void drawStatePanel(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        int relativeMouseX = mouseX - leftPos;
+        int relativeMouseY = mouseY - topPos;
+        graphics.text(font, Component.translatable("screen.kombucha.states"),
+                leftPos + STATE_X + 4, topPos + STATE_TITLE_Y, COLOR_TITLE, false);
+
+        for (int category = 0; category < STATE_CATEGORY_KEYS.length; category++) {
+            int buttonY = STATE_FIRST_ROW_Y + STATE_ROW_SPACING * category;
+            int selected = getSelectedState(category);
+            boolean hovered = isInside(relativeMouseX, relativeMouseY,
+                    STATE_BUTTON_X, buttonY, STATE_BUTTON_WIDTH, STATE_BUTTON_HEIGHT);
+            graphics.text(font, Component.translatable(STATE_CATEGORY_KEYS[category]),
+                    leftPos + STATE_LABEL_X, topPos + buttonY + 3, COLOR_MUTED, false);
+            graphics.fill(leftPos + STATE_BUTTON_X, topPos + buttonY,
+                    leftPos + STATE_BUTTON_X + STATE_BUTTON_WIDTH,
+                    topPos + buttonY + STATE_BUTTON_HEIGHT,
+                    hovered ? COLOR_STATE_BUTTON_HOVER : COLOR_STATE_BUTTON);
+            String buttonText = Component.translatable(STATE_BUTTON_OPTION_KEYS[category][selected]).getString();
+            graphics.text(font, font.plainSubstrByWidth(buttonText, STATE_BUTTON_WIDTH - 8),
+                    leftPos + STATE_BUTTON_X + 4, topPos + buttonY + 3, COLOR_TEXT, false);
+        }
+
+        if (openStateCategory >= 0) {
+            drawStateMenu(graphics, openStateCategory, relativeMouseX, relativeMouseY);
+        }
+    }
+
+    private void drawStateMenu(GuiGraphicsExtractor graphics, int category, int mouseX, int mouseY) {
+        int menuX = STATE_X;
+        int menuY = STATE_FIRST_ROW_Y + STATE_ROW_SPACING * category;
+        int menuWidth = STATE_MENU_WIDTH;
+        graphics.fill(leftPos + menuX - 1, topPos + menuY - 1,
+                leftPos + menuX + menuWidth + 1,
+                topPos + menuY + STATE_OPTION_HEIGHT * STATE_OPTION_KEYS[category].length + 1,
+                COLOR_STATE_MENU_BORDER);
+        graphics.fill(leftPos + menuX, topPos + menuY,
+                leftPos + menuX + menuWidth,
+                topPos + menuY + STATE_OPTION_HEIGHT * STATE_OPTION_KEYS[category].length,
+                COLOR_STATE_MENU);
+
+        int selected = getSelectedState(category);
+        for (int option = 0; option < STATE_OPTION_KEYS[category].length; option++) {
+            int optionY = menuY + STATE_OPTION_HEIGHT * option;
+            boolean hovered = isInside(mouseX, mouseY, menuX, optionY, menuWidth, STATE_OPTION_HEIGHT);
+            if (option == selected) {
+                graphics.fill(leftPos + menuX, topPos + optionY,
+                        leftPos + menuX + menuWidth, topPos + optionY + STATE_OPTION_HEIGHT,
+                        COLOR_STATE_SELECTED);
+            } else if (hovered) {
+                graphics.fill(leftPos + menuX, topPos + optionY,
+                        leftPos + menuX + menuWidth, topPos + optionY + STATE_OPTION_HEIGHT,
+                        COLOR_STATE_MENU_HOVER);
+            }
+            graphics.text(font, Component.translatable(STATE_OPTION_KEYS[category][option]),
+                    leftPos + menuX + STATE_OPTION_PADDING, topPos + optionY + 2, COLOR_STATE_MENU_TEXT, true);
+        }
+    }
+
+    private int getSelectedState(int category) {
+        return switch (category) {
+            case FriendlyKombuchaMonster.STATE_MOVEMENT -> kombucha.getMovementMode().ordinal();
+            case FriendlyKombuchaMonster.STATE_COMBAT -> kombucha.getCombatMode().ordinal();
+            case FriendlyKombuchaMonster.STATE_ATTACK -> kombucha.getAttackMode().ordinal();
+            default -> 0;
+        };
+    }
+
+    private boolean clickStatePanel(int x, int y) {
+        if (openStateCategory >= 0) {
+            int menuX = STATE_X;
+            int menuY = STATE_FIRST_ROW_Y + STATE_ROW_SPACING * openStateCategory;
+            if (isInside(x, y, menuX, menuY, STATE_MENU_WIDTH,
+                    STATE_OPTION_HEIGHT * STATE_OPTION_KEYS[openStateCategory].length)) {
+                int option = (y - menuY) / STATE_OPTION_HEIGHT;
+                ClientPacketDistributor.sendToServer(new FriendlyKombuchaStatePayload(
+                        kombucha.getId(), openStateCategory, option));
+                openStateCategory = -1;
+                return true;
+            }
+            openStateCategory = -1;
+            return true;
+        }
+
+        for (int category = 0; category < STATE_CATEGORY_KEYS.length; category++) {
+            int buttonY = STATE_FIRST_ROW_Y + STATE_ROW_SPACING * category;
+            if (isInside(x, y, STATE_BUTTON_X, buttonY, STATE_BUTTON_WIDTH, STATE_BUTTON_HEIGHT)) {
+                openStateCategory = category;
+                return true;
+            }
+        }
+        return false;
     }
 
     private void drawScrollbar(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
@@ -341,6 +471,10 @@ public class FriendlyKombuchaScreen extends Screen {
             int y = (int) event.y() - topPos;
             if (isInside(x, y, CLOSE_X, CLOSE_Y, CLOSE_WIDTH, CLOSE_HEIGHT)) {
                 onClose();
+                return true;
+            }
+
+            if (clickStatePanel(x, y)) {
                 return true;
             }
 

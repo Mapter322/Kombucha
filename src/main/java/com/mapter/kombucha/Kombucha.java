@@ -8,12 +8,12 @@ import com.mapter.kombucha.block.TeaType;
 import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
-import com.mapter.kombucha.entity.SpoiledCombuchaMonster;
+import com.mapter.kombucha.entity.SpoiledKombuchaMonster;
 import com.mapter.kombucha.entity.FriendlyKombuchaMonster;
-import com.mapter.kombucha.entity.EnderCombuchaMonster;
+import com.mapter.kombucha.entity.EnderKombuchaMonster;
 import com.mapter.kombucha.entity.EnderCombuchaProjectile;
 import com.mapter.kombucha.entity.MagmaCombuchaProjectile;
-import com.mapter.kombucha.entity.NetherCombuchaMonster;
+import com.mapter.kombucha.entity.NetherKombuchaMonster;
 import com.mapter.kombucha.entity.SlimeCombuchaProjectile;
 import com.mapter.kombucha.effect.ModEffects;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
@@ -22,6 +22,7 @@ import com.mapter.kombucha.item.LivingCombuchaShroomItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
 import com.mapter.kombucha.item.EmptyCombuchaBottleItem;
 import com.mapter.kombucha.network.FriendlyKombuchaUpgradePayload;
+import com.mapter.kombucha.network.FriendlyKombuchaStatePayload;
 import com.mapter.kombucha.sound.ModSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.component.DataComponents;
@@ -37,7 +38,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.component.Consumables;
@@ -75,20 +75,20 @@ public class Kombucha {
         LOOT_FUNCTIONS.register("copy_jar_data", () -> CopyJarDataFunction.CODEC);
     }
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpoiledCombuchaMonster>> SPOILED_COMBUCHA_MONSTER =
-            ENTITY_TYPES.registerEntityType("spoiled_combucha_monster", SpoiledCombuchaMonster::new, MobCategory.MONSTER,
+    public static final DeferredHolder<EntityType<?>, EntityType<SpoiledKombuchaMonster>> SPOILED_COMBUCHA_MONSTER =
+            ENTITY_TYPES.registerEntityType("spoiled_combucha_monster", SpoiledKombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).notInPeaceful());
 
     public static final DeferredHolder<EntityType<?>, EntityType<FriendlyKombuchaMonster>> FRIENDLY_KOMBUCHA_MONSTER =
             ENTITY_TYPES.registerEntityType("friendly_kombucha_monster", FriendlyKombuchaMonster::new, MobCategory.CREATURE,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<NetherCombuchaMonster>> NETHER_COMBUCHA_MONSTER =
-            ENTITY_TYPES.registerEntityType("nether_combucha_monster", NetherCombuchaMonster::new, MobCategory.MONSTER,
+    public static final DeferredHolder<EntityType<?>, EntityType<NetherKombuchaMonster>> NETHER_COMBUCHA_MONSTER =
+            ENTITY_TYPES.registerEntityType("nether_combucha_monster", NetherKombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).fireImmune().notInPeaceful());
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EnderCombuchaMonster>> ENDER_COMBUCHA_MONSTER =
-            ENTITY_TYPES.registerEntityType("ender_combucha_monster", EnderCombuchaMonster::new, MobCategory.MONSTER,
+    public static final DeferredHolder<EntityType<?>, EntityType<EnderKombuchaMonster>> ENDER_COMBUCHA_MONSTER =
+            ENTITY_TYPES.registerEntityType("ender_combucha_monster", EnderKombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).fireImmune().notInPeaceful());
 
     public static final DeferredHolder<EntityType<?>, EntityType<SlimeCombuchaProjectile>> SLIME_COMBUCHA_PROJECTILE =
@@ -297,10 +297,10 @@ public class Kombucha {
     }
 
     private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-        event.put(SPOILED_COMBUCHA_MONSTER.get(), SpoiledCombuchaMonster.createAttributes().build());
+        event.put(SPOILED_COMBUCHA_MONSTER.get(), SpoiledKombuchaMonster.createAttributes().build());
         event.put(FRIENDLY_KOMBUCHA_MONSTER.get(), FriendlyKombuchaMonster.createAttributes().build());
-        event.put(NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonster.createAttributes().build());
-        event.put(ENDER_COMBUCHA_MONSTER.get(), EnderCombuchaMonster.createAttributes().build());
+        event.put(NETHER_COMBUCHA_MONSTER.get(), NetherKombuchaMonster.createAttributes().build());
+        event.put(ENDER_COMBUCHA_MONSTER.get(), EnderKombuchaMonster.createAttributes().build());
     }
 
     private static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
@@ -322,7 +322,18 @@ public class Kombucha {
                             || kombucha.distanceToSqr(context.player()) > 64.0D) {
                         return;
                     }
-                    kombucha.upgradeStat(payload.stat());
+                     kombucha.upgradeStat(payload.stat());
+                 }));
+        event.registrar("1").playToServer(FriendlyKombuchaStatePayload.TYPE,
+                FriendlyKombuchaStatePayload.STREAM_CODEC, (payload, context) -> context.enqueueWork(() -> {
+                    if (!(context.player().level().getEntity(payload.entityId())
+                            instanceof FriendlyKombuchaMonster kombucha)
+                            || !kombucha.isTame()
+                            || !kombucha.isOwnedBy(context.player())
+                            || kombucha.distanceToSqr(context.player()) > 64.0D) {
+                        return;
+                    }
+                    kombucha.setState(payload.category(), payload.state());
                 }));
     }
 
