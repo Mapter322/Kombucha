@@ -6,10 +6,12 @@ import com.mapter.kombucha.client.model.SpoiledCombuchaMonsterModel;
 import com.mapter.kombucha.client.model.FriendlyKombuchaMonsterModel;
 import com.mapter.kombucha.client.model.EnderCombuchaMonsterModel;
 import com.mapter.kombucha.client.model.NetherCombuchaMonsterModel;
+import com.mapter.kombucha.client.model.CaveKombuchaMonsterModel;
 import com.mapter.kombucha.client.renderer.entity.SpoiledCombuchaMonsterRenderer;
 import com.mapter.kombucha.client.renderer.entity.FriendlyKombuchaMonsterRenderer;
 import com.mapter.kombucha.client.renderer.entity.EnderCombuchaMonsterRenderer;
 import com.mapter.kombucha.client.renderer.entity.NetherCombuchaMonsterRenderer;
+import com.mapter.kombucha.client.renderer.entity.CaveKombuchaMonsterRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -29,6 +31,7 @@ public class KombuchaClient {
         event.registerEntityRenderer(Kombucha.SPOILED_COMBUCHA_MONSTER.get(), SpoiledCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.FRIENDLY_KOMBUCHA_MONSTER.get(), FriendlyKombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.NETHER_COMBUCHA_MONSTER.get(), NetherCombuchaMonsterRenderer::new);
+        event.registerEntityRenderer(Kombucha.CAVE_KOMBUCHA_MONSTER.get(), CaveKombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.ENDER_COMBUCHA_MONSTER.get(), EnderCombuchaMonsterRenderer::new);
         event.registerEntityRenderer(Kombucha.SLIME_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, false));
         event.registerEntityRenderer(Kombucha.MAGMA_COMBUCHA_PROJECTILE.get(), context -> new ThrownItemRenderer<>(context, 0.7F, true));
@@ -40,6 +43,7 @@ public class KombuchaClient {
         event.registerLayerDefinition(FriendlyKombuchaMonsterModel.LAYER_LOCATION, FriendlyKombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(BabyFriendlyKombuchaMonsterModel.LAYER_LOCATION, BabyFriendlyKombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(NetherCombuchaMonsterModel.LAYER_LOCATION, NetherCombuchaMonsterModel::createBodyLayer);
+        event.registerLayerDefinition(CaveKombuchaMonsterModel.LAYER_LOCATION, CaveKombuchaMonsterModel::createBodyLayer);
         event.registerLayerDefinition(EnderCombuchaMonsterModel.LAYER_LOCATION, EnderCombuchaMonsterModel::createBodyLayer);
     }
 }

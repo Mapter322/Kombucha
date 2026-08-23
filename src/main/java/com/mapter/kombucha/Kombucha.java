@@ -9,6 +9,7 @@ import com.mapter.kombucha.block.WaterJarBlock;
 import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
 import com.mapter.kombucha.entity.SpoiledKombuchaMonster;
+import com.mapter.kombucha.entity.CaveKombuchaMonster;
 import com.mapter.kombucha.entity.FriendlyKombuchaMonster;
 import com.mapter.kombucha.entity.EnderKombuchaMonster;
 import com.mapter.kombucha.entity.EnderCombuchaProjectile;
@@ -79,6 +80,10 @@ public class Kombucha {
             ENTITY_TYPES.registerEntityType("spoiled_combucha_monster", SpoiledKombuchaMonster::new, MobCategory.MONSTER,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).notInPeaceful());
 
+    public static final DeferredHolder<EntityType<?>, EntityType<CaveKombuchaMonster>> CAVE_KOMBUCHA_MONSTER =
+            ENTITY_TYPES.registerEntityType("cave_kombucha_monster", CaveKombuchaMonster::new, MobCategory.MONSTER,
+                    b -> b.sized(1.0F, 1.0F).clientTrackingRange(8).notInPeaceful());
+
     public static final DeferredHolder<EntityType<?>, EntityType<FriendlyKombuchaMonster>> FRIENDLY_KOMBUCHA_MONSTER =
             ENTITY_TYPES.registerEntityType("friendly_kombucha_monster", FriendlyKombuchaMonster::new, MobCategory.CREATURE,
                     b -> b.sized(1.0F, 1.0F).clientTrackingRange(8));
@@ -106,6 +111,10 @@ public class Kombucha {
     public static final DeferredItem<Item> SPOILED_COMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
             "spoiled_combucha_monster_spawn_egg", SpawnEggItem::new,
             () -> new Item.Properties().spawnEgg(SPOILED_COMBUCHA_MONSTER.get()));
+
+    public static final DeferredItem<Item> CAVE_KOMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
+            "cave_kombucha_monster_spawn_egg", SpawnEggItem::new,
+            () -> new Item.Properties().spawnEgg(CAVE_KOMBUCHA_MONSTER.get()));
 
     public static final DeferredItem<Item> FRIENDLY_KOMBUCHA_MONSTER_SPAWN_EGG = ITEMS.registerItem(
             "friendly_kombucha_monster_spawn_egg", SpawnEggItem::new,
@@ -268,6 +277,7 @@ public class Kombucha {
                         output.accept(LAVA_JAR_ITEM.get());
 
                         output.accept(SPOILED_COMBUCHA_MONSTER_SPAWN_EGG.get());
+                        output.accept(CAVE_KOMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(FRIENDLY_KOMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(NETHER_COMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(ENDER_COMBUCHA_MONSTER_SPAWN_EGG.get());
@@ -298,6 +308,7 @@ public class Kombucha {
 
     private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
         event.put(SPOILED_COMBUCHA_MONSTER.get(), SpoiledKombuchaMonster.createAttributes().build());
+        event.put(CAVE_KOMBUCHA_MONSTER.get(), CaveKombuchaMonster.createAttributes().build());
         event.put(FRIENDLY_KOMBUCHA_MONSTER.get(), FriendlyKombuchaMonster.createAttributes().build());
         event.put(NETHER_COMBUCHA_MONSTER.get(), NetherKombuchaMonster.createAttributes().build());
         event.put(ENDER_COMBUCHA_MONSTER.get(), EnderKombuchaMonster.createAttributes().build());
@@ -305,6 +316,9 @@ public class Kombucha {
 
     private static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(SPOILED_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(CAVE_KOMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(NETHER_COMBUCHA_MONSTER.get(), SpawnPlacementTypes.ON_GROUND,
