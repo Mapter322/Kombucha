@@ -91,5 +91,7 @@
     "screen.kombucha.perk.increased_jump": "High Step",
     "screen.kombucha.perk.increased_jump.description": "Allows the kombucha to climb blocks up to %s blocks high.",
     "screen.kombucha.perk.fall_immunity": "Fall Damage Immunity",
-    "screen.kombucha.perk.fall_immunity.description": "The kombucha takes no fall damage."
+    "screen.kombucha.perk.fall_immunity.description": "The kombucha takes no fall damage.",
+    "screen.kombucha.perk.regeneration": "Regeneration",
+    "screen.kombucha.perk.regeneration.description": "Restores 1 HP every %s seconds."
 }

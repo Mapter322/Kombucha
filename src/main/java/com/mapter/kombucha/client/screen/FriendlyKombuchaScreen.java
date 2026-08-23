@@ -89,6 +89,7 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int COLOR_PLUS_HOVER = 0xFF3F321F;
     private static final int COLOR_PERK_INCREASED_JUMP = 0xFF00AAAA;
     private static final int COLOR_PERK_FALL_IMMUNITY = 0xFF245A75;
+    private static final int COLOR_PERK_REGENERATION = 0xFF3F8F4F;
     private static final int COLOR_PERK_OUTLINE = 0xD9F8EAC5;
     private static final int COLOR_STATE_BUTTON = 0x664A3A24;
     private static final int COLOR_STATE_BUTTON_HOVER = 0xAA4A3A24;
@@ -241,6 +242,22 @@ public class FriendlyKombuchaScreen extends Screen {
             if (isInside(mouseX, mouseY, perksX, hoveredPerkY, INFO_COLUMN_WIDTH - 14, STAT_ROW_SPACING)) {
                 graphics.setTooltipForNextFrame(
                         Component.translatable("screen.kombucha.perk.fall_immunity.description"), mouseX, mouseY);
+            }
+            perkY += STAT_ROW_SPACING;
+            hasPerk = true;
+        }
+
+        int regenerationLevel = kombucha.getRegenerationPerkLevel();
+        if (regenerationLevel > 0) {
+            String perkName = Component.translatable("screen.kombucha.perk.regeneration").getString();
+            String perkText = font.plainSubstrByWidth(perkName + " " + toRoman(regenerationLevel), INFO_COLUMN_WIDTH - 14);
+            drawOutlinedPerkText(graphics, perkText, perksX, perkY, COLOR_PERK_REGENERATION);
+            int hoveredPerkY = perkY - (int) scrollOffset;
+            if (isInside(mouseX, mouseY, perksX, hoveredPerkY, INFO_COLUMN_WIDTH - 14, STAT_ROW_SPACING)) {
+                graphics.setTooltipForNextFrame(
+                        Component.translatable("screen.kombucha.perk.regeneration.description",
+                                String.format(Locale.ROOT, "%.0f", kombucha.getRegenerationIntervalTicks() / 20.0F)),
+                        mouseX, mouseY);
             }
             hasPerk = true;
         }

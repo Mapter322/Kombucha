@@ -24,6 +24,7 @@ public final class KombuchaClientEvents {
                 || !(event.getTarget() instanceof FriendlyKombuchaMonster kombucha)
                 || event.getItemStack().is(Items.SUGAR)
                 || isKombuchaMushroom(event.getItemStack())
+                || isRegenerationMushroom(event.getItemStack())
                 || !kombucha.isTame()) {
             return;
         }
@@ -39,5 +40,9 @@ public final class KombuchaClientEvents {
                 || stack.is(Kombucha.NETHER_COMBUCHA_SHROOM.get())
                 || stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get())
                 || stack.is(Kombucha.LIVING_COMBUCHA_SHROOM.get());
+    }
+
+    private static boolean isRegenerationMushroom(ItemStack stack) {
+        return stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get());
     }
 }

@@ -91,5 +91,7 @@
     "screen.kombucha.perk.increased_jump": "Улучшенный шаг",
     "screen.kombucha.perk.increased_jump.description": "Позволяет комбуче забираться на блоки высотой до %s.",
     "screen.kombucha.perk.fall_immunity": "Невосприимчивость к падениям",
-    "screen.kombucha.perk.fall_immunity.description": "Комбуча не получает урон от падений."
+    "screen.kombucha.perk.fall_immunity.description": "Комбуча не получает урон от падений.",
+    "screen.kombucha.perk.regeneration": "Регенерация",
+    "screen.kombucha.perk.regeneration.description": "Восстанавливает 1 HP раз в %s сек."
 }
