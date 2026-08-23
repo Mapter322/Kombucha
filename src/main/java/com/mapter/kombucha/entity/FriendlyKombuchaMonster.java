@@ -30,6 +30,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAttackMob {
+    public static final int MELEE_ATTACK_INTERVAL_TICKS = 20;
+    public static final int RANGED_ATTACK_INTERVAL_TICKS = 45;
+    public static final float RANGED_PROJECTILE_BASE_SPEED = 0.8F;
+    public static final float RANGED_PROJECTILE_POWER_SCALE = 0.2667F;
+    public static final float RANGED_PROJECTILE_MIN_POWER = 0.1F;
+    public static final float RANGED_PROJECTILE_MAX_POWER = 1.0F;
+
     private static final EntityDataAccessor<Integer> SHOOT_TIME =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private double rangedTargetX;
@@ -44,7 +51,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CombuchaRangedAttackGoal(this, 1.0, 45, 12.0F));
+        this.goalSelector.addGoal(1, new CombuchaRangedAttackGoal(this, 1.0, RANGED_ATTACK_INTERVAL_TICKS, 12.0F));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
         this.goalSelector.addGoal(3, new FriendlyKombuchaFollowOwnerGoal(this, 1.0, 3.0F, 2.0F));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
@@ -97,6 +104,10 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return this.entityData.get(SHOOT_TIME);
     }
 
+    public static float getRangedProjectileSpeed(float power) {
+        return RANGED_PROJECTILE_BASE_SPEED + power * RANGED_PROJECTILE_POWER_SCALE;
+    }
+
     @Override
     public void performRangedAttack(net.minecraft.world.entity.LivingEntity target, float power) {
         if (this.level() instanceof ServerLevel) {
@@ -115,7 +126,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         SlimeCombuchaProjectile projectile = new SlimeCombuchaProjectile(serverLevel, this);
         Projectile.spawnProjectileUsingShoot(projectile, serverLevel, new ItemStack(Items.SLIME_BALL),
                 xd, this.rangedTargetY + yo - projectile.getY(), zd,
-                0.8F + this.rangedPower * 0.2667F, 4.0F);
+                getRangedProjectileSpeed(this.rangedPower), 4.0F);
         this.playSound(SoundEvents.SLIME_ATTACK, 1.0F, 0.8F + this.random.nextFloat() * 0.2F);
     }
 

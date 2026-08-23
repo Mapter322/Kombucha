@@ -56,11 +56,15 @@
     "kombucha.hint.nether_needs_lava": "Адский микс работает только в банке с лавой",
     "kombucha.hint.tame": "Прикорми Комбучу сахаром",
     "screen.kombucha.title": "Комбуча",
-    "screen.kombucha.model": "Комбуча",
-    "screen.kombucha.stats": "Статы",
+    "screen.kombucha.characteristics": "Характеристики",
+    "screen.kombucha.perks": "Перки",
+    "screen.kombucha.perks.placeholder": "Пока нет",
     "screen.kombucha.speed": "Скорость",
-    "screen.kombucha.damage": "Урон",
-    "screen.kombucha.health": "ХП",
-    "screen.kombucha.commands": "Команды",
-    "screen.kombucha.commands.placeholder": "Скоро..."
+    "screen.kombucha.melee_damage": "Ближний урон",
+    "screen.kombucha.ranged_damage": "Дальний урон",
+    "screen.kombucha.projectile_speed": "Скор. снар.",
+    "screen.kombucha.melee_speed": "Скор. ближ.",
+    "screen.kombucha.ranged_speed": "Скор. дальн.",
+    "screen.kombucha.seconds": "с",
+    "screen.kombucha.health": "ХП"
 }

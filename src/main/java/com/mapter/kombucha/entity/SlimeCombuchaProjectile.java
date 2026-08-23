@@ -8,6 +8,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class SlimeCombuchaProjectile extends CombuchaBlobProjectile {
+    public static final float DAMAGE = 4.0F;
+
     public SlimeCombuchaProjectile(EntityType<? extends SlimeCombuchaProjectile> type, Level level) {
         super(type, level);
     }
@@ -23,6 +25,6 @@ public class SlimeCombuchaProjectile extends CombuchaBlobProjectile {
 
     @Override
     protected float getDamage() {
-        return 4.0F;
+        return DAMAGE;
     }
 }
