@@ -4,6 +4,7 @@ import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.component.FriendlyKombuchaPerkData;
 import com.mapter.kombucha.component.FriendlyKombuchaStateData;
 import com.mapter.kombucha.component.LivingShroomData;
+import com.mapter.kombucha.config.KombuchaConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
@@ -667,6 +668,11 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     private double getBabyStatMultiplier() {
         return isBaby() ? BABY_STAT_MULTIPLIER : 1.0D;
+    }
+
+    @Override
+    protected int getBabyStartAge() {
+        return -KombuchaConfig.BABY_GROWTH_TICKS.get();
     }
 
     @Override

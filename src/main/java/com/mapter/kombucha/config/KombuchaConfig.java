@@ -17,5 +17,9 @@ public class KombuchaConfig {
             .comment("Ticks until the mushroom spoils (24000 = one Minecraft day).")
             .defineInRange("ticksToSpoiled", 24000, 1, Integer.MAX_VALUE);
 
+    public static final ModConfigSpec.IntValue BABY_GROWTH_TICKS = BUILDER
+            .comment("Ticks until a baby friendly kombucha grows up (24000 = one Minecraft day).")
+            .defineInRange("babyGrowthTicks", 24000, 1, Integer.MAX_VALUE);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 }
