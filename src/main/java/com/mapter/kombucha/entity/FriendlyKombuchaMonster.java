@@ -294,13 +294,11 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public float getRangedProjectileSpeedWithUpgrades(float power) {
-        return Math.max(MIN_PROJECTILE_SPEED, getRangedProjectileSpeed(power) - getProjectileSpeedUpgrades() * 0.05F);
+        return Math.max(MIN_PROJECTILE_SPEED, getRangedProjectileSpeed(power) + getProjectileSpeedUpgrades() * 0.05F);
     }
 
     public boolean canUpgradeProjectileSpeed() {
-        float nextMin = getRangedProjectileSpeed(RANGED_PROJECTILE_MIN_POWER)
-                - (getProjectileSpeedUpgrades() + 1) * 0.05F;
-        return nextMin > MIN_PROJECTILE_SPEED;
+        return true;
     }
 
     @Override
