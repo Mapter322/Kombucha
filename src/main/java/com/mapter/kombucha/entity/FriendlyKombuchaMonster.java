@@ -68,13 +68,21 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     public static final int EXPERIENCE_PER_KILL = 5;
     public static final int EXPERIENCE_PER_FEED = 2;
     private static final int BASE_LEVEL_EXPERIENCE = 10;
+    public static final int MAX_LEVEL = 40;
     private static final double BASE_HEALTH = 20.0D;
+    private static final double MAX_HEALTH = 80.0D;
+    private static final int MAX_HEALTH_UPGRADES = 30;
     private static final double BASE_SPEED = 0.20D;
     private static final double[] MOVEMENT_SPEED_BY_UPGRADE = {
             0.20D, 0.25D, 0.29D, 0.32D, 0.34D, 0.35D,
             0.36D, 0.37D, 0.38D, 0.39D, 0.40D
     };
     private static final double BASE_MELEE_DAMAGE = 6.0D;
+    private static final int MAX_MELEE_DAMAGE_UPGRADES = 10;
+    private static final int MAX_RANGED_DAMAGE_UPGRADES = 24;
+    private static final int MAX_MELEE_SPEED_UPGRADES = 5;
+    private static final int MAX_RANGED_SPEED_UPGRADES = 10;
+    private static final int MAX_PROJECTILE_SPEED_UPGRADES = 5;
     public static final int STAT_HEALTH = 0;
     public static final int STAT_SPEED = 1;
     public static final int STAT_MELEE_DAMAGE = 2;
@@ -294,11 +302,12 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public float getRangedProjectileSpeedWithUpgrades(float power) {
-        return Math.max(MIN_PROJECTILE_SPEED, getRangedProjectileSpeed(power) + getProjectileSpeedUpgrades() * 0.05F);
+        int upgrades = Math.min(getProjectileSpeedUpgrades(), MAX_PROJECTILE_SPEED_UPGRADES);
+        return Math.max(MIN_PROJECTILE_SPEED, getRangedProjectileSpeed(power) + upgrades * 0.05F);
     }
 
     public boolean canUpgradeProjectileSpeed() {
-        return true;
+        return getProjectileSpeedUpgrades() < MAX_PROJECTILE_SPEED_UPGRADES;
     }
 
     @Override
@@ -347,6 +356,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public int getExperienceToNextLevel() {
+        if (getLevel() >= MAX_LEVEL) {
+            return 0;
+        }
         return Math.max(1, (int) Math.ceil(BASE_LEVEL_EXPERIENCE * Math.pow(1.1D, getLevel() - 1)));
     }
 
@@ -356,6 +368,19 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public int getHealthUpgrades() {
         return this.entityData.get(HEALTH_UPGRADES);
+    }
+
+    public boolean canUpgradeStat(int stat) {
+        return switch (stat) {
+            case STAT_HEALTH -> getHealthUpgrades() < MAX_HEALTH_UPGRADES;
+            case STAT_SPEED -> canUpgradeSpeed();
+            case STAT_MELEE_DAMAGE -> getMeleeDamageUpgrades() < MAX_MELEE_DAMAGE_UPGRADES;
+            case STAT_RANGED_DAMAGE -> getRangedDamageUpgrades() < MAX_RANGED_DAMAGE_UPGRADES;
+            case STAT_MELEE_SPEED -> getMeleeSpeedUpgrades() < MAX_MELEE_SPEED_UPGRADES;
+            case STAT_RANGED_SPEED -> getRangedSpeedUpgrades() < MAX_RANGED_SPEED_UPGRADES;
+            case STAT_PROJECTILE_SPEED -> canUpgradeProjectileSpeed();
+            default -> false;
+        };
     }
 
     public int getSpeedUpgrades() {
@@ -475,28 +500,34 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     public float getRangedDamage() {
-        return SlimeCombuchaProjectile.DAMAGE + getRangedDamageUpgrades() * 0.5F;
+        int upgrades = Math.min(getRangedDamageUpgrades(), MAX_RANGED_DAMAGE_UPGRADES);
+        return SlimeCombuchaProjectile.DAMAGE + upgrades * 0.5F;
     }
 
     public int getMeleeAttackIntervalTicks() {
-        return Math.max(1, MELEE_ATTACK_INTERVAL_TICKS - getMeleeSpeedUpgrades() * 2);
+        int upgrades = Math.min(getMeleeSpeedUpgrades(), MAX_MELEE_SPEED_UPGRADES);
+        return Math.max(1, MELEE_ATTACK_INTERVAL_TICKS - upgrades * 2);
     }
 
     public int getRangedAttackIntervalTicks() {
-        return Math.max(1, RANGED_ATTACK_INTERVAL_TICKS - getRangedSpeedUpgrades() * 2);
+        int upgrades = Math.min(getRangedSpeedUpgrades(), MAX_RANGED_SPEED_UPGRADES);
+        return Math.max(1, RANGED_ATTACK_INTERVAL_TICKS - upgrades * 2);
     }
 
     public void addExperience(int amount) {
-        if (this.level().isClientSide() || amount <= 0) {
+        if (this.level().isClientSide() || amount <= 0 || getLevel() >= MAX_LEVEL) {
             return;
         }
         int experience = getExperience() + amount;
         int level = getLevel();
         int points = getAvailableUpgradePoints();
-        while (experience >= getExperienceToNextLevel(level)) {
+        while (level < MAX_LEVEL && experience >= getExperienceToNextLevel(level)) {
             experience -= getExperienceToNextLevel(level);
             level++;
             points++;
+        }
+        if (level >= MAX_LEVEL) {
+            experience = 0;
         }
         this.entityData.set(EXPERIENCE, experience);
         this.entityData.set(LEVEL, level);
@@ -525,10 +556,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         if (accessor == null) {
             return false;
         }
-        if (stat == STAT_SPEED && !canUpgradeSpeed()) {
-            return false;
-        }
-        if (stat == STAT_PROJECTILE_SPEED && !canUpgradeProjectileSpeed()) {
+        if (!canUpgradeStat(stat)) {
             return false;
         }
         this.entityData.set(accessor, this.entityData.get(accessor) + 1);
@@ -538,9 +566,11 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     private void applyUpgradedAttributes() {
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH + getHealthUpgrades() * 2.0D);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(
+                Math.min(MAX_HEALTH, BASE_HEALTH + getHealthUpgrades() * 2.0D));
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
-        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(BASE_MELEE_DAMAGE + getMeleeDamageUpgrades());
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(
+                BASE_MELEE_DAMAGE + Math.min(getMeleeDamageUpgrades(), MAX_MELEE_DAMAGE_UPGRADES));
         this.setHealth(Math.min(this.getHealth(), this.getMaxHealth()));
     }
 
@@ -552,16 +582,25 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
-        this.entityData.set(EXPERIENCE, input.getIntOr("KombuchaExperience", 0));
-        this.entityData.set(LEVEL, Math.max(1, input.getIntOr("KombuchaLevel", 1)));
+        int level = clampLevel(input.getIntOr("KombuchaLevel", 1));
+        this.entityData.set(EXPERIENCE, level >= MAX_LEVEL
+                ? 0 : Math.max(0, input.getIntOr("KombuchaExperience", 0)));
+        this.entityData.set(LEVEL, level);
         this.entityData.set(UPGRADE_POINTS, input.getIntOr("KombuchaUpgradePoints", 0));
-        this.entityData.set(HEALTH_UPGRADES, input.getIntOr("KombuchaHealthUpgrades", 0));
-        this.entityData.set(SPEED_UPGRADES, input.getIntOr("KombuchaSpeedUpgrades", 0));
-        this.entityData.set(MELEE_DAMAGE_UPGRADES, input.getIntOr("KombuchaMeleeDamageUpgrades", 0));
-        this.entityData.set(RANGED_DAMAGE_UPGRADES, input.getIntOr("KombuchaRangedDamageUpgrades", 0));
-        this.entityData.set(MELEE_SPEED_UPGRADES, input.getIntOr("KombuchaMeleeSpeedUpgrades", 0));
-        this.entityData.set(RANGED_SPEED_UPGRADES, input.getIntOr("KombuchaRangedSpeedUpgrades", 0));
-        this.entityData.set(PROJECTILE_SPEED_UPGRADES, input.getIntOr("KombuchaProjectileSpeedUpgrades", 0));
+        this.entityData.set(HEALTH_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaHealthUpgrades", 0), MAX_HEALTH_UPGRADES));
+        this.entityData.set(SPEED_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaSpeedUpgrades", 0), MOVEMENT_SPEED_BY_UPGRADE.length - 1));
+        this.entityData.set(MELEE_DAMAGE_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaMeleeDamageUpgrades", 0), MAX_MELEE_DAMAGE_UPGRADES));
+        this.entityData.set(RANGED_DAMAGE_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaRangedDamageUpgrades", 0), MAX_RANGED_DAMAGE_UPGRADES));
+        this.entityData.set(MELEE_SPEED_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaMeleeSpeedUpgrades", 0), MAX_MELEE_SPEED_UPGRADES));
+        this.entityData.set(RANGED_SPEED_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaRangedSpeedUpgrades", 0), MAX_RANGED_SPEED_UPGRADES));
+        this.entityData.set(PROJECTILE_SPEED_UPGRADES,
+                clampUpgradeCount(input.getIntOr("KombuchaProjectileSpeedUpgrades", 0), MAX_PROJECTILE_SPEED_UPGRADES));
         this.entityData.set(INCREASED_JUMP_PERK_LEVEL,
                 Math.max(0, Math.min(FriendlyKombuchaPerk.INCREASED_JUMP.getMaxLevel(),
                         input.getIntOr("KombuchaIncreasedJumpPerkLevel", 0))));
@@ -640,15 +679,21 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(ATTACK_MODE, data.attackMode());
         this.setOrderedToSit(getMovementMode() == MovementMode.STAY);
         this.patrolCenter = this.blockPosition();
-        this.entityData.set(LEVEL, data.level());
+        this.entityData.set(LEVEL, clampLevel(data.level()));
         this.entityData.set(UPGRADE_POINTS, data.upgradePoints());
-        this.entityData.set(HEALTH_UPGRADES, data.healthUpgrades());
-        this.entityData.set(SPEED_UPGRADES, data.speedUpgrades());
-        this.entityData.set(MELEE_DAMAGE_UPGRADES, data.meleeDamageUpgrades());
-        this.entityData.set(RANGED_DAMAGE_UPGRADES, data.rangedDamageUpgrades());
-        this.entityData.set(MELEE_SPEED_UPGRADES, data.meleeSpeedUpgrades());
-        this.entityData.set(RANGED_SPEED_UPGRADES, data.rangedSpeedUpgrades());
-        this.entityData.set(PROJECTILE_SPEED_UPGRADES, data.projectileSpeedUpgrades());
+        this.entityData.set(HEALTH_UPGRADES, clampUpgradeCount(data.healthUpgrades(), MAX_HEALTH_UPGRADES));
+        this.entityData.set(SPEED_UPGRADES,
+                clampUpgradeCount(data.speedUpgrades(), MOVEMENT_SPEED_BY_UPGRADE.length - 1));
+        this.entityData.set(MELEE_DAMAGE_UPGRADES,
+                clampUpgradeCount(data.meleeDamageUpgrades(), MAX_MELEE_DAMAGE_UPGRADES));
+        this.entityData.set(RANGED_DAMAGE_UPGRADES,
+                clampUpgradeCount(data.rangedDamageUpgrades(), MAX_RANGED_DAMAGE_UPGRADES));
+        this.entityData.set(MELEE_SPEED_UPGRADES,
+                clampUpgradeCount(data.meleeSpeedUpgrades(), MAX_MELEE_SPEED_UPGRADES));
+        this.entityData.set(RANGED_SPEED_UPGRADES,
+                clampUpgradeCount(data.rangedSpeedUpgrades(), MAX_RANGED_SPEED_UPGRADES));
+        this.entityData.set(PROJECTILE_SPEED_UPGRADES,
+                clampUpgradeCount(data.projectileSpeedUpgrades(), MAX_PROJECTILE_SPEED_UPGRADES));
         this.entityData.set(INCREASED_JUMP_PERK_LEVEL,
                 Math.max(0, Math.min(FriendlyKombuchaPerk.INCREASED_JUMP.getMaxLevel(),
                         data.perkData().increasedJumpLevel())));
@@ -720,7 +765,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             player.sendOverlayMessage(Component.translatable("kombucha.perk.received", this.getName(),
                     Component.translatable(perk.getDisplayNameKey()), currentLevel + 1)
                     .withStyle(ChatFormatting.GREEN));
-        } else {
+        } else if (getLevel() < MAX_LEVEL) {
             addExperience(getExperienceToNextLevel());
             player.sendOverlayMessage(Component.translatable("kombucha.perk.level_up", this.getName(), getLevel())
                     .withStyle(ChatFormatting.GREEN));
@@ -736,5 +781,13 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     private void applyPerkAttributes() {
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(getPerkStepHeight());
+    }
+
+    private static int clampUpgradeCount(int upgrades, int maximum) {
+        return Math.max(0, Math.min(upgrades, maximum));
+    }
+
+    private static int clampLevel(int level) {
+        return Math.max(1, Math.min(level, MAX_LEVEL));
     }
 }

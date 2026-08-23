@@ -82,6 +82,7 @@
     "screen.kombucha.health": "ХП",
     "screen.kombucha.level": "Уровень",
     "screen.kombucha.experience": "Опыт: %s / %s",
+    "screen.kombucha.max_level": "Максимальный уровень",
     "kombucha.hint.feed_cooldown": "Комбуча пока не хочет есть",
     "kombucha.progress.living_ready": "Живой гриб созрел. Открой банку!",
     "kombucha.hint.living_not_ready": "Живой гриб еще не созрел",
