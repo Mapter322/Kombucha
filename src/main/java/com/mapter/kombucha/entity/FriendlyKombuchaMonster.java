@@ -123,6 +123,8 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> INCREASED_JUMP_PERK_LEVEL =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> FALL_IMMUNITY_PERK_LEVEL =
+            SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MOVEMENT_MODE =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COMBAT_MODE =
@@ -273,6 +275,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         entityData.define(RANGED_SPEED_UPGRADES, 0);
         entityData.define(PROJECTILE_SPEED_UPGRADES, 0);
         entityData.define(INCREASED_JUMP_PERK_LEVEL, 0);
+        entityData.define(FALL_IMMUNITY_PERK_LEVEL, 0);
         entityData.define(MOVEMENT_MODE, MovementMode.FOLLOW.ordinal());
         entityData.define(COMBAT_MODE, CombatMode.DEFEND.ordinal());
         entityData.define(ATTACK_MODE, AttackMode.MELEE.ordinal());
@@ -414,6 +417,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     public int getPerkLevel(FriendlyKombuchaPerk perk) {
         return switch (perk) {
             case INCREASED_JUMP -> this.entityData.get(INCREASED_JUMP_PERK_LEVEL);
+            case FALL_IMMUNITY -> this.entityData.get(FALL_IMMUNITY_PERK_LEVEL);
         };
     }
 
@@ -428,6 +432,10 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             case 3 -> 2.5F;
             default -> 0.6F;
         };
+    }
+
+    public int getFallImmunityPerkLevel() {
+        return getPerkLevel(FriendlyKombuchaPerk.FALL_IMMUNITY);
     }
 
     public MovementMode getMovementMode() {
@@ -604,6 +612,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(INCREASED_JUMP_PERK_LEVEL,
                 Math.max(0, Math.min(FriendlyKombuchaPerk.INCREASED_JUMP.getMaxLevel(),
                         input.getIntOr("KombuchaIncreasedJumpPerkLevel", 0))));
+        this.entityData.set(FALL_IMMUNITY_PERK_LEVEL,
+                Math.max(0, Math.min(FriendlyKombuchaPerk.FALL_IMMUNITY.getMaxLevel(),
+                        input.getIntOr("KombuchaFallImmunityPerkLevel", 0))));
         this.entityData.set(MOVEMENT_MODE, input.getIntOr("KombuchaMovementMode", MovementMode.FOLLOW.ordinal()));
         this.entityData.set(COMBAT_MODE, input.getIntOr("KombuchaCombatMode", CombatMode.DEFEND.ordinal()));
         this.entityData.set(ATTACK_MODE, input.getIntOr("KombuchaAttackMode", AttackMode.MELEE.ordinal()));
@@ -630,6 +641,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         output.putInt("KombuchaRangedSpeedUpgrades", getRangedSpeedUpgrades());
         output.putInt("KombuchaProjectileSpeedUpgrades", getProjectileSpeedUpgrades());
         output.putInt("KombuchaIncreasedJumpPerkLevel", getIncreasedJumpPerkLevel());
+        output.putInt("KombuchaFallImmunityPerkLevel", getFallImmunityPerkLevel());
         output.putInt("KombuchaMovementMode", getMovementMode().ordinal());
         output.putInt("KombuchaCombatMode", getCombatMode().ordinal());
         output.putInt("KombuchaAttackMode", getAttackMode().ordinal());
@@ -663,8 +675,8 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
                 getRangedDamageUpgrades(), getMeleeSpeedUpgrades(), getRangedSpeedUpgrades(),
                 getProjectileSpeedUpgrades(), this.feedCooldown,
                 new FriendlyKombuchaStateData(this.isOrderedToSit(), getMovementMode().ordinal(),
-                        getCombatMode().ordinal(), getAttackMode().ordinal()),
-                new FriendlyKombuchaPerkData(getIncreasedJumpPerkLevel()));
+                         getCombatMode().ordinal(), getAttackMode().ordinal()),
+                new FriendlyKombuchaPerkData(getIncreasedJumpPerkLevel(), getFallImmunityPerkLevel()));
     }
 
     public void applyLivingShroomData(LivingShroomData data) {
@@ -697,6 +709,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(INCREASED_JUMP_PERK_LEVEL,
                 Math.max(0, Math.min(FriendlyKombuchaPerk.INCREASED_JUMP.getMaxLevel(),
                         data.perkData().increasedJumpLevel())));
+        this.entityData.set(FALL_IMMUNITY_PERK_LEVEL,
+                Math.max(0, Math.min(FriendlyKombuchaPerk.FALL_IMMUNITY.getMaxLevel(),
+                        data.perkData().fallImmunityLevel())));
         this.feedCooldown = data.feedCooldown();
         // the experience bar is the only thing that does not survive death
         this.entityData.set(EXPERIENCE, 0);
@@ -744,6 +759,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.ATTACK_DAMAGE, 6.0)
                 .add(Attributes.MOVEMENT_SPEED, BASE_SPEED)
+                .add(Attributes.FALL_DAMAGE_MULTIPLIER, 1.0)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -776,11 +792,14 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         int clampedLevel = Math.max(0, Math.min(perk.getMaxLevel(), level));
         switch (perk) {
             case INCREASED_JUMP -> this.entityData.set(INCREASED_JUMP_PERK_LEVEL, clampedLevel);
+            case FALL_IMMUNITY -> this.entityData.set(FALL_IMMUNITY_PERK_LEVEL, clampedLevel);
         }
     }
 
     private void applyPerkAttributes() {
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(getPerkStepHeight());
+        this.getAttribute(Attributes.FALL_DAMAGE_MULTIPLIER).setBaseValue(
+                getFallImmunityPerkLevel() > 0 ? 0.0D : 1.0D);
     }
 
     private static int clampUpgradeCount(int upgrades, int maximum) {

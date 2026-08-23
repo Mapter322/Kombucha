@@ -88,6 +88,7 @@ public class FriendlyKombuchaScreen extends Screen {
     private static final int COLOR_PLUS = 0xCC4A3A24;
     private static final int COLOR_PLUS_HOVER = 0xFF3F321F;
     private static final int COLOR_PERK_INCREASED_JUMP = 0xFF00AAAA;
+    private static final int COLOR_PERK_FALL_IMMUNITY = 0xFF245A75;
     private static final int COLOR_PERK_OUTLINE = 0xD9F8EAC5;
     private static final int COLOR_STATE_BUTTON = 0x664A3A24;
     private static final int COLOR_STATE_BUTTON_HOVER = 0xAA4A3A24;
@@ -214,20 +215,39 @@ public class FriendlyKombuchaScreen extends Screen {
         }
 
         int perksX = leftPos + INFO_X + INFO_COLUMN_WIDTH + INFO_DIVIDER + 7;
-        int perkLevel = kombucha.getIncreasedJumpPerkLevel();
-        if (perkLevel == 0) {
-            graphics.text(font, Component.translatable("screen.kombucha.perks.placeholder"),
-                    perksX, statsY, COLOR_MUTED, false);
-        } else {
+        int perkY = statsY;
+        boolean hasPerk = false;
+        int increasedJumpLevel = kombucha.getIncreasedJumpPerkLevel();
+        if (increasedJumpLevel > 0) {
             String perkName = Component.translatable("screen.kombucha.perk.increased_jump").getString();
-            String perkText = font.plainSubstrByWidth(perkName + " " + toRoman(perkLevel), INFO_COLUMN_WIDTH - 14);
-            drawOutlinedPerkText(graphics, perkText, perksX, statsY, COLOR_PERK_INCREASED_JUMP);
-            int perkY = statsY - (int) scrollOffset;
-            if (isInside(mouseX, mouseY, perksX, perkY, INFO_COLUMN_WIDTH - 14, STAT_ROW_SPACING)) {
+            String perkText = font.plainSubstrByWidth(perkName + " " + toRoman(increasedJumpLevel), INFO_COLUMN_WIDTH - 14);
+            drawOutlinedPerkText(graphics, perkText, perksX, perkY, COLOR_PERK_INCREASED_JUMP);
+            int hoveredPerkY = perkY - (int) scrollOffset;
+            if (isInside(mouseX, mouseY, perksX, hoveredPerkY, INFO_COLUMN_WIDTH - 14, STAT_ROW_SPACING)) {
                 graphics.setTooltipForNextFrame(
                         Component.translatable("screen.kombucha.perk.increased_jump.description",
                                 String.format(Locale.ROOT, "%.1f", kombucha.getPerkStepHeight())), mouseX, mouseY);
             }
+            perkY += STAT_ROW_SPACING;
+            hasPerk = true;
+        }
+
+        int fallImmunityLevel = kombucha.getFallImmunityPerkLevel();
+        if (fallImmunityLevel > 0) {
+            String perkName = Component.translatable("screen.kombucha.perk.fall_immunity").getString();
+            String perkText = font.plainSubstrByWidth(perkName + " " + toRoman(fallImmunityLevel), INFO_COLUMN_WIDTH - 14);
+            drawOutlinedPerkText(graphics, perkText, perksX, perkY, COLOR_PERK_FALL_IMMUNITY);
+            int hoveredPerkY = perkY - (int) scrollOffset;
+            if (isInside(mouseX, mouseY, perksX, hoveredPerkY, INFO_COLUMN_WIDTH - 14, STAT_ROW_SPACING)) {
+                graphics.setTooltipForNextFrame(
+                        Component.translatable("screen.kombucha.perk.fall_immunity.description"), mouseX, mouseY);
+            }
+            hasPerk = true;
+        }
+
+        if (!hasPerk) {
+            graphics.text(font, Component.translatable("screen.kombucha.perks.placeholder"),
+                    perksX, statsY, COLOR_MUTED, false);
         }
         graphics.pose().popMatrix();
         graphics.disableScissor();

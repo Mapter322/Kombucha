@@ -89,5 +89,7 @@
     "kombucha.perk.received": "%s received perk %s (level %s)",
     "kombucha.perk.level_up": "%s reached level %s",
     "screen.kombucha.perk.increased_jump": "High Step",
-    "screen.kombucha.perk.increased_jump.description": "Allows the kombucha to climb blocks up to %s blocks high."
+    "screen.kombucha.perk.increased_jump.description": "Allows the kombucha to climb blocks up to %s blocks high.",
+    "screen.kombucha.perk.fall_immunity": "Fall Damage Immunity",
+    "screen.kombucha.perk.fall_immunity.description": "The kombucha takes no fall damage."
 }
