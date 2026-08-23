@@ -93,5 +93,7 @@
     "screen.kombucha.perk.fall_immunity": "Fall Damage Immunity",
     "screen.kombucha.perk.fall_immunity.description": "The kombucha takes no fall damage.",
     "screen.kombucha.perk.regeneration": "Regeneration",
-    "screen.kombucha.perk.regeneration.description": "Restores 1 HP every %s seconds."
+    "screen.kombucha.perk.regeneration.description": "Restores 1 HP every %s seconds.",
+    "screen.kombucha.perk.vampirism": "Vampirism",
+    "screen.kombucha.perk.vampirism.description": "Restores %s%% of damage dealt."
 }

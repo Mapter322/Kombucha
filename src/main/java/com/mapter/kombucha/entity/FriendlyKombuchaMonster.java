@@ -131,6 +131,8 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> REGENERATION_PERK_LEVEL =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> VAMPIRISM_PERK_LEVEL =
+            SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MOVEMENT_MODE =
             SynchedEntityData.defineId(FriendlyKombuchaMonster.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COMBAT_MODE =
@@ -271,6 +273,14 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             }
             return InteractionResult.SUCCESS;
         }
+        if (isVampirismMushroom(itemStack)) {
+            if (!this.level().isClientSide()) {
+                itemStack.consume(1, player);
+                playEatingSound();
+                this.rollPerk(player, FriendlyKombuchaPerk.VAMPIRISM);
+            }
+            return InteractionResult.SUCCESS;
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -291,6 +301,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         entityData.define(INCREASED_JUMP_PERK_LEVEL, 0);
         entityData.define(FALL_IMMUNITY_PERK_LEVEL, 0);
         entityData.define(REGENERATION_PERK_LEVEL, 0);
+        entityData.define(VAMPIRISM_PERK_LEVEL, 0);
         entityData.define(MOVEMENT_MODE, MovementMode.FOLLOW.ordinal());
         entityData.define(COMBAT_MODE, CombatMode.DEFEND.ordinal());
         entityData.define(ATTACK_MODE, AttackMode.MELEE.ordinal());
@@ -438,6 +449,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             case INCREASED_JUMP -> this.entityData.get(INCREASED_JUMP_PERK_LEVEL);
             case FALL_IMMUNITY -> this.entityData.get(FALL_IMMUNITY_PERK_LEVEL);
             case REGENERATION -> this.entityData.get(REGENERATION_PERK_LEVEL);
+            case VAMPIRISM -> this.entityData.get(VAMPIRISM_PERK_LEVEL);
         };
     }
 
@@ -460,6 +472,19 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public int getRegenerationPerkLevel() {
         return getPerkLevel(FriendlyKombuchaPerk.REGENERATION);
+    }
+
+    public int getVampirismPerkLevel() {
+        return getPerkLevel(FriendlyKombuchaPerk.VAMPIRISM);
+    }
+
+    public float getVampirismRatio() {
+        return switch (getVampirismPerkLevel()) {
+            case 1 -> 0.05F;
+            case 2 -> 0.10F;
+            case 3 -> 0.15F;
+            default -> 0.0F;
+        };
     }
 
     public int getRegenerationIntervalTicks() {
@@ -651,6 +676,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(REGENERATION_PERK_LEVEL,
                 Math.max(0, Math.min(FriendlyKombuchaPerk.REGENERATION.getMaxLevel(),
                         input.getIntOr("KombuchaRegenerationPerkLevel", 0))));
+        this.entityData.set(VAMPIRISM_PERK_LEVEL,
+                Math.max(0, Math.min(FriendlyKombuchaPerk.VAMPIRISM.getMaxLevel(),
+                        input.getIntOr("KombuchaVampirismPerkLevel", 0))));
         this.entityData.set(MOVEMENT_MODE, input.getIntOr("KombuchaMovementMode", MovementMode.FOLLOW.ordinal()));
         this.entityData.set(COMBAT_MODE, input.getIntOr("KombuchaCombatMode", CombatMode.DEFEND.ordinal()));
         this.entityData.set(ATTACK_MODE, input.getIntOr("KombuchaAttackMode", AttackMode.MELEE.ordinal()));
@@ -679,6 +707,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         output.putInt("KombuchaIncreasedJumpPerkLevel", getIncreasedJumpPerkLevel());
         output.putInt("KombuchaFallImmunityPerkLevel", getFallImmunityPerkLevel());
         output.putInt("KombuchaRegenerationPerkLevel", getRegenerationPerkLevel());
+        output.putInt("KombuchaVampirismPerkLevel", getVampirismPerkLevel());
         output.putInt("KombuchaMovementMode", getMovementMode().ordinal());
         output.putInt("KombuchaCombatMode", getCombatMode().ordinal());
         output.putInt("KombuchaAttackMode", getAttackMode().ordinal());
@@ -690,11 +719,21 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
+        float targetHealth = target instanceof LivingEntity livingTarget ? livingTarget.getHealth() : 0.0F;
         boolean hurt = super.doHurtTarget(level, target);
+        if (hurt && target instanceof LivingEntity livingTarget) {
+            healFromVampirism(targetHealth - livingTarget.getHealth());
+        }
         if (hurt && target instanceof Mob mob && !mob.isAlive()) {
             this.addExperience(EXPERIENCE_PER_KILL);
         }
         return hurt;
+    }
+
+    public void healFromVampirism(float damageDealt) {
+        if (damageDealt > 0.0F) {
+            this.heal(damageDealt * getVampirismRatio());
+        }
     }
 
     @Override
@@ -714,7 +753,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
                 new FriendlyKombuchaStateData(this.isOrderedToSit(), getMovementMode().ordinal(),
                          getCombatMode().ordinal(), getAttackMode().ordinal()),
                  new FriendlyKombuchaPerkData(getIncreasedJumpPerkLevel(), getFallImmunityPerkLevel(),
-                         getRegenerationPerkLevel()));
+                         getRegenerationPerkLevel(), getVampirismPerkLevel()));
     }
 
     public void applyLivingShroomData(LivingShroomData data) {
@@ -753,6 +792,9 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         this.entityData.set(REGENERATION_PERK_LEVEL,
                 Math.max(0, Math.min(FriendlyKombuchaPerk.REGENERATION.getMaxLevel(),
                         data.perkData().regenerationLevel())));
+        this.entityData.set(VAMPIRISM_PERK_LEVEL,
+                Math.max(0, Math.min(FriendlyKombuchaPerk.VAMPIRISM.getMaxLevel(),
+                        data.perkData().vampirismLevel())));
         this.feedCooldown = data.feedCooldown();
         // the experience bar is the only thing that does not survive death
         this.entityData.set(EXPERIENCE, 0);
@@ -812,6 +854,10 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         return stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get());
     }
 
+    private static boolean isVampirismMushroom(ItemStack stack) {
+        return stack.is(Kombucha.NETHER_COMBUCHA_SHROOM.get());
+    }
+
     @Override
     protected void playEatingSound() {
         this.playSound(SoundEvents.PLAYER_BURP, 0.8F, 0.9F + this.random.nextFloat() * 0.2F);
@@ -843,6 +889,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             case INCREASED_JUMP -> this.entityData.set(INCREASED_JUMP_PERK_LEVEL, clampedLevel);
             case FALL_IMMUNITY -> this.entityData.set(FALL_IMMUNITY_PERK_LEVEL, clampedLevel);
             case REGENERATION -> this.entityData.set(REGENERATION_PERK_LEVEL, clampedLevel);
+            case VAMPIRISM -> this.entityData.set(VAMPIRISM_PERK_LEVEL, clampedLevel);
         }
     }
 
