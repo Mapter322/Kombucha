@@ -1,6 +1,8 @@
 package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.component.LivingShroomData;
+import com.mapter.kombucha.component.ModDataComponents;
 import com.mapter.kombucha.config.KombuchaConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -49,6 +51,26 @@ public class WaterJarBlock extends Block {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
                     be.setFillsLeft(3);
+                }
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // a living shroom carries a dead friendly kombucha — the jar can grow it back
+        if (stack.is(Kombucha.LIVING_COMBUCHA_SHROOM.get())) {
+            if (!level.isClientSide()) {
+                BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
+                        .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)
+                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL);
+                level.setBlock(pos, kombuchaState, 3);
+                if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+                    be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
+                    be.setFillsLeft(3);
+                    be.setLivingShroomData(stack.getOrDefault(ModDataComponents.LIVING_SHROOM_DATA, LivingShroomData.DEFAULT));
                 }
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);

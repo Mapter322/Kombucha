@@ -18,6 +18,7 @@ import com.mapter.kombucha.entity.SlimeCombuchaProjectile;
 import com.mapter.kombucha.effect.ModEffects;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
+import com.mapter.kombucha.item.LivingCombuchaShroomItem;
 import com.mapter.kombucha.loot.CopyJarDataFunction;
 import com.mapter.kombucha.item.EmptyCombuchaBottleItem;
 import com.mapter.kombucha.network.FriendlyKombuchaUpgradePayload;
@@ -129,7 +130,7 @@ public class Kombucha {
                     .rarity(Rarity.COMMON)));
 
     public static final DeferredItem<Item> LIVING_COMBUCHA_SHROOM = ITEMS.register("living_combucha_shroom",
-            id -> new Item(new Item.Properties()
+            id -> new LivingCombuchaShroomItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))
                     .rarity(Rarity.EPIC)));
 

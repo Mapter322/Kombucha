@@ -1,6 +1,8 @@
 package com.mapter.kombucha.entity;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.component.LivingShroomData;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -9,7 +11,9 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +36,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import java.util.Optional;
+import java.util.UUID;
 
 public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAttackMob {
     public static final int FEED_COOLDOWN_TICKS = 6000;
@@ -379,6 +385,55 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
             this.addExperience(EXPERIENCE_PER_KILL);
         }
         return hurt;
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
+        super.dropCustomDeathLoot(level, source, killedByPlayer);
+        // the whole monster lives on inside a shroom — everything but the experience bar
+        this.spawnAtLocation(level, this.captureLivingShroomData().toItemStack());
+    }
+
+    public LivingShroomData captureLivingShroomData() {
+        Optional<UUID> owner = Optional.ofNullable(this.getOwnerReference()).map(EntityReference::getUUID);
+        Optional<Component> name = Optional.ofNullable(this.getCustomName());
+        return new LivingShroomData(owner, name, getLevel(), getAvailableUpgradePoints(),
+                getHealthUpgrades(), getSpeedUpgrades(), getMeleeDamageUpgrades(),
+                getRangedDamageUpgrades(), getMeleeSpeedUpgrades(), getRangedSpeedUpgrades(),
+                getProjectileSpeedUpgrades(), this.feedCooldown, this.isOrderedToSit());
+    }
+
+    public void applyLivingShroomData(LivingShroomData data) {
+        data.customName().ifPresent(this::setCustomName);
+        data.ownerUuid().ifPresent(uuid -> {
+            this.setOwnerReference(EntityReference.of(uuid));
+            this.setTame(true, false);
+        });
+        this.setOrderedToSit(data.sitting());
+        this.entityData.set(LEVEL, data.level());
+        this.entityData.set(UPGRADE_POINTS, data.upgradePoints());
+        this.entityData.set(HEALTH_UPGRADES, data.healthUpgrades());
+        this.entityData.set(SPEED_UPGRADES, data.speedUpgrades());
+        this.entityData.set(MELEE_DAMAGE_UPGRADES, data.meleeDamageUpgrades());
+        this.entityData.set(RANGED_DAMAGE_UPGRADES, data.rangedDamageUpgrades());
+        this.entityData.set(MELEE_SPEED_UPGRADES, data.meleeSpeedUpgrades());
+        this.entityData.set(RANGED_SPEED_UPGRADES, data.rangedSpeedUpgrades());
+        this.entityData.set(PROJECTILE_SPEED_UPGRADES, data.projectileSpeedUpgrades());
+        this.feedCooldown = data.feedCooldown();
+        // the experience bar is the only thing that does not survive death
+        this.entityData.set(EXPERIENCE, 0);
+        applyUpgradedAttributes();
+        // come back to life at full health
+        this.setHealth(this.getMaxHealth());
+    }
+
+    /** Spawns the kombucha back from a matured living shroom jar. */
+    public static FriendlyKombuchaMonster reviveFromShroom(Level level, BlockPos pos, LivingShroomData data) {
+        FriendlyKombuchaMonster kombucha = Kombucha.FRIENDLY_KOMBUCHA_MONSTER.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        kombucha.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
+        kombucha.setYRot(level.getRandom().nextFloat() * 360.0F);
+        kombucha.applyLivingShroomData(data);
+        return kombucha;
     }
 
     @Override

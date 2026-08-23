@@ -69,5 +69,7 @@
     "screen.kombucha.health": "HP",
     "screen.kombucha.level": "Level",
     "screen.kombucha.experience": "Experience: %s / %s",
-    "kombucha.hint.feed_cooldown": "The kombucha is not hungry yet"
+    "kombucha.hint.feed_cooldown": "The kombucha is not hungry yet",
+    "kombucha.progress.living_ready": "The living mushroom has matured. Open the jar!",
+    "kombucha.hint.living_not_ready": "The living mushroom is not ready yet"
 }

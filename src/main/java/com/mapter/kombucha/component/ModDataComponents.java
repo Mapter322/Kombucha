@@ -23,4 +23,10 @@ public class ModDataComponents {
                     () -> DataComponentType.<TeaType>builder()
                             .persistent(TeaType.CODEC)
                             .build());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<LivingShroomData>> LIVING_SHROOM_DATA =
+            DATA_COMPONENT_TYPES.register("living_shroom_data",
+                    () -> DataComponentType.<LivingShroomData>builder()
+                            .persistent(LivingShroomData.CODEC)
+                            .build());
 }

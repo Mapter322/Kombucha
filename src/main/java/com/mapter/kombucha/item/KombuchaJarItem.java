@@ -32,6 +32,7 @@ public class KombuchaJarItem extends BlockItem {
         boolean updated = super.updateCustomBlockEntityTag(pos, level, player, stack, placedState);
         if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
             be.setTeaType(stack.getOrDefault(ModDataComponents.TEA_TYPE, TeaType.TEA));
+            be.setLivingShroomData(stack.get(ModDataComponents.LIVING_SHROOM_DATA));
             return true;
         }
         return updated;

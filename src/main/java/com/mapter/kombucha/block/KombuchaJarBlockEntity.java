@@ -1,6 +1,7 @@
 package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.component.LivingShroomData;
 import com.mapter.kombucha.config.KombuchaConfig;
 import com.mapter.kombucha.entity.SpoiledCombuchaMonster;
 import com.mojang.serialization.Codec;
@@ -14,16 +15,19 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public class KombuchaJarBlockEntity extends BlockEntity {
 
     private TeaType teaType = TeaType.TEA;
     private int fermentationTicks = 0;
     private int fillsLeft = 3;
+    private @Nullable LivingShroomData livingShroomData;
 
     public KombuchaJarBlockEntity(BlockPos pos, BlockState state) {
         super(Kombucha.KOMBUCHA_JAR_BE.get(), pos, state);
@@ -61,6 +65,22 @@ public class KombuchaJarBlockEntity extends BlockEntity {
 
     public void setTeaType(TeaType teaType) {
         this.teaType = teaType;
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public @Nullable LivingShroomData getLivingShroomData() {
+        return livingShroomData;
+    }
+
+    public boolean hasLivingShroom() {
+        return livingShroomData != null;
+    }
+
+    public void setLivingShroomData(@Nullable LivingShroomData data) {
+        this.livingShroomData = data;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -112,7 +132,11 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             if (stage == FermentationStage.SPOILED && jarType == KombuchaJarBlock.JarType.INFESTED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.SPOILED), 3);
 
-                if (be.teaType != TeaType.NETHER
+                if (be.livingShroomData != null) {
+                    // the shroom survives the failed brew and drops back out with everything it carries
+                    Block.popResource(level, pos, be.livingShroomData.toItemStack());
+                    be.setLivingShroomData(null);
+                } else if (be.teaType != TeaType.NETHER
                         && !level.canSeeSky(pos)
                         && level.getMaxLocalRawBrightness(pos) <= 7
                         && level.getRandom().nextFloat() < 0.10F) {
@@ -152,6 +176,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         input.read("tea_type", TeaType.CODEC).ifPresent(type -> this.teaType = type);
         input.read("fermentation_ticks", Codec.INT).ifPresent(ticks -> this.fermentationTicks = ticks);
         input.read("fills_left", Codec.INT).ifPresent(fills -> this.fillsLeft = fills);
+        input.read("living_shroom", LivingShroomData.CODEC).ifPresent(data -> this.livingShroomData = data);
     }
 
     @Override
@@ -160,6 +185,9 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         output.store("tea_type", TeaType.CODEC, teaType);
         output.store("fermentation_ticks", Codec.INT, fermentationTicks);
         output.store("fills_left", Codec.INT, fillsLeft);
+        if (this.livingShroomData != null) {
+            output.store("living_shroom", LivingShroomData.CODEC, this.livingShroomData);
+        }
     }
 
     @Override

@@ -38,6 +38,9 @@ public class CopyJarDataFunction extends LootItemConditionalFunction {
         }
         if (context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof KombuchaJarBlockEntity be) {
             stack.set(ModDataComponents.TEA_TYPE, be.getTeaType());
+            if (be.getLivingShroomData() != null) {
+                stack.set(ModDataComponents.LIVING_SHROOM_DATA, be.getLivingShroomData());
+            }
         }
         return stack;
     }
