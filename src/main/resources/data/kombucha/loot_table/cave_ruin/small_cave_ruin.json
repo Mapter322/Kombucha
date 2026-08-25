@@ -3,11 +3,7 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "rolls": {
-        "type": "minecraft:uniform",
-        "min": 3.0,
-        "max": 6.0
-      },
+      "rolls": 1.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -156,5 +152,5 @@
       ]
     }
   ],
-  "random_sequence": "kombucha:chests/kombucha_ruins_small"
+  "random_sequence": "kombucha:cave_ruin/small_cave_ruin"
 }

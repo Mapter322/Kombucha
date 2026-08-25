@@ -17,6 +17,23 @@ public final class cave_kombucha_monsterAnimation {
         return new AnimationChannel(AnimationChannel.Targets.ROTATION, keyframes);
     }
 
+    public static final AnimationDefinition idle = AnimationDefinition.Builder.withLength(4.0F).looping()
+            .addAnimation("mouth_tentacles", rotation(
+                    rotation(0.0F, 0.0F, 0.0F, 0.0F),
+                    rotation(0.75F, 0.0F, 5.0F, 0.0F),
+                    rotation(1.75F, 0.0F, -5.0F, 0.0F),
+                    rotation(2.75F, 0.0F, 4.0F, 0.0F),
+                    rotation(4.0F, 0.0F, 0.0F, 0.0F)))
+            .build();
+
+    public static final AnimationDefinition spit = AnimationDefinition.Builder.withLength(0.4F).looping()
+            .addAnimation("mouth_tentacles", rotation(
+                    rotation(0.0F, -35.0F, 0.0F, 0.0F),
+                    rotation(0.18F, -35.0F, 0.0F, 0.0F),
+                    rotation(0.24F, 15.0F, 0.0F, 0.0F),
+                    rotation(0.4F, 0.0F, 0.0F, 0.0F)))
+            .build();
+
     public static final AnimationDefinition walk = AnimationDefinition.Builder.withLength(1.0F).looping()
             .addAnimation("tentacle2", rotation(
                     rotation(0.0F, 0.0F, 0.0F, 0.0F),

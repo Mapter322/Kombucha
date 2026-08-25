@@ -4,7 +4,7 @@
   "step": "underground_structures",
   "terrain_adaptation": "bury",
   "spawn_overrides": {},
-  "start_pool": "kombucha:kombucha_ruins_small",
+  "start_pool": "kombucha:cave_ruin",
   "size": 1,
   "start_height": {
     "absolute": -40
