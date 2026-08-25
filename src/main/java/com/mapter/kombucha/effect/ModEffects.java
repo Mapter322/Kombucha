@@ -19,6 +19,15 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, MobEffect> COMBUCHA_IDOL =
             EFFECTS.register("combucha_idol", CombuchaIdolMobEffect::new);
 
+    public static final DeferredHolder<MobEffect, MobEffect> VAMPIRISM =
+            EFFECTS.register("vampirism", VampirismMobEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> HALF_SIZE =
+            EFFECTS.register("half_size", HalfSizeMobEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> FLIGHT =
+            EFFECTS.register("flight", FlightMobEffect::new);
+
     private ModEffects() {
     }
 }

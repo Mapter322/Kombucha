@@ -33,12 +33,17 @@ public class KombuchaDrinkItem extends Item {
                     ModEffects.COMBUCHA_FRIEND,
                     friendDuration(),
                     0));
+            RandomSource random = level.getRandom();
             if (teaType == TeaType.GOLDEN) {
                 player.addEffect(new MobEffectInstance(
                         ModEffects.COMBUCHA_IDOL,
                         5 * 60 * 20,
                         0));
-                if (level instanceof ServerLevel serverLevel) {
+                player.addEffect(new MobEffectInstance(
+                        MobEffects.REGENERATION,
+                        randomDuration(random, 2, 5),
+                        0));
+                if (level instanceof ServerLevel serverLevel && random.nextInt(2) == 0) {
                     summonGoldenCombucha(player, serverLevel);
                 }
             }
@@ -50,8 +55,6 @@ public class KombuchaDrinkItem extends Item {
                 return super.finishUsingItem(stack, level, entity);
             }
 
-            RandomSource random = level.getRandom();
-
             if (teaType == TeaType.NETHER || teaType == TeaType.ENDER) {
                 player.heal(random.nextIntBetweenInclusive(3, 6) * 2.0F);
                 if (teaType == TeaType.NETHER) {
@@ -59,6 +62,13 @@ public class KombuchaDrinkItem extends Item {
                             MobEffects.FIRE_RESISTANCE,
                             8 * 60 * 20,
                             0));
+                    applyNetherEffect(player, random);
+                } else {
+                    player.addEffect(new MobEffectInstance(
+                            ModEffects.HALF_SIZE,
+                            randomDuration(random, 2, 5),
+                            0));
+                    applyEnderEffect(player, random);
                 }
                 return super.finishUsingItem(stack, level, entity);
             }
@@ -122,18 +132,42 @@ public class KombuchaDrinkItem extends Item {
     }
 
     private static void applyAppleEffect(Player player, RandomSource random) {
-        int roll = random.nextInt(100);
-        if (roll < 20) {
-            player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, randomDuration(random, 2, 5), 1));
-        } else if (roll < 60) {
+        int roll = random.nextInt(6);
+        if (roll == 0) {
+            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 5 * 60 * 20, 0));
+        } else if (roll == 1) {
             player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, randomDuration(random, 2, 5), 0));
-        } else {
+        } else if (roll == 2) {
             player.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, randomDuration(random, 2, 3), 0));
         }
     }
 
+    private static void applyNetherEffect(Player player, RandomSource random) {
+        if (random.nextInt(2) == 0) {
+            player.addEffect(new MobEffectInstance(
+                    ModEffects.VAMPIRISM,
+                    randomDuration(random, 2, 5),
+                    0));
+        }
+    }
+
+    private static void applyEnderEffect(Player player, RandomSource random) {
+        int roll = random.nextInt(4);
+        if (roll == 0) {
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.INVISIBILITY,
+                    randomDuration(random, 2, 5),
+                    0));
+        } else if (roll == 1) {
+            player.addEffect(new MobEffectInstance(
+                    ModEffects.FLIGHT,
+                    2 * 60 * 20,
+                    0));
+        }
+    }
+
     private static void applyMelonEffect(Player player, RandomSource random) {
-        int roll = random.nextInt(3);
+        int roll = random.nextInt(6);
         switch (roll) {
             case 0 -> player.addEffect(new MobEffectInstance(
                     MobEffects.ABSORPTION,
@@ -147,7 +181,9 @@ public class KombuchaDrinkItem extends Item {
                     MobEffects.WATER_BREATHING,
                     randomDuration(random, 2, 3),
                     0));
-            default -> throw new IllegalStateException("Unexpected melon effect roll: " + roll);
+            default -> {
+                // Half of the rolls intentionally grant no extra effect.
+            }
         }
     }
 
