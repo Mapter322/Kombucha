@@ -44,9 +44,8 @@ public abstract class CombuchaBlobProjectile extends ThrowableItemProjectile {
             if (owner instanceof FriendlyKombuchaMonster friendly) {
                 friendly.healFromVampirism(targetHealth - livingTarget.getHealth());
             }
-            if (owner instanceof FriendlyKombuchaMonster friendly
-                    && livingTarget instanceof net.minecraft.world.entity.Mob mob && !mob.isAlive()) {
-                friendly.addExperience(FriendlyKombuchaMonster.EXPERIENCE_PER_KILL);
+            if (owner instanceof FriendlyKombuchaMonster friendly) {
+                friendly.addExperienceForKill(livingTarget);
             }
             if (this.setsTargetOnFire()) {
                 livingTarget.setRemainingFireTicks(60);

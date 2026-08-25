@@ -6,7 +6,11 @@ import com.mapter.kombucha.component.FriendlyKombuchaStateData;
 import com.mapter.kombucha.component.LivingShroomData;
 import com.mapter.kombucha.config.KombuchaConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.ChatFormatting;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -66,7 +70,6 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     public static final int PATROL_RADIUS = 20;
 
     public static final int FEED_COOLDOWN_TICKS = 6000;
-    public static final int EXPERIENCE_PER_KILL = 5;
     public static final int EXPERIENCE_PER_FEED = 2;
     private static final int BASE_LEVEL_EXPERIENCE = 10;
     public static final int MAX_LEVEL = 40;
@@ -764,10 +767,63 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         if (hurt && target instanceof LivingEntity livingTarget) {
             healFromVampirism(targetHealth - livingTarget.getHealth());
         }
-        if (hurt && target instanceof Mob mob && !mob.isAlive()) {
-            this.addExperience(EXPERIENCE_PER_KILL);
+        if (hurt) {
+            this.addExperienceForKill(target);
         }
         return hurt;
+    }
+
+    public void addExperienceForKill(Entity target) {
+        if (!(target instanceof Mob mob) || mob.isAlive()) {
+            return;
+        }
+
+        int experience = getExperienceForKill(mob);
+        if (experience > 0) {
+            this.addExperience(experience);
+        }
+    }
+
+    private static int getExperienceForKill(Mob mob) {
+        String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString();
+        int exactExperience = -1;
+        int tagExperience = -1;
+        int defaultExperience = -1;
+        for (String entry : KombuchaConfig.EXPERIENCE_BY_MOB.get()) {
+            int separator = entry.lastIndexOf('=');
+            if (separator <= 0 || separator == entry.length() - 1) {
+                continue;
+            }
+
+            String configuredId = entry.substring(0, separator).trim();
+            try {
+                int experience = Integer.parseInt(entry.substring(separator + 1).trim());
+                if (experience < 0) {
+                    continue;
+                }
+                if (entityId.equals(configuredId)) {
+                    exactExperience = experience;
+                } else if (configuredId.startsWith("#") && matchesEntityTag(mob, configuredId.substring(1))) {
+                    tagExperience = experience;
+                } else if ("*".equals(configuredId)) {
+                    defaultExperience = experience;
+                }
+            } catch (NumberFormatException ignored) {
+                // Ignore malformed entries and continue checking the remaining rules.
+            }
+        }
+        return exactExperience >= 0 ? exactExperience
+                : tagExperience >= 0 ? tagExperience : defaultExperience;
+    }
+
+    private static boolean matchesEntityTag(Mob mob, String tagId) {
+        try {
+            TagKey<net.minecraft.world.entity.EntityType<?>> tag = TagKey.create(
+                    Registries.ENTITY_TYPE, Identifier.parse(tagId));
+            return mob.getType().builtInRegistryHolder().is(tag);
+        } catch (IllegalArgumentException ignored) {
+            return false;
+        }
     }
 
     public void healFromVampirism(float damageDealt) {
