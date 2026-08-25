@@ -36,14 +36,14 @@ public final class KombuchaClientEvents {
     }
 
     private static boolean isKombuchaMushroom(ItemStack stack) {
-        return stack.is(Kombucha.COMBUCHA_SHROOM.get())
-                || stack.is(Kombucha.UNCOMMON_COMBUCHA_SHROOM.get())
-                || stack.is(Kombucha.NETHER_COMBUCHA_SHROOM.get())
-                || stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get())
-                || stack.is(Kombucha.LIVING_COMBUCHA_SHROOM.get());
+        return stack.is(Kombucha.KOMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.NETHER_KOMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.ENDER_KOMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.LIVING_KOMBUCHA_SHROOM.get());
     }
 
     private static boolean isRegenerationMushroom(ItemStack stack) {
-        return stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get());
+        return stack.is(Kombucha.ENDER_KOMBUCHA_SHROOM.get());
     }
 }

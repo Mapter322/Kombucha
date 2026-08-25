@@ -12,9 +12,9 @@ public final class ModSounds {
             DeferredRegister.create(Registries.SOUND_EVENT, Kombucha.MODID);
 
     public static final DeferredHolder<SoundEvent, SoundEvent> EMPTY_BOTTLE_WHISTLE = SOUNDS.register(
-            "item.empty_combucha_bottle.whistle",
+            "item.empty_kombucha_bottle.whistle",
             () -> SoundEvent.createVariableRangeEvent(
-                    Identifier.fromNamespaceAndPath(Kombucha.MODID, "item.empty_combucha_bottle.whistle")));
+                    Identifier.fromNamespaceAndPath(Kombucha.MODID, "item.empty_kombucha_bottle.whistle")));
 
     private ModSounds() {
     }

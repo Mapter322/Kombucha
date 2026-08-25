@@ -13,11 +13,11 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, MobEffect> FALL_IMMUNITY =
             EFFECTS.register("fall_immunity", FallImmunityMobEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> COMBUCHA_FRIEND =
-            EFFECTS.register("combucha_friend", CombuchaFriendMobEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> KOMBUCHA_FRIEND =
+            EFFECTS.register("kombucha_friend", KombuchaFriendMobEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> COMBUCHA_IDOL =
-            EFFECTS.register("combucha_idol", CombuchaIdolMobEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> KOMBUCHA_IDOL =
+            EFFECTS.register("kombucha_idol", KombuchaIdolMobEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> VAMPIRISM =
             EFFECTS.register("vampirism", VampirismMobEffect::new);

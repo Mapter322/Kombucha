@@ -1,7 +1,7 @@
 package com.mapter.kombucha.client.model;
 
 import com.mapter.kombucha.Kombucha;
-import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
+import com.mapter.kombucha.client.renderer.entity.state.KombuchaMonsterRenderState;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -52,11 +52,11 @@ public class FriendlyKombuchaMonsterModel extends EntityModel<LivingEntityRender
         this.tentacle2 = root.getChild("tentacle2");
         this.tentacle3 = root.getChild("tentacle3");
         this.tentacle4 = root.getChild("tentacle4");
-        this.basicAnimation = spoiled_combucha_monsterAnimation.basic.bake(root);
-        this.attackAnimation = spoiled_combucha_monsterAnimation.attack.bake(root);
-        this.shootAnimation = spoiled_combucha_monsterAnimation.shoot.bake(root);
-        this.spitAnimation = spoiled_combucha_monsterAnimation.spit.bake(root);
-        this.walkAnimation = spoiled_combucha_monsterAnimation.walk.bake(root);
+        this.basicAnimation = spoiled_kombucha_monsterAnimation.basic.bake(root);
+        this.attackAnimation = spoiled_kombucha_monsterAnimation.attack.bake(root);
+        this.shootAnimation = spoiled_kombucha_monsterAnimation.shoot.bake(root);
+        this.spitAnimation = spoiled_kombucha_monsterAnimation.spit.bake(root);
+        this.walkAnimation = spoiled_kombucha_monsterAnimation.walk.bake(root);
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -165,14 +165,14 @@ public class FriendlyKombuchaMonsterModel extends EntityModel<LivingEntityRender
         this.basicAnimation.apply((long) (state.ageInTicks * 50.0F), 1.0F);
         this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 3.5F, 4.0F);
         this.eyes.yRot = Mth.clamp(state.yRot, -35.0F, 35.0F) * Mth.DEG_TO_RAD;
-        if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.attackTime > 0.0F) {
-            this.attackAnimation.apply((long) (combuchaState.attackTime * 1125.0F), 1.5F);
+        if (state instanceof KombuchaMonsterRenderState kombuchaState && kombuchaState.attackTime > 0.0F) {
+            this.attackAnimation.apply((long) (kombuchaState.attackTime * 1125.0F), 1.5F);
         }
-        if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.shootTime > 0) {
-            long elapsed = (long) ((8 - combuchaState.shootTime) * 50L);
+        if (state instanceof KombuchaMonsterRenderState kombuchaState && kombuchaState.shootTime > 0) {
+            long elapsed = (long) ((8 - kombuchaState.shootTime) * 50L);
             this.shootAnimation.apply(elapsed, 1.0F);
         }
-        if (state instanceof CombuchaMonsterRenderState combuchaState && combuchaState.isJumping) {
+        if (state instanceof KombuchaMonsterRenderState kombuchaState && kombuchaState.isJumping) {
             this.tentacle.xRot += 0.45F;
             this.tentacle2.xRot += 0.45F;
             this.tentacle3.xRot += 0.45F;

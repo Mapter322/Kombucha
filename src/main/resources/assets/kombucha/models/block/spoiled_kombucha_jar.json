@@ -1,0 +1,1241 @@
+{
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [
+                75,
+                45,
+                0
+            ],
+            "scale": [
+                0.375,
+                0.375,
+                0.375
+            ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [
+                0,
+                3,
+                0
+            ],
+            "scale": [
+                0.25,
+                0.25,
+                0.25
+            ]
+        },
+        "firstperson_righthand": {
+            "scale": [
+                0.4,
+                0.4,
+                0.4
+            ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [
+                0,
+                -135,
+                0
+            ],
+            "scale": [
+                0.4,
+                0.4,
+                0.4
+            ]
+        },
+        "ground": {
+            "rotation": [
+                0,
+                3,
+                0
+            ],
+            "scale": [
+                0.25,
+                0.25,
+                0.25
+            ]
+        },
+        "fixed": {
+            "rotation": [
+                0,
+                45,
+                0
+            ],
+            "scale": [
+                0.5,
+                0.5,
+                0.5
+            ]
+        },
+        "gui": {
+            "rotation": [
+                30,
+                225,
+                0
+            ],
+            "scale": [
+                0.625,
+                0.625,
+                0.625
+            ]
+        }
+    },
+    "format_version": "1.21.11",
+    "credit": "Made with Blockbench",
+    "textures": {
+        "0": "kombucha:block/jar_glass",
+        "1": "kombucha:block/liquid",
+        "2": "kombucha:block/rope_and_cloth",
+        "3": "kombucha:block/kombucha_shroom_dead",
+        "4": "kombucha:block/white_wool",
+        "particle": "kombucha:block/jar_glass",
+        "5": "kombucha:block/lava"
+    },
+    "elements": [
+        {
+            "name": "jar_n",
+            "from": [
+                3,
+                1,
+                2
+            ],
+            "to": [
+                13,
+                13,
+                3
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    2,
+                    1,
+                    2
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        5,
+                        0,
+                        10,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        6,
+                        0.5,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        5,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "west": {
+                    "uv": [
+                        0.5,
+                        6,
+                        1,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "up": {
+                    "uv": [
+                        6,
+                        6,
+                        11,
+                        6.5
+                    ],
+                    "texture": "#0"
+                },
+                "down": {
+                    "uv": [
+                        1,
+                        6,
+                        6,
+                        6.5
+                    ],
+                    "texture": "#0"
+                }
+            }
+        },
+        {
+            "name": "jar_s",
+            "from": [
+                3,
+                1,
+                13
+            ],
+            "to": [
+                13,
+                13,
+                14
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    2,
+                    1,
+                    13
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        5,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        6,
+                        0.5,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "south": {
+                    "uv": [
+                        5,
+                        0,
+                        10,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "west": {
+                    "uv": [
+                        0.5,
+                        6,
+                        1,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "up": {
+                    "uv": [
+                        6,
+                        6.5,
+                        1,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "down": {
+                    "uv": [
+                        11,
+                        6,
+                        6,
+                        6.5
+                    ],
+                    "texture": "#0"
+                }
+            }
+        },
+        {
+            "name": "jar_w",
+            "from": [
+                3,
+                1,
+                14
+            ],
+            "to": [
+                13,
+                13,
+                15
+            ],
+            "rotation": {
+                "x": 0,
+                "y": 90,
+                "z": 0,
+                "origin": [
+                    2,
+                    1,
+                    14
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        5,
+                        0,
+                        10,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "east": {
+                    "uv": [
+                        0.5,
+                        6,
+                        1,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        5,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        6,
+                        0.5,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "up": {
+                    "uv": [
+                        6,
+                        6,
+                        11,
+                        6.5
+                    ],
+                    "texture": "#0"
+                },
+                "down": {
+                    "uv": [
+                        1,
+                        6,
+                        6,
+                        6.5
+                    ],
+                    "texture": "#0"
+                }
+            }
+        },
+        {
+            "name": "jar_e",
+            "from": [
+                14,
+                1,
+                14
+            ],
+            "to": [
+                24,
+                13,
+                15
+            ],
+            "rotation": {
+                "x": 0,
+                "y": 90,
+                "z": 0,
+                "origin": [
+                    13,
+                    1,
+                    14
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        5,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "east": {
+                    "uv": [
+                        0.5,
+                        6,
+                        1,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "south": {
+                    "uv": [
+                        5,
+                        0,
+                        10,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        6,
+                        0.5,
+                        12
+                    ],
+                    "texture": "#0"
+                },
+                "up": {
+                    "uv": [
+                        1,
+                        6,
+                        6,
+                        6.5
+                    ],
+                    "texture": "#0"
+                },
+                "down": {
+                    "uv": [
+                        6,
+                        6,
+                        11,
+                        6.5
+                    ],
+                    "texture": "#0"
+                }
+            }
+        },
+        {
+            "name": "jar_bottom",
+            "from": [
+                3,
+                0,
+                3
+            ],
+            "to": [
+                13,
+                1,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    1,
+                    0,
+                    1
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        6,
+                        6.5,
+                        11,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "east": {
+                    "uv": [
+                        1,
+                        6,
+                        6,
+                        6.5
+                    ],
+                    "texture": "#0"
+                },
+                "south": {
+                    "uv": [
+                        1,
+                        6.5,
+                        6,
+                        7
+                    ],
+                    "texture": "#0"
+                },
+                "west": {
+                    "uv": [
+                        6,
+                        6.5,
+                        11,
+                        7
+                    ],
+                    "texture": "#0"
+                },
+                "up": {
+                    "uv": [
+                        16,
+                        5,
+                        11,
+                        0
+                    ],
+                    "texture": "#0"
+                },
+                "down": {
+                    "uv": [
+                        16,
+                        0,
+                        11,
+                        5
+                    ],
+                    "texture": "#0"
+                }
+            }
+        },
+        {
+            "name": "jar_bottom",
+            "from": [
+                3,
+                13,
+                3
+            ],
+            "to": [
+                13,
+                14,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    1,
+                    13,
+                    1
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        6,
+                        6.5,
+                        11,
+                        6
+                    ],
+                    "texture": "#0"
+                },
+                "east": {
+                    "uv": [
+                        1,
+                        6,
+                        6,
+                        6.5
+                    ],
+                    "texture": "#0"
+                },
+                "south": {
+                    "uv": [
+                        1,
+                        6.5,
+                        6,
+                        7
+                    ],
+                    "texture": "#0"
+                },
+                "west": {
+                    "uv": [
+                        6,
+                        6.5,
+                        11,
+                        7
+                    ],
+                    "texture": "#0"
+                },
+                "up": {
+                    "uv": [
+                        6.5,
+                        12.5,
+                        1.5,
+                        7.5
+                    ],
+                    "texture": "#0"
+                },
+                "down": {
+                    "uv": [
+                        6.5,
+                        7.5,
+                        1.5,
+                        12.5
+                    ],
+                    "texture": "#0"
+                }
+            }
+        },
+        {
+            "name": "rope",
+            "from": [
+                4,
+                15,
+                4
+            ],
+            "to": [
+                12,
+                16,
+                12
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    13,
+                    4
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        16,
+                        16,
+                        8,
+                        8
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        16,
+                        8,
+                        8,
+                        16
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "cloth",
+            "from": [
+                3,
+                16,
+                3
+            ],
+            "to": [
+                13,
+                17,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    15,
+                    4
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        6
+                    ],
+                    "texture": "#4"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        6.1,
+                        16,
+                        8
+                    ],
+                    "texture": "#4"
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#4"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        2,
+                        16,
+                        4
+                    ],
+                    "texture": "#4"
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#4"
+                },
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#4"
+                }
+            }
+        },
+        {
+            "name": "cloth2",
+            "from": [
+                4,
+                14,
+                4
+            ],
+            "to": [
+                12,
+                15,
+                12
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    13,
+                    4
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        6
+                    ],
+                    "texture": "#4"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        6.1,
+                        16,
+                        8
+                    ],
+                    "texture": "#4"
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#4"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        2,
+                        16,
+                        4
+                    ],
+                    "texture": "#4"
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#4"
+                },
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#4"
+                }
+            }
+        },
+        {
+            "from": [
+                4,
+                8,
+                4
+            ],
+            "to": [
+                12,
+                9,
+                12
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    4,
+                    7,
+                    4
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        1
+                    ],
+                    "texture": "#3"
+                },
+                "east": {
+                    "uv": [
+                        8,
+                        1,
+                        16,
+                        2
+                    ],
+                    "texture": "#3"
+                },
+                "south": {
+                    "uv": [
+                        8,
+                        2,
+                        16,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "west": {
+                    "uv": [
+                        8,
+                        3,
+                        16,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "up": {
+                    "uv": [
+                        8,
+                        8,
+                        0,
+                        0
+                    ],
+                    "texture": "#3"
+                },
+                "down": {
+                    "uv": [
+                        8,
+                        8,
+                        0,
+                        16
+                    ],
+                    "texture": "#3"
+                }
+            }
+        },
+        {
+            "from": [
+                4,
+                6,
+                4
+            ],
+            "to": [
+                12,
+                7,
+                12
+            ],
+            "rotation": {
+                "x": 0,
+                "y": 90,
+                "z": 0,
+                "origin": [
+                    8,
+                    6,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        1
+                    ],
+                    "texture": "#3"
+                },
+                "east": {
+                    "uv": [
+                        8,
+                        1,
+                        16,
+                        2
+                    ],
+                    "texture": "#3"
+                },
+                "south": {
+                    "uv": [
+                        8,
+                        2,
+                        16,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "west": {
+                    "uv": [
+                        8,
+                        3,
+                        16,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "up": {
+                    "uv": [
+                        8,
+                        8,
+                        0,
+                        0
+                    ],
+                    "texture": "#3"
+                },
+                "down": {
+                    "uv": [
+                        8,
+                        8,
+                        0,
+                        16
+                    ],
+                    "texture": "#3"
+                }
+            }
+        },
+        {
+            "from": [
+                4,
+                4,
+                4
+            ],
+            "to": [
+                12,
+                5,
+                12
+            ],
+            "rotation": {
+                "x": 0,
+                "y": -90,
+                "z": 0,
+                "origin": [
+                    8,
+                    4,
+                    8
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        1
+                    ],
+                    "texture": "#3"
+                },
+                "east": {
+                    "uv": [
+                        8,
+                        1,
+                        16,
+                        2
+                    ],
+                    "texture": "#3"
+                },
+                "south": {
+                    "uv": [
+                        8,
+                        2,
+                        16,
+                        3
+                    ],
+                    "texture": "#3"
+                },
+                "west": {
+                    "uv": [
+                        8,
+                        3,
+                        16,
+                        4
+                    ],
+                    "texture": "#3"
+                },
+                "up": {
+                    "uv": [
+                        8,
+                        8,
+                        0,
+                        0
+                    ],
+                    "texture": "#3"
+                },
+                "down": {
+                    "uv": [
+                        8,
+                        8,
+                        0,
+                        16
+                    ],
+                    "texture": "#3"
+                }
+            }
+        },
+        {
+            "name": "tea_mixture",
+            "from": [
+                3,
+                1,
+                3
+            ],
+            "to": [
+                13,
+                10,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    1,
+                    3
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#1",
+                    "tintindex": 0
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#1",
+                    "tintindex": 0
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#1",
+                    "tintindex": 0
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#1",
+                    "tintindex": 0
+                },
+                "up": {
+                    "uv": [
+                        16,
+                        16,
+                        0,
+                        0
+                    ],
+                    "texture": "#1",
+                    "tintindex": 0
+                },
+                "down": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#1",
+                    "tintindex": 0
+                }
+            }
+        },
+        {
+            "name": "lava_mixture",
+            "from": [
+                3,
+                1,
+                3
+            ],
+            "to": [
+                13,
+                10,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    1,
+                    3
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "up": {
+                    "uv": [
+                        16,
+                        16,
+                        0,
+                        0
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                },
+                "down": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#5",
+                    "tintindex": 1
+                }
+            }
+        }
+    ],
+    "groups": [
+        {
+            "name": "jar",
+            "origin": [
+                1,
+                0,
+                1
+            ],
+            "scope": 0,
+            "color": 0,
+            "children": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "name": "kombucha_shrooms",
+            "origin": [
+                8,
+                8,
+                8
+            ],
+            "scope": 0,
+            "color": 0,
+            "children": [
+                9,
+                10,
+                11
+            ]
+        },
+        12
+    ],
+    "render_type": "minecraft:translucent"
+}

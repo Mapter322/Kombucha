@@ -42,7 +42,7 @@ public class WaterJarBlock extends Block {
         }
 
         // a starter mushroom puts the water jar at stage 2, waiting for tea mix
-        if (stack.is(Kombucha.COMBUCHA_SHROOM.get())) {
+        if (stack.is(Kombucha.KOMBUCHA_SHROOM.get())) {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
                         .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)
@@ -61,7 +61,7 @@ public class WaterJarBlock extends Block {
         }
 
         // a living shroom carries a dead friendly kombucha — the jar can grow it back
-        if (stack.is(Kombucha.LIVING_COMBUCHA_SHROOM.get())) {
+        if (stack.is(Kombucha.LIVING_KOMBUCHA_SHROOM.get())) {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
                         .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)

@@ -1,7 +1,7 @@
 package com.mapter.kombucha.client.model;
 
 import com.mapter.kombucha.Kombucha;
-import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
+import com.mapter.kombucha.client.renderer.entity.state.KombuchaMonsterRenderState;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -178,24 +178,24 @@ public class CaveKombuchaMonsterModel extends EntityModel<LivingEntityRenderStat
         this.mouthTentacleGroup.yRot -= faceWiggle * 1.4F;
         this.mouthTentacleTip.yRot += faceWiggle * 1.7F;
 
-        if (state instanceof CombuchaMonsterRenderState combuchaState) {
-            if (combuchaState.attackTime > 0.0F) {
-                float attack = Mth.sin(combuchaState.attackTime * Mth.PI);
+        if (state instanceof KombuchaMonsterRenderState kombuchaState) {
+            if (kombuchaState.attackTime > 0.0F) {
+                float attack = Mth.sin(kombuchaState.attackTime * Mth.PI);
                 this.tentacle2.xRot += attack * 0.35F;
                 this.tentacle3.xRot -= attack * 0.35F;
                 this.tentacle4.xRot += attack * 0.35F;
                 this.tentacle5.xRot -= attack * 0.35F;
             }
-            if (combuchaState.shootTime > 0) {
-                long elapsed = (long) ((8 - combuchaState.shootTime) * 50L);
+            if (kombuchaState.shootTime > 0) {
+                long elapsed = (long) ((8 - kombuchaState.shootTime) * 50L);
                 this.spitAnimation.apply(elapsed, 1.0F);
 
-                float spit = Mth.sin(((8.0F - combuchaState.shootTime) / 8.0F) * Mth.PI);
+                float spit = Mth.sin(((8.0F - kombuchaState.shootTime) / 8.0F) * Mth.PI);
                 this.mouthTentacles.yRot += spit * 0.18F;
                 this.mouthTentacleGroup.yRot -= spit * 0.3F;
                 this.mouthTentacleTip.yRot += spit * 0.36F;
             }
-            if (combuchaState.isJumping) {
+            if (kombuchaState.isJumping) {
                 this.tentacle2.xRot += 0.45F;
                 this.tentacle3.xRot += 0.45F;
                 this.tentacle4.xRot += 0.45F;

@@ -30,13 +30,13 @@ public class KombuchaDrinkItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (!level.isClientSide() && entity instanceof Player player) {
             player.addEffect(new MobEffectInstance(
-                    ModEffects.COMBUCHA_FRIEND,
+                    ModEffects.KOMBUCHA_FRIEND,
                     friendDuration(),
                     0));
             RandomSource random = level.getRandom();
             if (teaType == TeaType.GOLDEN) {
                 player.addEffect(new MobEffectInstance(
-                        ModEffects.COMBUCHA_IDOL,
+                        ModEffects.KOMBUCHA_IDOL,
                         5 * 60 * 20,
                         0));
                 player.addEffect(new MobEffectInstance(
@@ -44,7 +44,7 @@ public class KombuchaDrinkItem extends Item {
                         randomDuration(random, 2, 5),
                         0));
                 if (level instanceof ServerLevel serverLevel && random.nextInt(2) == 0) {
-                    summonGoldenCombucha(player, serverLevel);
+                    summonGoldenKombucha(player, serverLevel);
                 }
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -113,7 +113,7 @@ public class KombuchaDrinkItem extends Item {
         };
     }
 
-    private static void summonGoldenCombucha(Player player, ServerLevel level) {
+    private static void summonGoldenKombucha(Player player, ServerLevel level) {
         BlockPos spawnPos = player.blockPosition().relative(player.getDirection(), 3);
         double x = spawnPos.getX() + 0.5D;
         double y = spawnPos.getY() + 0.8D;
@@ -124,7 +124,7 @@ public class KombuchaDrinkItem extends Item {
         level.playSound(null, x, y, z,
                 SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 0.8F, 1.2F);
 
-        Kombucha.SPOILED_COMBUCHA_MONSTER.get().spawn(level, spawnPos, EntitySpawnReason.MOB_SUMMONED);
+        Kombucha.SPOILED_KOMBUCHA_MONSTER.get().spawn(level, spawnPos, EntitySpawnReason.MOB_SUMMONED);
 
         level.sendParticles(ParticleTypes.POOF, x, y, z, 12, 0.45D, 0.5D, 0.45D, 0.08D);
         level.playSound(null, x, y, z,

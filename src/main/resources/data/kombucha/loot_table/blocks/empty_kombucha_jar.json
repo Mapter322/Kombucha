@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:block",
+    "pools": [
+        {
+            "rolls": 1.0,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "kombucha:empty_kombucha_jar"
+                }
+            ]
+        }
+    ],
+    "random_sequence": "kombucha:blocks/empty_kombucha_jar"
+}

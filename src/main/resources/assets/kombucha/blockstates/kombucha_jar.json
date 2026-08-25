@@ -1,88 +1,88 @@
 {
     "variants": {
         "jar_type=unsealed,fill=empty": {
-            "model": "kombucha:block/empty_combucha_jar"
+            "model": "kombucha:block/empty_kombucha_jar"
         },
         "jar_type=unsealed,fill=one_third": {
-            "model": "kombucha:block/1.3_filled_unsealed_combucha_jar"
+            "model": "kombucha:block/1.3_filled_unsealed_kombucha_jar"
         },
         "jar_type=unsealed,fill=two_thirds": {
-            "model": "kombucha:block/2.3_filled_unsealed_combucha_jar"
+            "model": "kombucha:block/2.3_filled_unsealed_kombucha_jar"
         },
         "jar_type=unsealed,fill=full": {
-            "model": "kombucha:block/filled_unsealed_combucha_jar"
+            "model": "kombucha:block/filled_unsealed_kombucha_jar"
         },
         "jar_type=sealed,fill=empty": {
-            "model": "kombucha:block/empty_sealed_combucha_jar"
+            "model": "kombucha:block/empty_sealed_kombucha_jar"
         },
         "jar_type=sealed,fill=one_third": {
-            "model": "kombucha:block/1.3_filled_sealed_combucha_jar"
+            "model": "kombucha:block/1.3_filled_sealed_kombucha_jar"
         },
         "jar_type=sealed,fill=two_thirds": {
-            "model": "kombucha:block/2.3_filled_sealed_combucha_jar"
+            "model": "kombucha:block/2.3_filled_sealed_kombucha_jar"
         },
         "jar_type=sealed,fill=full": {
-            "model": "kombucha:block/filled_sealed_combucha_jar"
+            "model": "kombucha:block/filled_sealed_kombucha_jar"
         },
         "jar_type=infested,fill=empty": {
-            "model": "kombucha:block/empty_sealed_infested_combucha_jar"
+            "model": "kombucha:block/empty_sealed_infested_kombucha_jar"
         },
         "jar_type=infested,fill=one_third": {
-            "model": "kombucha:block/1.3_sealed_infested_combucha_jar"
+            "model": "kombucha:block/1.3_sealed_infested_kombucha_jar"
         },
         "jar_type=infested,fill=two_thirds": {
-            "model": "kombucha:block/2.3_sealed_infested_combucha_jar"
+            "model": "kombucha:block/2.3_sealed_infested_kombucha_jar"
         },
         "jar_type=infested,fill=full": {
-            "model": "kombucha:block/sealed_infested_combucha_jar"
+            "model": "kombucha:block/sealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_infested,fill=empty": {
-            "model": "kombucha:block/empty_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/empty_unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_infested,fill=one_third": {
-            "model": "kombucha:block/1.3_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/1.3_unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_infested,fill=two_thirds": {
-            "model": "kombucha:block/2.3_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/2.3_unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_infested,fill=full": {
-            "model": "kombucha:block/unsealed_infested_combucha_jar"
+            "model": "kombucha:block/unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_water_infested,fill=empty": {
-            "model": "kombucha:block/water_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/water_unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_water_infested,fill=one_third": {
-            "model": "kombucha:block/water_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/water_unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_water_infested,fill=two_thirds": {
-            "model": "kombucha:block/water_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/water_unsealed_infested_kombucha_jar"
         },
         "jar_type=unsealed_water_infested,fill=full": {
-            "model": "kombucha:block/water_unsealed_infested_combucha_jar"
+            "model": "kombucha:block/water_unsealed_infested_kombucha_jar"
         },
         "jar_type=spoiled,fill=empty": {
-            "model": "kombucha:block/spoiled_combucha_jar"
+            "model": "kombucha:block/spoiled_kombucha_jar"
         },
         "jar_type=spoiled,fill=one_third": {
-            "model": "kombucha:block/spoiled_combucha_jar"
+            "model": "kombucha:block/spoiled_kombucha_jar"
         },
         "jar_type=spoiled,fill=two_thirds": {
-            "model": "kombucha:block/spoiled_combucha_jar"
+            "model": "kombucha:block/spoiled_kombucha_jar"
         },
         "jar_type=spoiled,fill=full": {
-            "model": "kombucha:block/spoiled_combucha_jar"
+            "model": "kombucha:block/spoiled_kombucha_jar"
         },
         "jar_type=unsealed_lava_infested,fill=empty": {
-            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+            "model": "kombucha:block/unsealed_lava_infested_kombucha_jar"
         },
         "jar_type=unsealed_lava_infested,fill=one_third": {
-            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+            "model": "kombucha:block/unsealed_lava_infested_kombucha_jar"
         },
         "jar_type=unsealed_lava_infested,fill=two_thirds": {
-            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+            "model": "kombucha:block/unsealed_lava_infested_kombucha_jar"
         },
         "jar_type=unsealed_lava_infested,fill=full": {
-            "model": "kombucha:block/unsealed_lava_infested_combucha_jar"
+            "model": "kombucha:block/unsealed_lava_infested_kombucha_jar"
         }
     }
 }

@@ -3,7 +3,7 @@ package com.mapter.kombucha.client.renderer.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.client.model.CaveKombuchaMonsterModel;
-import com.mapter.kombucha.client.renderer.entity.state.CombuchaMonsterRenderState;
+import com.mapter.kombucha.client.renderer.entity.state.KombuchaMonsterRenderState;
 import com.mapter.kombucha.entity.CaveKombuchaMonster;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -14,7 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CaveKombuchaMonsterRenderer extends MobRenderer<CaveKombuchaMonster, CombuchaMonsterRenderState, CaveKombuchaMonsterModel> {
+public class CaveKombuchaMonsterRenderer extends MobRenderer<CaveKombuchaMonster, KombuchaMonsterRenderState, CaveKombuchaMonsterModel> {
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/cave_kombucha_monster.png");
 
@@ -23,17 +23,17 @@ public class CaveKombuchaMonsterRenderer extends MobRenderer<CaveKombuchaMonster
     }
 
     @Override
-    public CombuchaMonsterRenderState createRenderState() {
-        return new CombuchaMonsterRenderState();
+    public KombuchaMonsterRenderState createRenderState() {
+        return new KombuchaMonsterRenderState();
     }
 
     @Override
-    public Identifier getTextureLocation(CombuchaMonsterRenderState state) {
+    public Identifier getTextureLocation(KombuchaMonsterRenderState state) {
         return TEXTURE;
     }
 
     @Override
-    public void extractRenderState(CaveKombuchaMonster entity, CombuchaMonsterRenderState state, float partialTicks) {
+    public void extractRenderState(CaveKombuchaMonster entity, KombuchaMonsterRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.isJumping = !entity.onGround();
         state.attackTime = entity.getAttackAnim(partialTicks);
@@ -41,7 +41,7 @@ public class CaveKombuchaMonsterRenderer extends MobRenderer<CaveKombuchaMonster
     }
 
     @Override
-    public void submit(CombuchaMonsterRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
+    public void submit(KombuchaMonsterRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
                        CameraRenderState camera) {
         this.getModel().setupAnim(state);
         super.submit(state, poseStack, submitNodeCollector, camera);

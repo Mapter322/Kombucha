@@ -25,7 +25,7 @@ public class KombuchaTargetGoal extends Goal {
             return false;
         }
         if (this.mob.getTarget() != null) {
-            if (CombuchaRelations.isFriendOfCombuchas(this.mob.getTarget())) {
+            if (KombuchaRelations.isFriendOfKombuchas(this.mob.getTarget())) {
                 this.mob.setTarget(null);
             }
             return false;
@@ -38,7 +38,7 @@ public class KombuchaTargetGoal extends Goal {
         double followRange = this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
         TargetingConditions conditions = TargetingConditions.forCombat()
                 .range(followRange)
-                .selector((entity, ignored) -> !CombuchaRelations.isFriendOfCombuchas(entity)
+                .selector((entity, ignored) -> !KombuchaRelations.isFriendOfKombuchas(entity)
                         && (!(this.mob instanceof FriendlyKombuchaMonster friendly)
                         || (entity != friendly.getOwner() && !(entity instanceof FriendlyKombuchaMonster))));
         if (!(this.mob instanceof FriendlyKombuchaMonster)) {
@@ -78,7 +78,7 @@ public class KombuchaTargetGoal extends Goal {
         LivingEntity currentTarget = this.mob.getTarget();
         return currentTarget != null
                 && currentTarget.isAlive()
-                && !CombuchaRelations.isFriendOfCombuchas(currentTarget)
+                && !KombuchaRelations.isFriendOfKombuchas(currentTarget)
                 && this.mob.canAttack(currentTarget)
                 && (!(this.mob instanceof FriendlyKombuchaMonster)
                         || this.mob.getSensing().hasLineOfSight(currentTarget))

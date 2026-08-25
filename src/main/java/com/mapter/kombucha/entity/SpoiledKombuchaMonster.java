@@ -41,13 +41,13 @@ public class SpoiledKombuchaMonster extends Monster implements RangedAttackMob {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new KombuchaRangedAttackGoal(this, 1.0, 45, 12.0F));
-        this.goalSelector.addGoal(2, new CombuchaFollowPlayerGoal(this, 1.0, 3.0, 16.0));
+        this.goalSelector.addGoal(2, new KombuchaFollowPlayerGoal(this, 1.0, 3.0, 16.0));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, true));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new CombuchaHurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new KombuchaHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new KombuchaTargetGoal(this));
     }
 
@@ -94,7 +94,7 @@ public class SpoiledKombuchaMonster extends Monster implements RangedAttackMob {
         double zd = this.rangedTargetZ - this.getZ();
         double yo = Math.sqrt(xd * xd + zd * zd) * 0.2F;
         ItemStack itemStack = new ItemStack(Items.SLIME_BALL);
-        SlimeCombuchaProjectile projectile = new SlimeCombuchaProjectile(serverLevel, this);
+        SlimeKombuchaProjectile projectile = new SlimeKombuchaProjectile(serverLevel, this);
         Projectile.spawnProjectileUsingShoot(projectile, serverLevel, itemStack,
                 xd, this.rangedTargetY + yo - projectile.getY(), zd, 0.8F + this.rangedPower * 0.2667F, 4.0F);
         this.playSound(SoundEvents.SLIME_ATTACK, 1.0F, 0.8F + this.random.nextFloat() * 0.2F);
@@ -105,11 +105,11 @@ public class SpoiledKombuchaMonster extends Monster implements RangedAttackMob {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
         float dropRoll = this.random.nextFloat();
         if (dropRoll < 0.10F) {
-            this.spawnAtLocation(level, Kombucha.LIVING_COMBUCHA_SHROOM.get());
+            this.spawnAtLocation(level, Kombucha.LIVING_KOMBUCHA_SHROOM.get());
         } else if (dropRoll < 0.80F) {
-            this.spawnAtLocation(level, Kombucha.COMBUCHA_SHROOM.get());
+            this.spawnAtLocation(level, Kombucha.KOMBUCHA_SHROOM.get());
         } else {
-            this.spawnAtLocation(level, Kombucha.UNCOMMON_COMBUCHA_SHROOM.get());
+            this.spawnAtLocation(level, Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get());
         }
     }
 

@@ -140,7 +140,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
                         && !level.canSeeSky(pos)
                         && level.getMaxLocalRawBrightness(pos) <= 7
                         && level.getRandom().nextFloat() < 0.10F) {
-                    SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(Kombucha.SPOILED_COMBUCHA_MONSTER.get(), level);
+                    SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
                     monster.setPos(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D);
                     monster.setYRot(level.getRandom().nextFloat() * 360.0F);
                     level.addFreshEntity(monster);

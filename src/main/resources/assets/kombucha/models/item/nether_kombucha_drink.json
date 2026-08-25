@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "kombucha:item/nether_combucha_bottle"
+        "layer0": "kombucha:item/nether_kombucha_bottle"
     }
 }

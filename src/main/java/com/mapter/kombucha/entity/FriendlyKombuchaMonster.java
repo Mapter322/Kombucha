@@ -370,7 +370,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
         double xd = this.rangedTargetX - this.getX();
         double zd = this.rangedTargetZ - this.getZ();
         double yo = Math.sqrt(xd * xd + zd * zd) * 0.2F;
-        SlimeCombuchaProjectile projectile = new SlimeCombuchaProjectile(serverLevel, this);
+        SlimeKombuchaProjectile projectile = new SlimeKombuchaProjectile(serverLevel, this);
         Projectile.spawnProjectileUsingShoot(projectile, serverLevel, new ItemStack(Items.SLIME_BALL),
                 xd, this.rangedTargetY + yo - projectile.getY(), zd,
                  getRangedProjectileSpeedWithUpgrades(this.rangedPower), 4.0F);
@@ -587,7 +587,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
 
     public float getRangedDamage() {
         int upgrades = Math.min(getRangedDamageUpgrades(), MAX_RANGED_DAMAGE_UPGRADES);
-        return (float) ((SlimeCombuchaProjectile.DAMAGE + upgrades * 0.5F) * getBabyStatMultiplier());
+        return (float) ((SlimeKombuchaProjectile.DAMAGE + upgrades * 0.5F) * getBabyStatMultiplier());
     }
 
     public int getMeleeAttackIntervalTicks() {
@@ -944,15 +944,15 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     private static boolean isPerkMushroom(ItemStack stack) {
-        return stack.is(Kombucha.UNCOMMON_COMBUCHA_SHROOM.get());
+        return stack.is(Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get());
     }
 
     private static boolean isRegenerationMushroom(ItemStack stack) {
-        return stack.is(Kombucha.ENDER_COMBUCHA_SHROOM.get());
+        return stack.is(Kombucha.ENDER_KOMBUCHA_SHROOM.get());
     }
 
     private static boolean isVampirismMushroom(ItemStack stack) {
-        return stack.is(Kombucha.NETHER_COMBUCHA_SHROOM.get());
+        return stack.is(Kombucha.NETHER_KOMBUCHA_SHROOM.get());
     }
 
     @Override

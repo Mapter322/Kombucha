@@ -42,13 +42,13 @@ public class NetherKombuchaMonster extends Monster implements RangedAttackMob {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new KombuchaRangedAttackGoal(this, 1.0, 45, 12.0F));
-        this.goalSelector.addGoal(2, new CombuchaFollowPlayerGoal(this, 1.0, 3.0, 16.0));
+        this.goalSelector.addGoal(2, new KombuchaFollowPlayerGoal(this, 1.0, 3.0, 16.0));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, true));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new CombuchaHurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new KombuchaHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new KombuchaTargetGoal(this));
     }
 
@@ -95,7 +95,7 @@ public class NetherKombuchaMonster extends Monster implements RangedAttackMob {
         double zd = this.rangedTargetZ - this.getZ();
         double yo = Math.sqrt(xd * xd + zd * zd) * 0.2F;
         ItemStack itemStack = new ItemStack(Items.MAGMA_CREAM);
-        MagmaCombuchaProjectile projectile = new MagmaCombuchaProjectile(serverLevel, this);
+        MagmaKombuchaProjectile projectile = new MagmaKombuchaProjectile(serverLevel, this);
         Projectile.spawnProjectileUsingShoot(projectile, serverLevel, itemStack,
                 xd, this.rangedTargetY + yo - projectile.getY(), zd, 0.8F + this.rangedPower * 0.2667F, 4.0F);
         this.playSound(SoundEvents.BLAZE_SHOOT, 1.0F, 0.8F + this.random.nextFloat() * 0.2F);
@@ -105,7 +105,7 @@ public class NetherKombuchaMonster extends Monster implements RangedAttackMob {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
         if (this.random.nextFloat() < 0.5F) {
-            this.spawnAtLocation(level, Kombucha.NETHER_COMBUCHA_SHROOM.get());
+            this.spawnAtLocation(level, Kombucha.NETHER_KOMBUCHA_SHROOM.get());
         }
     }
 

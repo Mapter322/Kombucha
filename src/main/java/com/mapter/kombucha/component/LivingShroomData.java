@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Everything that makes a friendly kombucha monster who it is, carried by a
- * living combucha shroom. The experience bar is deliberately not part of it -
+ * living kombucha shroom. The experience bar is deliberately not part of it -
  * it resets when the monster comes back to life.
  */
 public record LivingShroomData(
@@ -73,7 +73,7 @@ public record LivingShroomData(
 
     /** The shroom item as it drops on death - carries the whole monster. */
     public ItemStack toItemStack() {
-        ItemStack stack = new ItemStack(Kombucha.LIVING_COMBUCHA_SHROOM.get());
+        ItemStack stack = new ItemStack(Kombucha.LIVING_KOMBUCHA_SHROOM.get());
         stack.set(ModDataComponents.LIVING_SHROOM_DATA, this);
         customName.ifPresent(name -> stack.set(DataComponents.CUSTOM_NAME, name));
         return stack;
