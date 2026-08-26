@@ -2,12 +2,13 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": 1.0,
+      "rolls": 2.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "kombucha:apple_tea_mix",
+          "name": "kombucha:nether_kombucha_shroom",
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -18,83 +19,53 @@
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
-      "entries": [
+        },
         {
           "type": "minecraft:item",
-          "name": "kombucha:tea_mix",
+          "name": "kombucha:nether_tea_mix",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
+          "weight": 8,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 2.0
+                "min": 2.0,
+                "max": 6.0
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
-      "entries": [
+        },
         {
           "type": "minecraft:item",
-          "name": "kombucha:melon_tea_mix",
+          "name": "minecraft:quartz",
+          "weight": 8,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 2.0
+                "min": 3.0,
+                "max": 8.0
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
-      "entries": [
+        },
         {
           "type": "minecraft:item",
-          "name": "kombucha:kombucha_shroom",
+          "name": "minecraft:magma_cream",
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 2.0
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "kombucha:uncommon_kombucha_shroom",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 2.0
+                "max": 3.0
               }
             }
           ]
@@ -102,5 +73,5 @@
       ]
     }
   ],
-  "random_sequence": "kombucha:cave_ruin/small_cave_ruin"
+  "random_sequence": "kombucha:nether_ruin/small_nether_ruin"
 }
