@@ -50,6 +50,7 @@
     "kombucha.progress.ready": "Чайный гриб готов!",
     "kombucha.progress.ready_unsealed": "Комбуча готова! Налей в бутылку.",
     "kombucha.progress.spoiled": "Комбуча испортилась. Чайный гриб погиб.",
+    "kombucha.progress.turning_monster": "Испорченная комбуча превращается в монстра... %s",
     "kombucha.hint.add_liquid": "Добавь жидкость",
     "kombucha.hint.add_tea_mix": "Добавь чайный микс",
     "kombucha.hint.add_tea_or_shroom": "Добавь чайный микс или чайный гриб",

@@ -50,6 +50,7 @@
     "kombucha.progress.ready": "Kombucha is ready!",
     "kombucha.progress.ready_unsealed": "Kombucha is ready! Fill a bottle.",
     "kombucha.progress.spoiled": "The kombucha has spoiled. The mushroom is dead.",
+    "kombucha.progress.turning_monster": "The spoiled kombucha is turning into a monster... %s",
     "kombucha.hint.add_liquid": "Add liquid",
     "kombucha.hint.add_tea_mix": "Add a tea mix",
     "kombucha.hint.add_tea_or_shroom": "Add a tea mix or kombucha mushroom",

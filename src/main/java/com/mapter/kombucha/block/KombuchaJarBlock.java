@@ -159,7 +159,8 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                     } else if (FermentationStage.of(be.getFermentationTicks(),
                             KombuchaConfig.TICKS_TO_INFESTED.get(),
                             KombuchaConfig.TICKS_TO_FERMENTED.get(),
-                            KombuchaConfig.TICKS_TO_SPOILED.get()) == FermentationStage.THREE) {
+                            KombuchaConfig.TICKS_TO_SPOILED.get(),
+                            KombuchaConfig.TICKS_TO_MONSTER.get()) == FermentationStage.THREE) {
                         fillBottle(level, pos, state, player, stack, be);
                     } else {
                         player.sendOverlayMessage(
@@ -354,7 +355,8 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             hasMushroom = FermentationStage.of(be.getFermentationTicks(),
                     KombuchaConfig.TICKS_TO_INFESTED.get(),
                     KombuchaConfig.TICKS_TO_FERMENTED.get(),
-                    KombuchaConfig.TICKS_TO_SPOILED.get()) != FermentationStage.ONE;
+                    KombuchaConfig.TICKS_TO_SPOILED.get(),
+                    KombuchaConfig.TICKS_TO_MONSTER.get()) != FermentationStage.ONE;
         }
 
         // closing the lid keeps the stage
@@ -389,7 +391,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
 
         // only when matured (stage 3)
         if (FermentationStage.of(be.getFermentationTicks(), ticksToInfested,
-                ticksToFermented, ticksToSpoiled) != FermentationStage.THREE
+                ticksToFermented, ticksToSpoiled, KombuchaConfig.TICKS_TO_MONSTER.get()) != FermentationStage.THREE
                 || be.getFillsLeft() <= 0) {
             return;
         }
@@ -434,7 +436,8 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         FermentationStage stage = FermentationStage.of(be.getFermentationTicks(),
                 KombuchaConfig.TICKS_TO_INFESTED.get(),
                 KombuchaConfig.TICKS_TO_FERMENTED.get(),
-                KombuchaConfig.TICKS_TO_SPOILED.get());
+                KombuchaConfig.TICKS_TO_SPOILED.get(),
+                KombuchaConfig.TICKS_TO_MONSTER.get());
         if (stage != FermentationStage.TWO && stage != FermentationStage.THREE) {
             return false;
         }
@@ -471,7 +474,8 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             FermentationStage stage = FermentationStage.of(be.getFermentationTicks(),
                     KombuchaConfig.TICKS_TO_INFESTED.get(),
                     KombuchaConfig.TICKS_TO_FERMENTED.get(),
-                    KombuchaConfig.TICKS_TO_SPOILED.get());
+                    KombuchaConfig.TICKS_TO_SPOILED.get(),
+                    KombuchaConfig.TICKS_TO_MONSTER.get());
             if (stage == FermentationStage.THREE) {
                 reviveLivingShroom(level, pos, state, be);
             } else {
@@ -488,11 +492,11 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             return;
         }
         level.addFreshEntity(FriendlyKombuchaMonster.reviveFromShroom(level, pos, data));
-        // the living shroom is gone — the jar is back to plain tea without a mushroom
+        // the living shroom is gone — the jar is empty
         be.setLivingShroomData(null);
         be.setFermentationTicks(0);
-        be.setFillsLeft(3);
-        level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED).setValue(FILL, Fill.FULL), 3);
+        be.setFillsLeft(0);
+        level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
         level.playSound(null, pos, SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.BLOCKS, 1.0F, 1.0F);
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,
@@ -507,11 +511,20 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         int ticksToFermented = KombuchaConfig.TICKS_TO_FERMENTED.get();
         int ticksToSpoiled = KombuchaConfig.TICKS_TO_SPOILED.get();
         FermentationStage stage = FermentationStage.of(fermentationTicks, ticksToInfested,
-                ticksToFermented, ticksToSpoiled);
+                ticksToFermented, ticksToSpoiled, KombuchaConfig.TICKS_TO_MONSTER.get());
 
         if (jarType == JarType.SPOILED) {
-            player.sendOverlayMessage(
-                    Component.translatable("kombucha.progress.spoiled").withStyle(ChatFormatting.DARK_RED));
+            if (stage == FermentationStage.SPOILED) {
+                long remaining = Math.max(0L, (long) ticksToInfested + ticksToFermented + ticksToSpoiled
+                        + KombuchaConfig.TICKS_TO_MONSTER.get() - fermentationTicks);
+                player.sendOverlayMessage(
+                        Component.translatable("kombucha.progress.turning_monster",
+                                        Component.literal(formatTime(remaining)).withStyle(ChatFormatting.WHITE))
+                                .withStyle(ChatFormatting.DARK_RED));
+            } else {
+                player.sendOverlayMessage(
+                        Component.translatable("kombucha.progress.spoiled").withStyle(ChatFormatting.DARK_RED));
+            }
             return;
         }
 
@@ -558,13 +571,13 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
     }
 
-    private static String formatTime(int ticks) {
-        int seconds = Math.max(1, ticks / 20);
+    private static String formatTime(long ticks) {
+        long seconds = Math.max(1, ticks / 20);
         if (seconds < 60) {
             return seconds + "s";
         }
-        int minutes = seconds / 60;
-        int secs = seconds % 60;
+        long minutes = seconds / 60;
+        long secs = seconds % 60;
         if (secs == 0) {
             return minutes + "m";
         }

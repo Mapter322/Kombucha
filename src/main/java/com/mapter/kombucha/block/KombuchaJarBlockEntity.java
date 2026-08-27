@@ -14,6 +14,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -98,14 +100,17 @@ public class KombuchaJarBlockEntity extends BlockEntity {
     public static void tick(Level level, BlockPos pos, BlockState state, KombuchaJarBlockEntity be) {
         KombuchaJarBlock.JarType jarType = state.getValue(KombuchaJarBlock.JAR_TYPE);
 
-        if (jarType != KombuchaJarBlock.JarType.SEALED && jarType != KombuchaJarBlock.JarType.INFESTED) {
+        if (jarType != KombuchaJarBlock.JarType.SEALED
+                && jarType != KombuchaJarBlock.JarType.INFESTED
+                && jarType != KombuchaJarBlock.JarType.SPOILED) {
             // unsealed — paused, but a ready jar keeps the same particles as a closed one
             if (!level.isClientSide()
                     && jarType == KombuchaJarBlock.JarType.UNSEALED_INFESTED
                     && FermentationStage.of(be.fermentationTicks,
                     KombuchaConfig.TICKS_TO_INFESTED.get(),
                     KombuchaConfig.TICKS_TO_FERMENTED.get(),
-                    KombuchaConfig.TICKS_TO_SPOILED.get())
+                    KombuchaConfig.TICKS_TO_SPOILED.get(),
+                    KombuchaConfig.TICKS_TO_MONSTER.get())
                     == FermentationStage.THREE
                     && level.getGameTime() % 10 == 0) {
                 sendReadyParticles(level, pos);
@@ -120,15 +125,16 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             int ticksToInfested = KombuchaConfig.TICKS_TO_INFESTED.get();
             int ticksToFermented = KombuchaConfig.TICKS_TO_FERMENTED.get();
             int ticksToSpoiled = KombuchaConfig.TICKS_TO_SPOILED.get();
+            int ticksToMonster = KombuchaConfig.TICKS_TO_MONSTER.get();
             FermentationStage stage = FermentationStage.of(be.fermentationTicks, ticksToInfested,
-                    ticksToFermented, ticksToSpoiled);
+                    ticksToFermented, ticksToSpoiled, ticksToMonster);
 
             // the mushroom appears: a sealed jar turns infested
             if (stage != FermentationStage.ONE && jarType == KombuchaJarBlock.JarType.SEALED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.INFESTED), 3);
             }
 
-            // the mushroom dies: an infested jar spoils
+            // the mushroom spoils: an infested jar enters the final stage
             if (stage == FermentationStage.SPOILED && jarType == KombuchaJarBlock.JarType.INFESTED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.SPOILED), 3);
 
@@ -136,21 +142,35 @@ public class KombuchaJarBlockEntity extends BlockEntity {
                     // the shroom survives the failed brew and drops back out with everything it carries
                     Block.popResource(level, pos, be.livingShroomData.toItemStack());
                     be.setLivingShroomData(null);
-                } else if (be.teaType != TeaType.NETHER
-                        && !level.canSeeSky(pos)
-                        && level.getMaxLocalRawBrightness(pos) <= 7
-                        && level.getRandom().nextFloat() < 0.10F) {
-                    SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
-                    monster.setPos(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D);
-                    monster.setYRot(level.getRandom().nextFloat() * 360.0F);
-                    level.addFreshEntity(monster);
+                    be.setFillsLeft(0);
+                    level.setBlock(pos, Kombucha.EMPTY_KOMBUCHA_JAR.get().defaultBlockState(), 3);
+                    return;
                 }
             }
 
+            // the spoiled kombucha breaks the jar as it emerges
+            if (stage == FermentationStage.MONSTER && jarType == KombuchaJarBlock.JarType.SPOILED) {
+                SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(
+                        Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
+                monster.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
+                monster.setYRot(level.getRandom().nextFloat() * 360.0F);
+                level.addFreshEntity(monster);
+                level.destroyBlock(pos, true);
+                level.playSound(null, pos, SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,
+                            pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                            40, 0.3D, 0.3D, 0.3D, 0.1D);
+                }
+                return;
+            }
+
             // bubbles while it's growing, witch particles once it's ready
+            boolean growing = stage == FermentationStage.ONE || stage == FermentationStage.TWO;
             boolean matured = stage == FermentationStage.THREE;
 
-            if (!matured && level.getGameTime() % 15 == 0) {
+            if (growing && level.getGameTime() % 15 == 0) {
                 double x = pos.getX() + 0.3 + level.getRandom().nextDouble() * 0.4;
                 double y = pos.getY() + 0.9;
                 double z = pos.getZ() + 0.3 + level.getRandom().nextDouble() * 0.4;
