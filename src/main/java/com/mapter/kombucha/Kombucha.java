@@ -20,7 +20,7 @@ import com.mapter.kombucha.effect.ModEffects;
 import com.mapter.kombucha.item.KombuchaDrinkItem;
 import com.mapter.kombucha.item.KombuchaJarItem;
 import com.mapter.kombucha.item.LivingKombuchaShroomItem;
-import com.mapter.kombucha.loot.CopyJarDataFunction;
+import com.mapter.kombucha.loot.DropJarContentsFunction;
 import com.mapter.kombucha.item.EmptyKombuchaBottleItem;
 import com.mapter.kombucha.network.FriendlyKombuchaUpgradePayload;
 import com.mapter.kombucha.network.FriendlyKombuchaStatePayload;
@@ -45,6 +45,7 @@ import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.neoforged.bus.api.IEventBus;
@@ -73,7 +74,7 @@ public class Kombucha {
             DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, MODID);
 
     static {
-        LOOT_FUNCTIONS.register("copy_jar_data", () -> CopyJarDataFunction.CODEC);
+        LOOT_FUNCTIONS.register("drop_jar_contents", () -> DropJarContentsFunction.CODEC);
     }
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpoiledKombuchaMonster>> SPOILED_KOMBUCHA_MONSTER =
@@ -156,6 +157,8 @@ public class Kombucha {
     public static final DeferredBlock<EmptyJarBlock> EMPTY_KOMBUCHA_JAR = BLOCKS.register("empty_kombucha_jar",
             id -> new EmptyJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
+                    .strength(0.3F)
+                    .sound(SoundType.GLASS)
                     .noOcclusion()));
     public static final DeferredItem<BlockItem> EMPTY_KOMBUCHA_JAR_ITEM = ITEMS.register("empty_kombucha_jar",
             id -> new BlockItem(EMPTY_KOMBUCHA_JAR.get(), new Item.Properties()
@@ -164,6 +167,8 @@ public class Kombucha {
     public static final DeferredBlock<KombuchaJarBlock> KOMBUCHA_JAR = BLOCKS.register("kombucha_jar",
             id -> new KombuchaJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
+                    .strength(0.3F)
+                    .sound(SoundType.GLASS)
                     .noOcclusion()));
     public static final DeferredItem<KombuchaJarItem> KOMBUCHA_JAR_ITEM = ITEMS.register("kombucha_jar",
             id -> new KombuchaJarItem(KOMBUCHA_JAR.get(), new Item.Properties()
@@ -226,6 +231,8 @@ public class Kombucha {
     public static final DeferredBlock<WaterJarBlock> WATER_JAR = BLOCKS.register("water_jar",
             id -> new WaterJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
+                    .strength(0.3F)
+                    .sound(SoundType.GLASS)
                     .noOcclusion()));
     public static final DeferredItem<BlockItem> WATER_JAR_ITEM = ITEMS.register("water_jar",
             id -> new BlockItem(WATER_JAR.get(), new Item.Properties()
@@ -234,6 +241,8 @@ public class Kombucha {
     public static final DeferredBlock<LavaJarBlock> LAVA_JAR = BLOCKS.register("lava_jar",
             id -> new LavaJarBlock(BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, id))
+                    .strength(0.3F)
+                    .sound(SoundType.GLASS)
                     .noOcclusion()
                     .lightLevel(state -> 15)));
     public static final DeferredItem<BlockItem> LAVA_JAR_ITEM = ITEMS.register("lava_jar",

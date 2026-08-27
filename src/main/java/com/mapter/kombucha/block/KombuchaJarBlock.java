@@ -246,6 +246,9 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             if (tryReviveLivingShroom(level, pos, state, player)) {
                 return InteractionResult.SUCCESS;
             }
+            if (tryTakeMushroom(level, pos, state, player)) {
+                return InteractionResult.SUCCESS;
+            }
             if (jarType == JarType.SEALED || jarType == JarType.INFESTED) {
                 if (!level.isClientSide()) {
                     unsealJar(level, pos, state, player);
@@ -297,6 +300,9 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         // shift+RMB: revive the kombucha in a matured living-shroom jar, otherwise take the lid off
         if (player.isShiftKeyDown()) {
             if (tryReviveLivingShroom(level, pos, state, player)) {
+                return InteractionResult.SUCCESS;
+            }
+            if (tryTakeMushroom(level, pos, state, player)) {
                 return InteractionResult.SUCCESS;
             }
             if (jarType == JarType.SEALED || jarType == JarType.INFESTED) {
@@ -411,6 +417,45 @@ public class KombuchaJarBlock extends BaseEntityBlock {
 
     private static Item getDrinkFor(TeaType teaType) {
         return Kombucha.KOMBUCHA_DRINKS.get(teaType).get();
+    }
+
+    /** Shift+RMB on an open jar: take the mushroom during stages 2 and 3. */
+    private static boolean tryTakeMushroom(Level level, BlockPos pos, BlockState state, Player player) {
+        JarType jarType = state.getValue(JAR_TYPE);
+        if (jarType != JarType.UNSEALED_INFESTED
+                && jarType != JarType.UNSEALED_WATER_INFESTED
+                && jarType != JarType.UNSEALED_LAVA_INFESTED) {
+            return false;
+        }
+        if (!(level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be)) {
+            return false;
+        }
+
+        FermentationStage stage = FermentationStage.of(be.getFermentationTicks(),
+                KombuchaConfig.TICKS_TO_INFESTED.get(),
+                KombuchaConfig.TICKS_TO_FERMENTED.get(),
+                KombuchaConfig.TICKS_TO_SPOILED.get());
+        if (stage != FermentationStage.TWO && stage != FermentationStage.THREE) {
+            return false;
+        }
+
+        if (!level.isClientSide()) {
+            ItemStack mushroom = new ItemStack(Kombucha.KOMBUCHA_SHROOM.get());
+            if (!player.getInventory().add(mushroom)) {
+                player.drop(mushroom, false);
+            }
+
+            if (jarType == JarType.UNSEALED_WATER_INFESTED) {
+                level.setBlock(pos, Kombucha.WATER_JAR.get().defaultBlockState(), 3);
+            } else if (jarType == JarType.UNSEALED_LAVA_INFESTED) {
+                level.setBlock(pos, Kombucha.LAVA_JAR.get().defaultBlockState(), 3);
+            } else {
+                be.setFermentationTicks(0);
+                level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED), 3);
+            }
+            level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
+        return true;
     }
 
     /** Shift+RMB on a living-shroom jar: revive the monster once the shroom has matured. */

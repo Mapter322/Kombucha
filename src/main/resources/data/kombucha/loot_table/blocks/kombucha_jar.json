@@ -6,10 +6,10 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "kombucha:kombucha_jar",
+                    "name": "kombucha:empty_kombucha_jar",
                     "functions": [
                         {
-                            "function": "kombucha:copy_jar_data"
+                            "function": "kombucha:drop_jar_contents"
                         }
                     ]
                 }
