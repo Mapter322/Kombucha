@@ -56,6 +56,8 @@
     "kombucha.hint.add_tea_or_shroom": "Добавь чайный микс или чайный гриб",
     "kombucha.hint.cover_jar": "Накрой банку шерстью",
     "kombucha.hint.not_ready": "Чайный гриб еще не готов!",
+    "kombucha.hint.fresh_air": "Комбуча должна быть на свежем воздухе!",
+    "kombucha.hint.underground": "Комбуча должна быть под землёй и без света!",
     "kombucha.hint.add_water": "Банка пуста. Сначала добавь воды.",
     "kombucha.hint.add_lava": "Банка пуста. Сначала добавь лавы.",
     "kombucha.hint.add_nether_mix": "Добавь адский чайный микс",

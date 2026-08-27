@@ -56,6 +56,8 @@
     "kombucha.hint.add_tea_or_shroom": "Add a tea mix or kombucha mushroom",
     "kombucha.hint.cover_jar": "Cover the jar with wool",
     "kombucha.hint.not_ready": "Kombucha is not ready yet!",
+    "kombucha.hint.fresh_air": "Kombucha needs to be in the open air!",
+    "kombucha.hint.underground": "Kombucha needs to be underground and in complete darkness!",
     "kombucha.hint.add_water": "The jar is empty. Add water first.",
     "kombucha.hint.add_lava": "The jar is empty. Add lava first.",
     "kombucha.hint.add_nether_mix": "Add the nether tea mix",

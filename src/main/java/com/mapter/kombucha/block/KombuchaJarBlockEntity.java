@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
@@ -119,17 +120,32 @@ public class KombuchaJarBlockEntity extends BlockEntity {
         }
 
         if (!level.isClientSide()) {
+            int ticksToInfested = KombuchaConfig.TICKS_TO_INFESTED.get();
+            if (jarType == KombuchaJarBlock.JarType.SEALED
+                    && be.fermentationTicks < ticksToInfested
+                    && !isUnderground(level, pos)) {
+                return;
+            }
+
             be.fermentationTicks++;
             be.setChanged();
 
-            int ticksToInfested = KombuchaConfig.TICKS_TO_INFESTED.get();
             int ticksToFermented = KombuchaConfig.TICKS_TO_FERMENTED.get();
             int ticksToSpoiled = KombuchaConfig.TICKS_TO_SPOILED.get();
             int ticksToMonster = KombuchaConfig.TICKS_TO_MONSTER.get();
             FermentationStage stage = FermentationStage.of(be.fermentationTicks, ticksToInfested,
                     ticksToFermented, ticksToSpoiled, ticksToMonster);
 
-            // the mushroom appears: a sealed jar turns infested
+            boolean freshAir = level.canSeeSky(pos.above());
+            if (jarType == KombuchaJarBlock.JarType.SPOILED && stage == FermentationStage.THREE) {
+                stage = FermentationStage.SPOILED;
+            } else if (jarType == KombuchaJarBlock.JarType.INFESTED
+                    && stage == FermentationStage.THREE && !freshAir) {
+                // A mushroom that is not moved outside spoils instead of maturing.
+                stage = FermentationStage.SPOILED;
+            }
+
+            // the mushroom appears: a sealed jar turns infested in a cave
             if (stage != FermentationStage.ONE && jarType == KombuchaJarBlock.JarType.SEALED) {
                 level.setBlock(pos, state.setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.INFESTED), 3);
             }
@@ -149,7 +165,9 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             }
 
             // the spoiled kombucha breaks the jar as it emerges
-            if (stage == FermentationStage.MONSTER && jarType == KombuchaJarBlock.JarType.SPOILED) {
+            if (stage == FermentationStage.MONSTER
+                    && (jarType == KombuchaJarBlock.JarType.INFESTED
+                    || jarType == KombuchaJarBlock.JarType.SPOILED)) {
                 SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(
                         Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
                 monster.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
@@ -181,6 +199,13 @@ public class KombuchaJarBlockEntity extends BlockEntity {
                 sendReadyParticles(level, pos);
             }
         }
+    }
+
+    public static boolean isUnderground(Level level, BlockPos pos) {
+        return pos.getY() < 40
+                && level.getMaxLocalRawBrightness(pos) == 0
+                && !level.canSeeSky(pos.above())
+                && !level.getFluidState(pos).is(Fluids.WATER);
     }
 
     private static void sendReadyParticles(Level level, BlockPos pos) {

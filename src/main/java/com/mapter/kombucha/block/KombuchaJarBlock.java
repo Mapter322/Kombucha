@@ -263,7 +263,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                 || jarType == JarType.UNSEALED_INFESTED || jarType == JarType.SPOILED) {
             if (!level.isClientSide()) {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
-                    showProgress(player, jarType, be);
+                    showProgress(level, player, jarType, be);
                 }
             }
             return InteractionResult.SUCCESS;
@@ -319,7 +319,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                 || jarType == JarType.UNSEALED_INFESTED || jarType == JarType.SPOILED) {
             if (!level.isClientSide()) {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
-                    showProgress(player, jarType, be);
+                    showProgress(level, player, jarType, be);
                 }
             }
             return InteractionResult.SUCCESS;
@@ -393,6 +393,11 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         if (FermentationStage.of(be.getFermentationTicks(), ticksToInfested,
                 ticksToFermented, ticksToSpoiled, KombuchaConfig.TICKS_TO_MONSTER.get()) != FermentationStage.THREE
                 || be.getFillsLeft() <= 0) {
+            return;
+        }
+        if (!level.canSeeSky(pos.above())) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.fresh_air").withStyle(ChatFormatting.WHITE));
             return;
         }
 
@@ -505,7 +510,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
     }
 
-    private static void showProgress(Player player, JarType jarType, KombuchaJarBlockEntity be) {
+    private static void showProgress(Level level, Player player, JarType jarType, KombuchaJarBlockEntity be) {
         int fermentationTicks = be.getFermentationTicks();
         int ticksToInfested = KombuchaConfig.TICKS_TO_INFESTED.get();
         int ticksToFermented = KombuchaConfig.TICKS_TO_FERMENTED.get();
@@ -544,7 +549,20 @@ public class KombuchaJarBlock extends BaseEntityBlock {
             return;
         }
 
+        if (jarType == JarType.INFESTED && stage == FermentationStage.TWO
+                && !level.canSeeSky(be.getBlockPos().above())) {
+            player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.fresh_air").withStyle(ChatFormatting.WHITE));
+            return;
+        }
+
         if (jarType == JarType.SEALED) {
+            if (fermentationTicks < ticksToInfested
+                    && !KombuchaJarBlockEntity.isUnderground(level, be.getBlockPos())) {
+                player.sendOverlayMessage(
+                    Component.translatable("kombucha.hint.underground").withStyle(ChatFormatting.WHITE));
+                return;
+            }
             // stage 1: plain tea
             int remaining = Math.max(0, ticksToInfested - fermentationTicks);
             player.sendOverlayMessage(
