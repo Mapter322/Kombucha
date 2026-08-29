@@ -2,6 +2,7 @@ package com.mapter.kombucha.component;
 
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.block.KombuchaJarBlock;
+import com.mapter.kombucha.block.MushroomType;
 import com.mapter.kombucha.block.TeaType;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -22,6 +23,12 @@ public class ModDataComponents {
             DATA_COMPONENT_TYPES.register("tea_type",
                     () -> DataComponentType.<TeaType>builder()
                             .persistent(TeaType.CODEC)
+                            .build());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<MushroomType>> MUSHROOM_TYPE =
+            DATA_COMPONENT_TYPES.register("mushroom_type",
+                    () -> DataComponentType.<MushroomType>builder()
+                            .persistent(MushroomType.CODEC)
                             .build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<LivingShroomData>> LIVING_SHROOM_DATA =

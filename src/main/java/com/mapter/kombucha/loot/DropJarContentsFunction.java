@@ -1,6 +1,5 @@
 package com.mapter.kombucha.loot;
 
-import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.block.KombuchaJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlockEntity;
 import com.mojang.serialization.MapCodec;
@@ -35,7 +34,7 @@ public class DropJarContentsFunction extends LootItemConditionalFunction {
                 && context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof KombuchaJarBlockEntity be) {
             ItemStack mushroom = be.hasLivingShroom()
                     ? be.getLivingShroomData().toItemStack()
-                    : new ItemStack(Kombucha.KOMBUCHA_SHROOM.get());
+                    : new ItemStack(be.getMushroomType().getItem());
             Block.popResource(context.getLevel(), be.getBlockPos(), mushroom);
         }
         return stack;
