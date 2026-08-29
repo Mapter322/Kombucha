@@ -103,14 +103,7 @@ public class SpoiledKombuchaMonster extends Monster implements RangedAttackMob {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
-        float dropRoll = this.random.nextFloat();
-        if (dropRoll < 0.10F) {
-            this.spawnAtLocation(level, Kombucha.LIVING_KOMBUCHA_SHROOM.get());
-        } else if (dropRoll < 0.80F) {
-            this.spawnAtLocation(level, Kombucha.KOMBUCHA_SHROOM.get());
-        } else {
-            this.spawnAtLocation(level, Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get());
-        }
+        this.spawnAtLocation(level, Kombucha.KOMBUCHA_SHROOM.get());
     }
 
     public static AttributeSupplier.Builder createAttributes() {

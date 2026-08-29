@@ -1,6 +1,7 @@
 package com.mapter.kombucha.block;
 
 import com.mapter.kombucha.Kombucha;
+import com.mapter.kombucha.config.KombuchaConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,6 +39,26 @@ public class LavaJarBlock extends Block {
                     player.setItemInHand(hand, new ItemStack(Items.LAVA_BUCKET));
                 }
                 level.playSound(null, pos, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // a nether mushroom starts the nether brew
+        if (MushroomType.fromStack(stack) == MushroomType.NETHER) {
+            if (!level.isClientSide()) {
+                BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
+                        .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_LAVA_INFESTED)
+                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL);
+                level.setBlock(pos, kombuchaState, 3);
+                if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
+                    be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
+                    be.setFillsLeft(3);
+                    be.setMushroomType(MushroomType.NETHER);
+                }
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }

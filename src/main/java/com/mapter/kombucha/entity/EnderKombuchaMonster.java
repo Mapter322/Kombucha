@@ -103,9 +103,7 @@ public class EnderKombuchaMonster extends Monster implements net.minecraft.world
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
-        if (this.random.nextFloat() < 0.5F) {
-            this.spawnAtLocation(level, Kombucha.ENDER_KOMBUCHA_SHROOM.get());
-        }
+        this.spawnAtLocation(level, Kombucha.ENDER_KOMBUCHA_SHROOM.get());
     }
 
     @Override

@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        "kombucha:kombucha_shroom",
+        "kombucha:kombucha_shroom",
+        "kombucha:kombucha_shroom",
+        "kombucha:uncommon_kombucha_shroom",
+        "kombucha:nether_kombucha_shroom",
+        "kombucha:ender_kombucha_shroom",
+        "kombucha:kombucha_shroom",
+        "kombucha:kombucha_shroom",
+        "kombucha:kombucha_shroom"
+    ],
+    "result": {
+        "id": "kombucha:living_kombucha_shroom"
+    }
+}

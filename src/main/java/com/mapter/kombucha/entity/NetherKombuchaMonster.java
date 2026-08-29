@@ -104,9 +104,7 @@ public class NetherKombuchaMonster extends Monster implements RangedAttackMob {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
-        if (this.random.nextFloat() < 0.5F) {
-            this.spawnAtLocation(level, Kombucha.NETHER_KOMBUCHA_SHROOM.get());
-        }
+        this.spawnAtLocation(level, Kombucha.NETHER_KOMBUCHA_SHROOM.get());
     }
 
     @Override

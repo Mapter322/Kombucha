@@ -120,6 +120,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         stack.set(ModDataComponents.JAR_TYPE, state.getValue(JAR_TYPE));
         if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
             stack.set(ModDataComponents.TEA_TYPE, be.getTeaType());
+            stack.set(ModDataComponents.MUSHROOM_TYPE, be.getMushroomType());
             if (be.getLivingShroomData() != null) {
                 stack.set(ModDataComponents.LIVING_SHROOM_DATA, be.getLivingShroomData());
             }
@@ -448,7 +449,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
 
         if (!level.isClientSide()) {
-            ItemStack mushroom = new ItemStack(Kombucha.KOMBUCHA_SHROOM.get());
+            ItemStack mushroom = new ItemStack(be.getMushroomType().getItem());
             if (!player.getInventory().add(mushroom)) {
                 player.drop(mushroom, false);
             }

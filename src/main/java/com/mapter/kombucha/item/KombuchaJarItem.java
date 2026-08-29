@@ -2,6 +2,7 @@ package com.mapter.kombucha.item;
 
 import com.mapter.kombucha.block.KombuchaJarBlock;
 import com.mapter.kombucha.block.KombuchaJarBlockEntity;
+import com.mapter.kombucha.block.MushroomType;
 import com.mapter.kombucha.block.TeaType;
 import com.mapter.kombucha.component.ModDataComponents;
 import net.minecraft.core.BlockPos;
@@ -32,6 +33,7 @@ public class KombuchaJarItem extends BlockItem {
         boolean updated = super.updateCustomBlockEntityTag(pos, level, player, stack, placedState);
         if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
             be.setTeaType(stack.getOrDefault(ModDataComponents.TEA_TYPE, TeaType.TEA));
+            be.setMushroomType(stack.getOrDefault(ModDataComponents.MUSHROOM_TYPE, MushroomType.REGULAR));
             be.setLivingShroomData(stack.get(ModDataComponents.LIVING_SHROOM_DATA));
             return true;
         }

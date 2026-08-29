@@ -41,8 +41,9 @@ public class WaterJarBlock extends Block {
             return InteractionResult.SUCCESS;
         }
 
-        // a starter mushroom puts the water jar at stage 2, waiting for tea mix
-        if (stack.is(Kombucha.KOMBUCHA_SHROOM.get())) {
+        // a water-compatible starter mushroom puts the jar at stage 2, waiting for tea mix
+        MushroomType mushroomType = MushroomType.fromStack(stack);
+        if (mushroomType != null && mushroomType != MushroomType.NETHER) {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
                         .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)
@@ -51,6 +52,7 @@ public class WaterJarBlock extends Block {
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
                     be.setFillsLeft(3);
+                    be.setMushroomType(mushroomType);
                 }
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);

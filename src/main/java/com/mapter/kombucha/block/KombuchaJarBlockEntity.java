@@ -3,6 +3,9 @@ package com.mapter.kombucha.block;
 import com.mapter.kombucha.Kombucha;
 import com.mapter.kombucha.component.LivingShroomData;
 import com.mapter.kombucha.config.KombuchaConfig;
+import com.mapter.kombucha.entity.CaveKombuchaMonster;
+import com.mapter.kombucha.entity.EnderKombuchaMonster;
+import com.mapter.kombucha.entity.NetherKombuchaMonster;
 import com.mapter.kombucha.entity.SpoiledKombuchaMonster;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -23,11 +26,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.monster.Monster;
 import org.jspecify.annotations.Nullable;
 
 public class KombuchaJarBlockEntity extends BlockEntity {
 
     private TeaType teaType = TeaType.TEA;
+    private MushroomType mushroomType = MushroomType.REGULAR;
     private int fermentationTicks = 0;
     private int fillsLeft = 3;
     private @Nullable LivingShroomData livingShroomData;
@@ -38,6 +43,10 @@ public class KombuchaJarBlockEntity extends BlockEntity {
 
     public TeaType getTeaType() {
         return teaType;
+    }
+
+    public MushroomType getMushroomType() {
+        return mushroomType;
     }
 
     public int getFermentationTicks() {
@@ -68,6 +77,14 @@ public class KombuchaJarBlockEntity extends BlockEntity {
 
     public void setTeaType(TeaType teaType) {
         this.teaType = teaType;
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public void setMushroomType(MushroomType mushroomType) {
+        this.mushroomType = mushroomType;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -168,8 +185,16 @@ public class KombuchaJarBlockEntity extends BlockEntity {
             if (stage == FermentationStage.MONSTER
                     && (jarType == KombuchaJarBlock.JarType.INFESTED
                     || jarType == KombuchaJarBlock.JarType.SPOILED)) {
-                SpoiledKombuchaMonster monster = new SpoiledKombuchaMonster(
-                        Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
+                Monster monster = switch (be.mushroomType) {
+                    case REGULAR -> new SpoiledKombuchaMonster(
+                            Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
+                    case UNCOMMON -> new CaveKombuchaMonster(
+                            Kombucha.CAVE_KOMBUCHA_MONSTER.get(), level);
+                    case NETHER -> new NetherKombuchaMonster(
+                            Kombucha.NETHER_KOMBUCHA_MONSTER.get(), level);
+                    case ENDER -> new EnderKombuchaMonster(
+                            Kombucha.ENDER_KOMBUCHA_MONSTER.get(), level);
+                };
                 monster.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
                 monster.setYRot(level.getRandom().nextFloat() * 360.0F);
                 level.addFreshEntity(monster);
@@ -219,6 +244,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         input.read("tea_type", TeaType.CODEC).ifPresent(type -> this.teaType = type);
+        input.read("mushroom_type", MushroomType.CODEC).ifPresent(type -> this.mushroomType = type);
         input.read("fermentation_ticks", Codec.INT).ifPresent(ticks -> this.fermentationTicks = ticks);
         input.read("fills_left", Codec.INT).ifPresent(fills -> this.fillsLeft = fills);
         input.read("living_shroom", LivingShroomData.CODEC).ifPresent(data -> this.livingShroomData = data);
@@ -228,6 +254,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.store("tea_type", TeaType.CODEC, teaType);
+        output.store("mushroom_type", MushroomType.CODEC, mushroomType);
         output.store("fermentation_ticks", Codec.INT, fermentationTicks);
         output.store("fills_left", Codec.INT, fillsLeft);
         if (this.livingShroomData != null) {
@@ -239,6 +266,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putString("tea_type", teaType.getSerializedName());
+        tag.putString("mushroom_type", mushroomType.getSerializedName());
         tag.putInt("fermentation_ticks", fermentationTicks);
         return tag;
     }
