@@ -16,12 +16,12 @@ public final class KombuchaEvents {
     public static void onLivingDamage(LivingDamageEvent.Post event) {
         if (!(event.getSource().getEntity() instanceof Player player)
                 || !player.hasEffect(ModEffects.VAMPIRISM)
-                || event.getNewDamage() <= 0.0F) {
+                || event.getHealthDamage() <= 0.0F) {
             return;
         }
 
         int amplifier = player.getEffect(ModEffects.VAMPIRISM).getAmplifier();
-        player.heal(event.getNewDamage() * 0.1F * (amplifier + 1));
+        player.heal(event.getHealthDamage() * 0.1F * (amplifier + 1));
     }
 
     @SubscribeEvent

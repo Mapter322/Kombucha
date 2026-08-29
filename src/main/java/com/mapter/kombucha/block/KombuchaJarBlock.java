@@ -375,7 +375,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                 : JarType.UNSEALED;
         level.setBlock(pos, state.setValue(JAR_TYPE, target), 3);
         if (!player.getAbilities().instabuild) {
-            ItemStack wool = new ItemStack(Items.WHITE_WOOL);
+            ItemStack wool = new ItemStack(Items.WOOL.white());
             if (!player.getInventory().add(wool)) {
                 player.drop(wool, false);
             }

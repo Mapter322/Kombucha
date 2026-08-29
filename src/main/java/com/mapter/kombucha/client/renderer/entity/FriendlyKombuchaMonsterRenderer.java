@@ -13,10 +13,6 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class FriendlyKombuchaMonsterRenderer extends MobRenderer<FriendlyKombuchaMonster, KombuchaMonsterRenderState, EntityModel<LivingEntityRenderState>> {
     private static final Identifier ADULT_TEXTURE =
             Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/friendly_kombucha_monster.png");

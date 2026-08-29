@@ -10,10 +10,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class NetherKombuchaMonsterRenderer extends MobRenderer<NetherKombuchaMonster, KombuchaMonsterRenderState, NetherKombuchaMonsterModel> {
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath(Kombucha.MODID, "textures/entity/nether_kombucha_monster.png");

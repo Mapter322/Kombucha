@@ -32,7 +32,7 @@ public final class KombuchaClientEvents {
 
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
-        Minecraft.getInstance().setScreen(new FriendlyKombuchaScreen(kombucha));
+        Minecraft.getInstance().gui.setScreen(new FriendlyKombuchaScreen(kombucha));
     }
 
     private static boolean isKombuchaMushroom(ItemStack stack) {
