@@ -25,7 +25,9 @@ public class KombuchaJarItem extends BlockItem {
         BlockState state = super.getPlacementState(context);
         KombuchaJarBlock.JarType type = context.getItemInHand()
                 .getOrDefault(ModDataComponents.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED);
-        return state.setValue(KombuchaJarBlock.JAR_TYPE, type);
+        TeaType teaType = context.getItemInHand().getOrDefault(ModDataComponents.TEA_TYPE, TeaType.TEA);
+        return state.setValue(KombuchaJarBlock.JAR_TYPE, type)
+                .setValue(KombuchaJarBlock.LAVA, teaType == TeaType.NETHER);
     }
 
     @Override

@@ -1,7 +1,7 @@
 {
     "variants": {
         "": {
-            "model": "kombucha:block/empty_kombucha_jar"
+            "model": "kombucha:block/jar/empty"
         }
     }
 }

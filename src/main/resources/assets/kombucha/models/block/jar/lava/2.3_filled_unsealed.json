@@ -82,245 +82,17 @@
     },
     "format_version": "1.21.11",
     "credit": "Made with Blockbench",
+    "texture_size": [
+        32,
+        32
+    ],
     "textures": {
         "0": "kombucha:block/jar_glass",
         "1": "kombucha:block/liquid",
-        "3": "kombucha:block/kombucha_shroom",
         "particle": "kombucha:block/jar_glass",
         "2": "kombucha:block/lava"
     },
     "elements": [
-        {
-            "from": [
-                4,
-                8.0,
-                4
-            ],
-            "to": [
-                12,
-                9.0,
-                12
-            ],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [
-                    4,
-                    7,
-                    4
-                ]
-            },
-            "faces": {
-                "north": {
-                    "uv": [
-                        8,
-                        0,
-                        16,
-                        1
-                    ],
-                    "texture": "#3"
-                },
-                "east": {
-                    "uv": [
-                        8,
-                        1,
-                        16,
-                        2
-                    ],
-                    "texture": "#3"
-                },
-                "south": {
-                    "uv": [
-                        8,
-                        2,
-                        16,
-                        3
-                    ],
-                    "texture": "#3"
-                },
-                "west": {
-                    "uv": [
-                        8,
-                        3,
-                        16,
-                        4
-                    ],
-                    "texture": "#3"
-                },
-                "up": {
-                    "uv": [
-                        8,
-                        8,
-                        0,
-                        0
-                    ],
-                    "texture": "#3"
-                },
-                "down": {
-                    "uv": [
-                        8,
-                        8,
-                        0,
-                        16
-                    ],
-                    "texture": "#3"
-                }
-            }
-        },
-        {
-            "from": [
-                4,
-                6.0,
-                4
-            ],
-            "to": [
-                12,
-                7.0,
-                12
-            ],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [
-                    4,
-                    5,
-                    4
-                ]
-            },
-            "faces": {
-                "north": {
-                    "uv": [
-                        8,
-                        0,
-                        16,
-                        1
-                    ],
-                    "texture": "#3"
-                },
-                "east": {
-                    "uv": [
-                        8,
-                        1,
-                        16,
-                        2
-                    ],
-                    "texture": "#3"
-                },
-                "south": {
-                    "uv": [
-                        8,
-                        2,
-                        16,
-                        3
-                    ],
-                    "texture": "#3"
-                },
-                "west": {
-                    "uv": [
-                        8,
-                        3,
-                        16,
-                        4
-                    ],
-                    "texture": "#3"
-                },
-                "up": {
-                    "uv": [
-                        8,
-                        8,
-                        0,
-                        0
-                    ],
-                    "texture": "#3"
-                },
-                "down": {
-                    "uv": [
-                        8,
-                        8,
-                        0,
-                        16
-                    ],
-                    "texture": "#3"
-                }
-            }
-        },
-        {
-            "from": [
-                4,
-                4.0,
-                4
-            ],
-            "to": [
-                12,
-                5.0,
-                12
-            ],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [
-                    4,
-                    3,
-                    4
-                ]
-            },
-            "faces": {
-                "north": {
-                    "uv": [
-                        8,
-                        0,
-                        16,
-                        1
-                    ],
-                    "texture": "#3"
-                },
-                "east": {
-                    "uv": [
-                        8,
-                        1,
-                        16,
-                        2
-                    ],
-                    "texture": "#3"
-                },
-                "south": {
-                    "uv": [
-                        8,
-                        2,
-                        16,
-                        3
-                    ],
-                    "texture": "#3"
-                },
-                "west": {
-                    "uv": [
-                        8,
-                        3,
-                        16,
-                        4
-                    ],
-                    "texture": "#3"
-                },
-                "up": {
-                    "uv": [
-                        8,
-                        8,
-                        0,
-                        0
-                    ],
-                    "texture": "#3"
-                },
-                "down": {
-                    "uv": [
-                        8,
-                        8,
-                        0,
-                        16
-                    ],
-                    "texture": "#3"
-                }
-            }
-        },
         {
             "name": "jar_n",
             "from": [
@@ -817,7 +589,7 @@
                     "uv": [
                         6,
                         6,
-                        11,
+                        10,
                         7
                     ],
                     "texture": "#0"
@@ -826,7 +598,7 @@
                     "uv": [
                         1,
                         6,
-                        6,
+                        5,
                         7
                     ],
                     "texture": "#0"
@@ -835,7 +607,7 @@
                     "uv": [
                         6,
                         6,
-                        11,
+                        10,
                         7
                     ],
                     "texture": "#0"
@@ -844,7 +616,7 @@
                     "uv": [
                         1,
                         6,
-                        6,
+                        5,
                         7
                     ],
                     "texture": "#0"
@@ -861,95 +633,11 @@
                 "down": {
                     "uv": [
                         7.5,
-                        12,
+                        7.5,
                         11.5,
-                        16
+                        11.5
                     ],
                     "texture": "#0"
-                }
-            }
-        },
-        {
-            "name": "tea_mixture",
-            "from": [
-                3,
-                1,
-                3
-            ],
-            "to": [
-                13,
-                10,
-                13
-            ],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [
-                    3,
-                    1,
-                    3
-                ]
-            },
-            "faces": {
-                "north": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1",
-                    "tintindex": 0
-                },
-                "east": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1",
-                    "tintindex": 0
-                },
-                "south": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1",
-                    "tintindex": 0
-                },
-                "west": {
-                    "uv": [
-                        0,
-                        0,
-                        16,
-                        16
-                    ],
-                    "texture": "#1",
-                    "tintindex": 0
-                },
-                "up": {
-                    "uv": [
-                        16,
-                        16,
-                        0,
-                        0
-                    ],
-                    "texture": "#1",
-                    "tintindex": 0
-                },
-                "down": {
-                    "uv": [
-                        16,
-                        0,
-                        0,
-                        16
-                    ],
-                    "texture": "#1",
-                    "tintindex": 0
                 }
             }
         },
@@ -962,7 +650,7 @@
             ],
             "to": [
                 13,
-                10,
+                7,
                 13
             ],
             "rotation": {
@@ -983,7 +671,7 @@
                         16
                     ],
                     "texture": "#2",
-                    "tintindex": 1
+                    "tintindex": 0
                 },
                 "east": {
                     "uv": [
@@ -993,7 +681,7 @@
                         16
                     ],
                     "texture": "#2",
-                    "tintindex": 1
+                    "tintindex": 0
                 },
                 "south": {
                     "uv": [
@@ -1003,7 +691,7 @@
                         16
                     ],
                     "texture": "#2",
-                    "tintindex": 1
+                    "tintindex": 0
                 },
                 "west": {
                     "uv": [
@@ -1013,7 +701,7 @@
                         16
                     ],
                     "texture": "#2",
-                    "tintindex": 1
+                    "tintindex": 0
                 },
                 "up": {
                     "uv": [
@@ -1023,7 +711,7 @@
                         0
                     ],
                     "texture": "#2",
-                    "tintindex": 1
+                    "tintindex": 0
                 },
                 "down": {
                     "uv": [
@@ -1033,27 +721,12 @@
                         16
                     ],
                     "texture": "#2",
-                    "tintindex": 1
+                    "tintindex": 0
                 }
             }
         }
     ],
     "groups": [
-        {
-            "name": "kombucha_shrooms",
-            "origin": [
-                8,
-                8,
-                8
-            ],
-            "scope": 0,
-            "color": 0,
-            "children": [
-                0,
-                1,
-                2
-            ]
-        },
         {
             "name": "jar",
             "origin": [
@@ -1064,16 +737,16 @@
             "scope": 0,
             "color": 0,
             "children": [
+                0,
+                1,
+                2,
                 3,
                 4,
                 5,
-                6,
-                7,
-                8,
-                9
+                6
             ]
         },
-        10
+        7
     ],
     "render_type": "minecraft:translucent"
 }

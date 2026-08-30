@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class KombuchaJarBlock extends BaseEntityBlock {
@@ -80,13 +81,15 @@ public class KombuchaJarBlock extends BaseEntityBlock {
 
     public static final EnumProperty<JarType> JAR_TYPE = EnumProperty.create("jar_type", JarType.class);
     public static final EnumProperty<Fill> FILL = EnumProperty.create("fill", Fill.class);
+    public static final BooleanProperty LAVA = BooleanProperty.create("lava");
     public static final MapCodec<KombuchaJarBlock> CODEC = simpleCodec(KombuchaJarBlock::new);
 
     public KombuchaJarBlock(Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any()
                 .setValue(JAR_TYPE, JarType.UNSEALED)
-                .setValue(FILL, Fill.FULL));
+                .setValue(FILL, Fill.FULL)
+                .setValue(LAVA, false));
     }
 
     @Override
@@ -111,7 +114,7 @@ public class KombuchaJarBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(JAR_TYPE, FILL);
+        builder.add(JAR_TYPE, FILL, LAVA);
     }
 
     @Override
@@ -177,7 +180,8 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                 && state.getValue(FILL) == Fill.EMPTY) {
             if (!level.isClientSide()) {
                 level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_WATER_INFESTED)
-                        .setValue(FILL, Fill.FULL), 3);
+                        .setValue(FILL, Fill.FULL)
+                        .setValue(LAVA, false), 3);
                 if (!player.getAbilities().instabuild) {
                     player.setItemInHand(hand, new ItemStack(Items.BUCKET));
                 }
@@ -187,11 +191,14 @@ public class KombuchaJarBlock extends BaseEntityBlock {
         }
 
         // add lava to a drained nether jar
+        boolean netherJar = level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be
+                && be.getTeaType() == TeaType.NETHER;
         if (stack.is(Items.LAVA_BUCKET) && jarType == JarType.UNSEALED_INFESTED
-                && state.getValue(FILL) == Fill.EMPTY) {
+                && state.getValue(FILL) == Fill.EMPTY && netherJar) {
             if (!level.isClientSide()) {
                 level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_LAVA_INFESTED)
-                        .setValue(FILL, Fill.FULL), 3);
+                        .setValue(FILL, Fill.FULL)
+                        .setValue(LAVA, true), 3);
                 if (!player.getAbilities().instabuild) {
                     player.setItemInHand(hand, new ItemStack(Items.BUCKET));
                 }
@@ -215,7 +222,8 @@ public class KombuchaJarBlock extends BaseEntityBlock {
                         be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
                         be.setFillsLeft(3);
                     }
-                    level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_INFESTED), 3);
+                    level.setBlock(pos, state.setValue(JAR_TYPE, JarType.UNSEALED_INFESTED)
+                            .setValue(LAVA, nether), 3);
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }

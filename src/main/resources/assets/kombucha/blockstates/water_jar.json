@@ -1,7 +1,7 @@
 {
     "variants": {
         "": {
-            "model": "kombucha:block/water_jar"
+            "model": "kombucha:block/jar/water"
         }
     }
 }
