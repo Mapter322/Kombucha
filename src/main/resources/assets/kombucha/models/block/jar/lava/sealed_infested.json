@@ -84,9 +84,12 @@
     "credit": "Made with Blockbench",
     "textures": {
         "0": "kombucha:block/jar_glass",
-        "1": "kombucha:block/lava",
+        "1": "kombucha:block/liquid",
+        "2": "kombucha:block/rope_and_cloth",
         "3": "kombucha:block/kombucha_shroom",
-        "particle": "kombucha:block/jar_glass"
+        "4": "kombucha:block/white_wool",
+        "particle": "kombucha:block/jar_glass",
+        "5": "kombucha:block/lava"
     },
     "elements": [
         {
@@ -791,7 +794,163 @@
             }
         },
         {
-            "name": "jar_top2",
+            "name": "rope",
+            "from": [
+                4,
+                15,
+                4
+            ],
+            "to": [
+                12,
+                16,
+                12
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    14,
+                    4
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        8,
+                        0,
+                        16,
+                        1
+                    ],
+                    "texture": "#2"
+                },
+                "east": {
+                    "uv": [
+                        8,
+                        1,
+                        16,
+                        2
+                    ],
+                    "texture": "#2"
+                },
+                "south": {
+                    "uv": [
+                        8,
+                        2,
+                        16,
+                        3
+                    ],
+                    "texture": "#2"
+                },
+                "west": {
+                    "uv": [
+                        8,
+                        3,
+                        16,
+                        4
+                    ],
+                    "texture": "#2"
+                },
+                "up": {
+                    "uv": [
+                        16,
+                        16,
+                        8,
+                        8
+                    ],
+                    "texture": "#2"
+                },
+                "down": {
+                    "uv": [
+                        16,
+                        8,
+                        8,
+                        16
+                    ],
+                    "texture": "#2"
+                }
+            }
+        },
+        {
+            "name": "cloth",
+            "from": [
+                3,
+                16,
+                3
+            ],
+            "to": [
+                13,
+                17,
+                13
+            ],
+            "rotation": {
+                "angle": 0,
+                "axis": "y",
+                "origin": [
+                    3,
+                    15,
+                    4
+                ]
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        6
+                    ],
+                    "texture": "#4"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        6,
+                        16,
+                        8
+                    ],
+                    "texture": "#4"
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        2
+                    ],
+                    "texture": "#4"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        2,
+                        16,
+                        4
+                    ],
+                    "texture": "#4"
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#4"
+                },
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#4"
+                }
+            }
+        },
+        {
+            "name": "cloth2",
             "from": [
                 4,
                 14,
@@ -799,7 +958,7 @@
             ],
             "to": [
                 12,
-                16,
+                15,
                 12
             ],
             "rotation": {
@@ -814,62 +973,62 @@
             "faces": {
                 "north": {
                     "uv": [
-                        6,
-                        6,
-                        11,
-                        7
+                        0,
+                        4,
+                        16,
+                        6
                     ],
-                    "texture": "#0"
+                    "texture": "#4"
                 },
                 "east": {
                     "uv": [
-                        1,
+                        0,
                         6,
-                        6,
-                        7
+                        16,
+                        8
                     ],
-                    "texture": "#0"
+                    "texture": "#4"
                 },
                 "south": {
                     "uv": [
-                        6,
-                        6,
-                        11,
-                        7
+                        0,
+                        0,
+                        16,
+                        2
                     ],
-                    "texture": "#0"
+                    "texture": "#4"
                 },
                 "west": {
                     "uv": [
-                        1,
-                        6,
-                        6,
-                        7
+                        0,
+                        2,
+                        16,
+                        4
                     ],
-                    "texture": "#0"
+                    "texture": "#4"
                 },
                 "up": {
                     "uv": [
-                        7.5,
-                        12,
-                        11.5,
+                        0,
+                        0,
+                        16,
                         16
                     ],
-                    "texture": "#0"
+                    "texture": "#4"
                 },
                 "down": {
                     "uv": [
-                        7.5,
-                        12,
-                        11.5,
+                        0,
+                        0,
+                        16,
                         16
                     ],
-                    "texture": "#0"
+                    "texture": "#4"
                 }
             }
         },
         {
-            "name": "tea_mixture",
+            "name": "lava_mixture",
             "from": [
                 3,
                 1,
@@ -897,8 +1056,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1",
-                    "tintindex": 1
+                    "texture": "#5",
+                    "tintindex": 0
                 },
                 "east": {
                     "uv": [
@@ -907,8 +1066,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1",
-                    "tintindex": 1
+                    "texture": "#5",
+                    "tintindex": 0
                 },
                 "south": {
                     "uv": [
@@ -917,8 +1076,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1",
-                    "tintindex": 1
+                    "texture": "#5",
+                    "tintindex": 0
                 },
                 "west": {
                     "uv": [
@@ -927,8 +1086,8 @@
                         16,
                         16
                     ],
-                    "texture": "#1",
-                    "tintindex": 1
+                    "texture": "#5",
+                    "tintindex": 0
                 },
                 "up": {
                     "uv": [
@@ -937,8 +1096,8 @@
                         0,
                         0
                     ],
-                    "texture": "#1",
-                    "tintindex": 1
+                    "texture": "#5",
+                    "tintindex": 0
                 },
                 "down": {
                     "uv": [
@@ -947,8 +1106,8 @@
                         0,
                         16
                     ],
-                    "texture": "#1",
-                    "tintindex": 1
+                    "texture": "#5",
+                    "tintindex": 0
                 }
             }
         }
@@ -985,10 +1144,12 @@
                 6,
                 7,
                 8,
-                9
+                9,
+                10,
+                11
             ]
         },
-        10
+        12
     ],
     "render_type": "minecraft:translucent"
 }

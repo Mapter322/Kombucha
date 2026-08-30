@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "kombucha:block/empty_kombucha_jar"
+    "model": "kombucha:block/jar/empty"
   }
 }

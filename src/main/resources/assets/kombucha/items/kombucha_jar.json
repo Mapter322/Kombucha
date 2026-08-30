@@ -7,60 +7,77 @@
             {
                 "when": "unsealed",
                 "model": {
-                    "type": "minecraft:model",
-                    "model": "kombucha:block/filled_unsealed_kombucha_jar",
-                    "tints": [
+                    "type": "minecraft:select",
+                    "property": "minecraft:component",
+                    "component": "kombucha:tea_type",
+                    "cases": [
                         {
-                            "type": "kombucha:tea_type"
-                        },
-                        {
-                            "type": "kombucha:lava_element"
+                            "when": "nether",
+                            "model": {
+                                "type": "minecraft:model",
+                                "model": "kombucha:block/jar/lava/filled_unsealed",
+                                "tints": [{"type": "kombucha:lava"}]
+                            }
                         }
-                    ]
+                    ],
+                    "fallback": {
+                        "type": "minecraft:model",
+                        "model": "kombucha:block/jar/filled_unsealed",
+                        "tints": [{"type": "kombucha:tea_type"}]
+                    }
                 }
             },
             {
                 "when": "sealed",
                 "model": {
-                    "type": "minecraft:model",
-                    "model": "kombucha:block/filled_sealed_kombucha_jar",
-                    "tints": [
+                    "type": "minecraft:select",
+                    "property": "minecraft:component",
+                    "component": "kombucha:tea_type",
+                    "cases": [
                         {
-                            "type": "kombucha:tea_type"
-                        },
-                        {
-                            "type": "kombucha:lava_element"
+                            "when": "nether",
+                            "model": {
+                                "type": "minecraft:model",
+                                "model": "kombucha:block/jar/lava/filled_sealed",
+                                "tints": [{"type": "kombucha:lava"}]
+                            }
                         }
-                    ]
+                    ],
+                    "fallback": {
+                        "type": "minecraft:model",
+                        "model": "kombucha:block/jar/filled_sealed",
+                        "tints": [{"type": "kombucha:tea_type"}]
+                    }
                 }
             },
             {
                 "when": "infested",
                 "model": {
-                    "type": "minecraft:model",
-                    "model": "kombucha:block/infested_kombucha_jar",
-                    "tints": [
+                    "type": "minecraft:select",
+                    "property": "minecraft:component",
+                    "component": "kombucha:tea_type",
+                    "cases": [
                         {
-                            "type": "kombucha:tea_type"
-                        },
-                        {
-                            "type": "kombucha:lava_element"
+                            "when": "nether",
+                            "model": {
+                                "type": "minecraft:model",
+                                "model": "kombucha:block/jar/lava/infested",
+                                "tints": [{"type": "kombucha:lava"}]
+                            }
                         }
-                    ]
+                    ],
+                    "fallback": {
+                        "type": "minecraft:model",
+                        "model": "kombucha:block/jar/infested",
+                        "tints": [{"type": "kombucha:tea_type"}]
+                    }
                 }
             }
         ],
         "fallback": {
             "type": "minecraft:model",
-            "model": "kombucha:block/filled_unsealed_kombucha_jar",
-            "tints": [
-                {
-                    "type": "kombucha:tea_type"
-                },
-                {
-                    "type": "kombucha:lava_element"
-                }
-            ]
+            "model": "kombucha:block/jar/filled_unsealed",
+            "tints": [{"type": "kombucha:tea_type"}]
         }
     }
 }

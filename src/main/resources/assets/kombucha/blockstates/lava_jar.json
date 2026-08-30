@@ -1,7 +1,7 @@
 {
     "variants": {
         "": {
-            "model": "kombucha:block/lava_jar"
+            "model": "kombucha:block/jar/lava/jar"
         }
     }
 }

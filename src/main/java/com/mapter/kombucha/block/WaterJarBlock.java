@@ -47,7 +47,8 @@ public class WaterJarBlock extends Block {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
                         .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)
-                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL);
+                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL)
+                        .setValue(KombuchaJarBlock.LAVA, false);
                 level.setBlock(pos, kombuchaState, 3);
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
@@ -67,7 +68,8 @@ public class WaterJarBlock extends Block {
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
                         .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED_WATER_INFESTED)
-                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL);
+                        .setValue(KombuchaJarBlock.FILL, KombuchaJarBlock.Fill.FULL)
+                        .setValue(KombuchaJarBlock.LAVA, false);
                 level.setBlock(pos, kombuchaState, 3);
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     be.setFermentationTicks(KombuchaConfig.TICKS_TO_INFESTED.get());
@@ -95,7 +97,8 @@ public class WaterJarBlock extends Block {
             }
             if (!level.isClientSide()) {
                 BlockState kombuchaState = Kombucha.KOMBUCHA_JAR.get().defaultBlockState()
-                        .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED);
+                        .setValue(KombuchaJarBlock.JAR_TYPE, KombuchaJarBlock.JarType.UNSEALED)
+                        .setValue(KombuchaJarBlock.LAVA, false);
                 level.setBlock(pos, kombuchaState, 3);
                 if (level.getBlockEntity(pos) instanceof KombuchaJarBlockEntity be) {
                     be.setTeaType(teaType);
