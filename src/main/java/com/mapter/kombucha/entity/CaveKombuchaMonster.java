@@ -103,7 +103,7 @@ public class CaveKombuchaMonster extends Monster implements RangedAttackMob {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
         super.dropCustomDeathLoot(level, source, killedByPlayer);
-        this.spawnAtLocation(level, Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get());
+        this.spawnAtLocation(level, Kombucha.GOLDEN_KOMBUCHA_SHROOM.get());
     }
 
     public static AttributeSupplier.Builder createAttributes() {

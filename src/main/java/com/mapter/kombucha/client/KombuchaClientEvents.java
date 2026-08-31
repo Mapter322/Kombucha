@@ -37,7 +37,7 @@ public final class KombuchaClientEvents {
 
     private static boolean isKombuchaMushroom(ItemStack stack) {
         return stack.is(Kombucha.KOMBUCHA_SHROOM.get())
-                || stack.is(Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get())
+                || stack.is(Kombucha.GOLDEN_KOMBUCHA_SHROOM.get())
                 || stack.is(Kombucha.NETHER_KOMBUCHA_SHROOM.get())
                 || stack.is(Kombucha.ENDER_KOMBUCHA_SHROOM.get())
                 || stack.is(Kombucha.LIVING_KOMBUCHA_SHROOM.get());

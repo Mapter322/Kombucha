@@ -129,7 +129,7 @@ public class Kombucha {
             "ender_kombucha_monster_spawn_egg", SpawnEggItem::new,
             () -> new Item.Properties().spawnEgg(ENDER_KOMBUCHA_MONSTER.get()));
 
-    public static final DeferredItem<Item> UNCOMMON_KOMBUCHA_SHROOM = ITEMS.register("uncommon_kombucha_shroom",
+    public static final DeferredItem<Item> GOLDEN_KOMBUCHA_SHROOM = ITEMS.register("golden_kombucha_shroom",
             id -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))
                     .rarity(Rarity.UNCOMMON)));
@@ -292,7 +292,7 @@ public class Kombucha {
                         output.accept(ENDER_KOMBUCHA_MONSTER_SPAWN_EGG.get());
                         output.accept(KOMBUCHA_SHROOM.get());
                         output.accept(LIVING_KOMBUCHA_SHROOM.get());
-                        output.accept(UNCOMMON_KOMBUCHA_SHROOM.get());
+                        output.accept(GOLDEN_KOMBUCHA_SHROOM.get());
                         output.accept(NETHER_KOMBUCHA_SHROOM.get());
                         output.accept(ENDER_KOMBUCHA_SHROOM.get());
                     }).build());
