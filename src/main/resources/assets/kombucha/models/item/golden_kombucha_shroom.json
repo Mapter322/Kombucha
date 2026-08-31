@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "kombucha:item/uncommon_kombucha_shroom"
+        "layer0": "kombucha:item/golden_kombucha_shroom"
     }
 }

@@ -188,7 +188,7 @@ public class KombuchaJarBlockEntity extends BlockEntity {
                 Monster monster = switch (be.mushroomType) {
                     case REGULAR -> new SpoiledKombuchaMonster(
                             Kombucha.SPOILED_KOMBUCHA_MONSTER.get(), level);
-                    case UNCOMMON -> new CaveKombuchaMonster(
+                    case GOLDEN -> new CaveKombuchaMonster(
                             Kombucha.CAVE_KOMBUCHA_MONSTER.get(), level);
                     case NETHER -> new NetherKombuchaMonster(
                             Kombucha.NETHER_KOMBUCHA_MONSTER.get(), level);

@@ -87,7 +87,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "kombucha:uncommon_kombucha_shroom",
+          "name": "kombucha:golden_kombucha_shroom",
           "functions": [
             {
               "function": "minecraft:set_count",

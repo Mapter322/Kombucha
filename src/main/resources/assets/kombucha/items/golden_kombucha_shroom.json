@@ -1,6 +1,6 @@
 {
     "model": {
         "type": "minecraft:model",
-        "model": "kombucha:item/uncommon_kombucha_shroom"
+        "model": "kombucha:item/golden_kombucha_shroom"
     }
 }

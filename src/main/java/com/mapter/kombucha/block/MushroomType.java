@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public enum MushroomType implements StringRepresentable {
     REGULAR("regular"),
-    UNCOMMON("uncommon"),
+    GOLDEN("golden"),
     NETHER("nether"),
     ENDER("ender");
 
@@ -29,8 +29,8 @@ public enum MushroomType implements StringRepresentable {
         if (stack.is(Kombucha.KOMBUCHA_SHROOM.get())) {
             return REGULAR;
         }
-        if (stack.is(Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get())) {
-            return UNCOMMON;
+        if (stack.is(Kombucha.GOLDEN_KOMBUCHA_SHROOM.get())) {
+            return GOLDEN;
         }
         if (stack.is(Kombucha.NETHER_KOMBUCHA_SHROOM.get())) {
             return NETHER;
@@ -44,7 +44,7 @@ public enum MushroomType implements StringRepresentable {
     public Item getItem() {
         return switch (this) {
             case REGULAR -> Kombucha.KOMBUCHA_SHROOM.get();
-            case UNCOMMON -> Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get();
+            case GOLDEN -> Kombucha.GOLDEN_KOMBUCHA_SHROOM.get();
             case NETHER -> Kombucha.NETHER_KOMBUCHA_SHROOM.get();
             case ENDER -> Kombucha.ENDER_KOMBUCHA_SHROOM.get();
         };

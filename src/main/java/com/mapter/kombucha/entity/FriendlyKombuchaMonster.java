@@ -944,7 +944,7 @@ public class FriendlyKombuchaMonster extends TamableAnimal implements RangedAtta
     }
 
     private static boolean isPerkMushroom(ItemStack stack) {
-        return stack.is(Kombucha.UNCOMMON_KOMBUCHA_SHROOM.get());
+        return stack.is(Kombucha.GOLDEN_KOMBUCHA_SHROOM.get());
     }
 
     private static boolean isRegenerationMushroom(ItemStack stack) {
