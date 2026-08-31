@@ -169,7 +169,8 @@ public class Kombucha {
                     .setId(ResourceKey.create(Registries.BLOCK, id))
                     .strength(0.3F)
                     .sound(SoundType.GLASS)
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(KombuchaJarBlock.LAVA) ? 15 : 0)));
     public static final DeferredItem<KombuchaJarItem> KOMBUCHA_JAR_ITEM = ITEMS.register("kombucha_jar",
             id -> new KombuchaJarItem(KOMBUCHA_JAR.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, id))));
